@@ -108,7 +108,7 @@ The technology stack is chosen to align with modern web development practices an
 
 ### **2.1 Programming Languages**
 - Frontend: TypeScript (for type safety and scalability).
-- Backend Logic: JavaScript/TypeScript (handled in-browser).
+- Backend Logic: TypeScript (handled in-browser).
 
 ### **2.2 Frameworks**
 - Frontend: React (for building dynamic and responsive UI components).
@@ -123,8 +123,8 @@ The technology stack is chosen to align with modern web development practices an
 - JSON Export/Import: For backing up and restoring data externally.
 
 ### **2.5 Build Tools**
-- Package Manager: npm or Yarn.
-- Bundler: Vite or Webpack.
+- Package Manager: npm.
+- Bundler: Vite.
 
 ### **2.6 Testing**
 - Unit Testing: Jest.
@@ -224,9 +224,9 @@ The interface design ensures seamless interaction between modules and provides J
 The deployment architecture focuses on hosting static assets and ensuring cross-browser compatibility.
 
 ### **5.1 Cloud Environment**
-- Hosting: AWS S3 or Netlify.
-- CDN: CloudFront or similar.
-- CI/CD Pipeline: GitHub Actions or GitLab CI/CD.
+- Hosting: AWS S3.
+- CDN: CloudFront.
+- CI/CD Pipeline: GitHub Actions.
 
 ### **5.2 Security**
 - HTTPS Enforcement: SSL/TLS certificates.
