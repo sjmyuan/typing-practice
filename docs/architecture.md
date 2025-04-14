@@ -103,7 +103,6 @@ webApp -> Parent: Displays statistics
 ---
 
 ## **2. Technology Stack**
-The technology stack is chosen to align with your preferences for TypeScript, AWS S3 hosting, and scalability requirements.
 
 ### **2.1 Programming Languages**
 - Frontend: TypeScript (Next.js with client-side rendering).
@@ -327,22 +326,17 @@ Here’s how the CI/CD pipeline will work with **GitHub Actions**:
 The repository is organized to ensure maintainability and ease of navigation.
 
 ```
-typing-practice-program/
+typing-practice/
 ├── docs/               # Documentation files
 │   ├── architecture.md # System architecture diagrams and descriptions
 │   ├── api-specs.md    # API specifications (internal module calls)
 │   └── deployment.md   # Deployment instructions and CI/CD pipeline details
-├── public/             # Public assets (e.g., favicon.ico, robots.txt)
-├── src/                # Source code files
+├── public/             # Public assets (e.g., favicon.ico, robots.txt, images)
+├── src/                # Source code files (excluding pages)
 │   ├── components/     # Reusable UI components
 │   │   ├── Header.tsx  # Application header component
 │   │   ├── Footer.tsx  # Application footer component
 │   │   └── TypingArea.tsx # Typing practice area component
-│   ├── pages/          # Application pages
-│   │   ├── Home.tsx    # Homepage with practice content selection
-│   │   ├── Practice.tsx # Typing practice page
-│   │   ├── Settings.tsx # User preferences/settings page
-│   │   └── Progress.tsx # Progress monitoring page for parents
 │   ├── hooks/          # Custom React hooks
 │   │   ├── useLocalStorage.ts # Hook for interacting with LocalStorage
 │   │   └── useTypingSession.ts # Hook for managing typing sessions
@@ -351,8 +345,20 @@ typing-practice-program/
 │   ├── utils/          # Utility functions
 │   │   ├── pinyinUtils.ts # Helper functions for handling Chinese pinyin
 │   │   └── fileExport.ts # Functions for exporting data as JSON files
-│   ├── App.tsx         # Main application entry point
-│   └── index.tsx       # Root file to render the React app
+│   ├── styles/         # Global CSS or styled-components (optional, Tailwind can replace this)
+│   │   └── globals.css # Global styles (if not using Tailwind)
+│   ├── lib/            # Library code (e.g., helper functions, constants)
+│   │   └── constants.ts # Constants used across the app
+│   └── _app.tsx        # Custom App component for wrapping pages
+├── pages/              # Next.js pages (automatically routed by file name)
+│   ├── index.tsx       # Homepage with practice content selection
+│   ├── practice.tsx    # Typing practice page
+│   ├── settings.tsx    # User preferences/settings page
+│   ├── progress.tsx    # Progress monitoring page for parents
+│   └── api/            # API routes (handled by Next.js)
+│       ├── practice-content.ts # API route for managing practice content
+│       ├── typing-session.ts   # API route for saving typing sessions
+│       └── user-preferences.ts # API route for managing user preferences
 ├── tests/              # Test files
 │   ├── unit/           # Unit tests
 │   │   ├── TypingEngine.test.ts # Tests for typing engine logic
@@ -362,14 +368,13 @@ typing-practice-program/
 │   └── e2e/            # End-to-end tests (optional)
 │       └── cypress/    # Cypress test files
 ├── config/             # Configuration files
-│   ├── webpack.config.js # Webpack configuration (if not using Create React App)
 │   ├── jest.setup.js   # Jest setup file for testing
 │   └── tailwind.config.js # Tailwind CSS configuration
 ├── .github/            # GitHub Actions workflows
 │   └── workflows/
 │       └── ci-cd.yml   # CI/CD pipeline configuration for GitHub Actions
 ├── .env.example        # Example environment variables
-├── package.json        # Node.js dependencies and scripts
+├── next.config.js      # Next.js configuration file
 ├── tsconfig.json       # TypeScript configuration
 └── README.md           # Project overview and setup instructions
 ```
