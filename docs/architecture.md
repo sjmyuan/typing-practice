@@ -1,7 +1,7 @@
 # **Software Architecture Design Document**
 
 ## **1. System Architecture**
-The system architecture for the Typing Practice Program is designed to support a cross-platform web application with local data persistence using LocalStorage. It consists of multiple internal modules interacting through well-defined interfaces.
+The system architecture for the Typing Practice is designed to support a cross-platform web application with local data persistence using LocalStorage. It consists of multiple internal modules interacting through well-defined interfaces.
 
 ### **1.1 C4 Diagrams**
 
@@ -106,10 +106,10 @@ webApp -> Parent: Displays statistics
 The technology stack is chosen to align with your preferences for TypeScript, AWS S3 hosting, and scalability requirements.
 
 ### **2.1 Programming Languages**
-- Frontend: TypeScript (React-based SPA).
+- Frontend: TypeScript (Next.js with client-side rendering).
 
 ### **2.2 Frameworks & Libraries**
-- Frontend Framework: React with TypeScript.
+- Frontend Framework: Next.js with TypeScript and client-side rendering.
 - Styling: Tailwind CSS for responsive and utility-first styling.
 - Pinyin Support: `pinyin.js` library for handling Chinese pinyin input validation.
 - State Management: Context API for managing global state (e.g., practice content, statistics).
