@@ -103,7 +103,6 @@ webApp -> Parent: Displays statistics
 ---
 
 ## **2. Technology Stack**
-The technology stack is chosen to align with your preferences for TypeScript, AWS S3 hosting, and scalability requirements.
 
 ### **2.1 Programming Languages**
 - Frontend: TypeScript (Next.js with client-side rendering).
