@@ -1,3 +1,1 @@
-// jest.setup.js
-
-// Add any global setup needed for tests
+require('dotenv').config({ path: '.env.local' });
