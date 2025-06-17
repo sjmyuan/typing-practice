@@ -19,7 +19,7 @@ type Story = StoryObj<typeof PracticeArea>;
 
 export const Default: Story = {
   args: {
-    prompt: 'hello world',
+    prompt: 'Hello, world!',
   },
 };
 
@@ -32,5 +32,11 @@ export const ShortPrompt: Story = {
 export const LongPrompt: Story = {
   args: {
     prompt: 'The quick brown fox jumps over the lazy dog.',
+  },
+};
+
+export const WithSpaces: Story = {
+  args: {
+    prompt: 'Practice typing with spaces',
   },
 };

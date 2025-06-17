@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import PracticeArea from './components/PracticeArea'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -24,6 +25,16 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
+      </div>
+      <div className="card">
+        <h2>Typing Practice</h2>
+        <PracticeArea prompt="Hello, world!" />
+        <div className="mt-8">
+          <h3>Try different prompts:</h3>
+          <div className="mt-4">
+            <PracticeArea prompt="The quick brown fox" />
+          </div>
+        </div>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
