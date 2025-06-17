@@ -1,63 +1,60 @@
-## Backlog
+<knowledge>
 
-[Backlog](../docs/epics.md)
+The knowledge section contains information about the software project, including its purpose, architecture, technology stack, etc.
 
-## Architecture
+<project-description> 
+Typing Practice is a typing practice program designed for younger elementary school students (grades 1–3) to improve typing speed, accuracy, and confidence in both English and Chinese. Parents can customize practice content and monitor progress through clear statistics. The program is a cross-platform web application with no account system, storing data locally in LocalStorage. Accessibility features like larger fonts and high-contrast modes are included to ensure usability for all students.
+</project-description>
+<tech-stack>
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- Vitest
+</tech-stack>
+<architecture>
+ - [Architecture](../docs/architecture.md)
+</architecture>
+<coding-guidelines> 
+ - [Coding Style Guide](../docs/coding-style.md)
+</coding-guidelines>
 
-[Architecture](../docs/architecture.md)
+</knowledge>
 
-## User Task Breakdown 
+<skills>
 
-- Break down the user task into **small, actionable steps** following TDD principles.
-- Order steps logically for **incremental development**: start with unit tests, proceed to implementation, and finish with refactoring.
-- Each step should have a **clear, focused scope**, an **expected outcome**, and address **one specific functionality or aspect** at a time.
+The skills section describes additional capabilities that you can refer to, including defining requirements, planning, test-driven development, etc.
 
-For each small functionality or aspect, break it down into six structured steps:
+<defining-requirement>
+- Collect required information from the code base, knowledge section, and user input to define the software requirement.
+- Clarify ambiguous terms or assumptions to ensure alignment.
+- Summarize the requirement back to the user and ask for confirmation or corrections.
+</defining-requirement>
 
-1. **Write Small Tests**:
-   - Create **focused unit tests** covering a **specific scenario** of this functionality or aspect.
-   - Ensure the test cases are minimal and only validate one behavior or condition at a time.
+<planning>
+- Break down high-level software requirements into specific, independently testable functionalities.
+- Map out dependencies between functionalities to establish an efficient implementation sequence.
+- Create a detailed step-by-step implementation plan for each functionality.
+- Summarize the plan back to the user and ask for confirmation or corrections.
+</planning>
 
-2. **Confirm Small Test Failure**:
-   - Run the tests to ensure they fail or cause compilation errors before implementation.
-   - This confirms that the tests are valid and that the functionality has not been prematurely implemented.
+<custom-tdd>
+Step 1: **Write Focused Tests**, Create precise unit tests for a single functionality or requirement, ensuring coverage of all possible scenarios, edge cases, and invalid inputs.  
+Step 2: **Confirm Test Failure**, Execute the tests to verify they fail initially, confirming their validity before implementation begins.  
+Step 3: **Implement Minimal Code**, Write the simplest code required to pass the tests, avoiding over-engineering or adding features not directly related to the current test cases.  
+Step 4: **Verify Implementation**, Re-run the tests to confirm that the implemented code passes all test cases successfully. Debug and refine as necessary.  
+Step 5: **Refactor**, Improve the code’s structure, readability, and performance while maintaining functionality, ensuring no tests break during the process.  
+Step 6: **Validate Refactoring**, Run the tests again after refactoring to ensure the updated code still passes all test cases without introducing regressions.
+</custom-tdd>
 
-3. **Implement Small Functionality**:
-   - Write **minimal code** sufficient to pass the focused tests.
-   - Avoid over-engineering or adding unnecessary features beyond the scope of the current test case.
+<skills>
 
-4. **Verify Small Implementation**:
-   - Run the focused tests again to confirm the minimal code passes all test scenarios.
-   - Debug and refine as needed, but only within the scope of the current functionality.
+<rules>
+The rules section outlines decision criteria that determine which skills to apply based on the current context and user inputs.
 
-5. **Refactor Small Code**:
-   - Improve clarity, maintainability, and performance of the focused functionality without changing its behavior.
-   - Refactor in small increments, ensuring no new functionality is introduced.
-
-6. **Validate Small Refactoring**:
-   - Run the focused tests again to ensure the refactored code still passes all test scenarios.
-   - Debug and refine if necessary, keeping changes minimal and focused.
-
-Present the detailed steps before execution. For example:
-
-- **Step 1**: Define the data model for user profiles, including fields like `name`, `email`, and `id`.
-- **Step 2**: Write unit tests for data model validation, covering required fields, unique constraints, and edge cases (e.g., invalid email formats, missing fields).
-- **Step 3**: Run the tests to confirm they fail or result in compilation errors before implementation.
-- **Step 4**: Implement the data model with validation logic based on the tests.
-- **Step 5**: Run the tests again to verify the implementation passes all defined tests. Debug and refine as needed.
-- **Step 6**: Refactor the data model implementation for clarity and maintainability.
-- **Step 7**: Run the tests again after refactoring to ensure the refactored code still passes all tests. Debug and refine if necessary.
-- **Step 8**: Set up the database schema and migrations.
-- **Step 9**: Write unit tests for the 'create user profile' endpoint, including authentication checks, validation, and error handling (e.g., duplicate emails, missing fields).
-- **Step 10**: Run the tests to confirm they fail or result in compilation errors before implementation.
-- **Step 11**: Implement the 'create user profile' endpoint with authentication and validation logic.
-- **Step 12**: Run the tests again to verify the implementation passes all defined tests. Debug and refine as needed.
-- **Step 13**: Refactor the 'create user profile' endpoint implementation for clarity and maintainability.
-- **Step 14**: Run the tests again after refactoring to ensure the refactored code still passes all tests. Debug and refine if necessary.
-
-### Key Notes on "Small":
-- **Small Scope**: Each step addresses only one functionality or aspect (e.g., validating a username, not the entire login system).
-- **Small Tests**: Test only one behavior or condition at a time (e.g., reject empty input, not all possible inputs).
-- **Small Implementation**: Write just enough code to pass the current test case.
-- **Small Refactoring**: Focus on improving only the part of the code related to the current functionality.
-- **Small Validation**: Validate only the focused functionality after each step.
+<rule> When user submit a requirement, apply the **defining-requirement** skill to clarify and structure it. </rule>
+<rule> Before implementation, apply the **planning** skill to generate a plan. </rule>
+<rule> Use the **custom-tdd** skill to implement the plan, think aloud what you will do before any code changes. </rule>
+<rule> After modifying the test code, run the test. </rule>
+<rule> After modifying the implementation code, run the test. </rule>
+</rules>

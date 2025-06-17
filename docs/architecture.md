@@ -327,54 +327,24 @@ The repository is organized to ensure maintainability and ease of navigation.
 
 ```
 typing-practice/
-├── docs/               # Documentation files
-│   ├── architecture.md # System architecture diagrams and descriptions
-│   ├── api-specs.md    # API specifications (internal module calls)
-│   └── deployment.md   # Deployment instructions and CI/CD pipeline details
-├── public/             # Public assets (e.g., favicon.ico, robots.txt, images)
-├── src/                # Source code files (excluding pages)
-│   ├── components/     # Reusable UI components
-│   │   ├── Header.tsx  # Application header component
-│   │   ├── Footer.tsx  # Application footer component
-│   │   └── TypingArea.tsx # Typing practice area component
-│   ├── hooks/          # Custom React hooks
-│   │   ├── useLocalStorage.ts # Hook for interacting with LocalStorage
-│   │   └── useTypingSession.ts # Hook for managing typing sessions
-│   ├── context/        # Context API for global state management
-│   │   └── AppContext.tsx # Global state for practice content, sessions, and preferences
-│   ├── utils/          # Utility functions
-│   │   ├── pinyinUtils.ts # Helper functions for handling Chinese pinyin
-│   │   └── fileExport.ts # Functions for exporting data as JSON files
-│   ├── styles/         # Global CSS or styled-components (optional, Tailwind can replace this)
-│   │   └── globals.css # Global styles (if not using Tailwind)
-│   ├── lib/            # Library code (e.g., helper functions, constants)
-│   │   └── constants.ts # Constants used across the app
-│   └── _app.tsx        # Custom App component for wrapping pages
-├── pages/              # Next.js pages (automatically routed by file name)
-│   ├── index.tsx       # Homepage with practice content selection
-│   ├── practice.tsx    # Typing practice page
-│   ├── settings.tsx    # User preferences/settings page
-│   ├── progress.tsx    # Progress monitoring page for parents
-│   └── api/            # API routes (handled by Next.js)
-│       ├── practice-content.ts # API route for managing practice content
-│       ├── typing-session.ts   # API route for saving typing sessions
-│       └── user-preferences.ts # API route for managing user preferences
-├── tests/              # Test files
-│   ├── unit/           # Unit tests
-│   │   ├── TypingEngine.test.ts # Tests for typing engine logic
-│   │   └── PinyinEngine.test.ts # Tests for pinyin input validation
-│   ├── integration/    # Integration tests
-│   │   └── App.test.tsx # Integration tests for the entire app
-│   └── e2e/            # End-to-end tests (optional)
-│       └── cypress/    # Cypress test files
-├── config/             # Configuration files
-│   ├── jest.setup.js   # Jest setup file for testing
-│   └── tailwind.config.js # Tailwind CSS configuration
-├── .github/            # GitHub Actions workflows
-│   └── workflows/
-│       └── ci-cd.yml   # CI/CD pipeline configuration for GitHub Actions
-├── .env.example        # Example environment variables
-├── next.config.js      # Next.js configuration file
-├── tsconfig.json       # TypeScript configuration
-└── README.md           # Project overview and setup instructions
+├── public/                 # Static public assets (served as-is)
+├── src/                    # Application source code
+│   ├── assets/             # Images, fonts, etc. imported in code
+│   ├── components/         # Reusable React components
+│   ├── context/            # React context providers for global state
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Library code, helpers, constants
+│   ├── styles/             # Global CSS (optional, Tailwind preferred)
+│   ├── utils/              # Utility functions
+│   └── main.tsx            # App entry point
+├── docs/                   # Project documentation
+├── index.html              # Main HTML file loaded by Vite
+├── package.json            # Project manifest
+├── package-lock.json       # Dependency lock file
+├── tsconfig.json           # TypeScript config
+├── tsconfig.app.json       # (Optional) App-specific TS config
+├── vite.config.ts          # Vite config
+├── tailwind.config.js      # Tailwind CSS config
+├── eslint.config.js        # ESLint config
+└── README.md               # Project overview and setup
 ```

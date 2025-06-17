@@ -4,20 +4,15 @@
 
 ### Folder Structure
 ```
-src/
-├── components/       # Reusable components
-│   ├── Button/
-│   │   ├── Button.tsx
-│   │   ├── Button.module.css
-│   │   ├── Button.test.tsx
-│   │   └── index.ts
-├── hooks/            # Custom hooks
-├── pages/            # Page components
-├── services/         # API services
-├── store/            # State management
-├── types/            # Global type definitions
-├── utils/            # Utility functions
-└── App.tsx
+src/                    # Application source code
+├── assets/             # Images, fonts, etc. imported in code
+├── components/         # Reusable React components
+├── context/            # React context providers for global state
+├── hooks/              # Custom React hooks
+├── lib/                # Library code, helpers, constants
+├── styles/             # Global CSS (optional, Tailwind preferred)
+├── utils/              # Utility functions
+└── main.tsx            # App entry point
 ```
 
 ### File Naming
