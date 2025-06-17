@@ -1,2 +1,3 @@
-# typing-practice
-A web application to practice English and pinyin typing
+# Typing Practice
+
+A project to practice the pinyin and english
