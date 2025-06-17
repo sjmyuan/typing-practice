@@ -9,7 +9,7 @@ Typing Practice is a typing practice program designed for younger elementary sch
 - Vite
 - React
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS V4 and Tailwind Vite Plugin
 - Vitest
 </tech-stack>
 <architecture>

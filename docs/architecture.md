@@ -105,17 +105,17 @@ webApp -> Parent: Displays statistics
 ## **2. Technology Stack**
 
 ### **2.1 Programming Languages**
-- Frontend: TypeScript (Next.js with client-side rendering).
+- Frontend: TypeScript, React, Vite.
 
 ### **2.2 Frameworks & Libraries**
-- Frontend Framework: Next.js with TypeScript and client-side rendering.
+- Frontend Framework: Vite, TypeScript and React.
 - Styling: Tailwind CSS for responsive and utility-first styling.
 - Pinyin Support: `pinyin.js` library for handling Chinese pinyin input validation.
 - State Management: Context API for managing global state (e.g., practice content, statistics).
 - JSON Export: FileSaver.js for exporting practice data as JSON files.
 
 ### **2.3 Testing & Quality Assurance**
-- Unit Testing: Jest for unit tests.
+- Unit Testing: vitest for unit tests.
 - Integration Testing: React Testing Library for integration tests.
 - End-to-End Testing: Cypress for simulating user interactions across the entire application.
 
