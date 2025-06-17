@@ -57,4 +57,5 @@ The rules section outlines decision criteria that determine which skills to appl
 <rule> Use the **custom-tdd** skill to implement the plan, think aloud what you will do before any code changes. </rule>
 <rule> After modifying the test code, run the test. </rule>
 <rule> After modifying the implementation code, run the test. </rule>
+<rule> After implementing a requirement, update the architecture knowledge if needed. </rule>
 </rules>
