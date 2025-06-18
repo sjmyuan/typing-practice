@@ -59,4 +59,6 @@ The rules section outlines decision criteria that determine which skills to appl
 <rule> After modifying the implementation code, run the test. </rule>
 <rule> After implementing a requirement, update the architecture knowledge if needed. </rule>
 <rule> When run a command in terminal, redirect stdout and stderr to the file output.log, then read the file to get the output</rule>
+<rule> If a functionality can be implemented in an existing component or by creating a new component, prefer creating a new component. </rule>
+<rule> After create a new component, add it to storybook. </rule>
 </rules>

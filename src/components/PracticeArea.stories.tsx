@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import PracticeArea from './PracticeArea';
 
 const meta: Meta<typeof PracticeArea> = {
-  title: 'PracticeArea',
+  title: 'Components/PracticeArea',
   component: PracticeArea,
   tags: ['autodocs'],
   argTypes: {
