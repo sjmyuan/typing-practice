@@ -152,21 +152,22 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
         >
           {characters.map((charData, idx) => {
             const isCurrentPosition = idx === cursorPosition;
-            let className = 'relative inline-block min-w-[0.5rem] cursor-pointer';
+            // Apply consistent base styling to all characters to maintain uniform width
+            let className = 'relative inline-block min-w-[0.5rem] cursor-pointer px-1 rounded';
             
-            // Apply styling based on character state
+            // Apply color and background styling based on character state
             switch (charData.state) {
               case 'untyped':
                 className += ' text-gray-400';
                 break;
               case 'correct':
-                className += ' text-green-600 font-bold bg-green-100 rounded px-1';
+                className += ' text-green-600 font-bold bg-green-100';
                 break;
               case 'incorrect':
-                className += ' text-red-600 font-bold bg-red-100 rounded px-1';
+                className += ' text-red-600 font-bold bg-red-100';
                 break;
               case 'skipped':
-                className += ' text-yellow-700 font-bold bg-yellow-100 rounded px-1 line-through';
+                className += ' text-yellow-700 font-bold bg-yellow-100 line-through';
                 break;
             }
 

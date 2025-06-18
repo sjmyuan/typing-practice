@@ -82,6 +82,41 @@ describe('PracticeArea', () => {
     expect(screen.getByText(/Accuracy: 100%/)).toBeInTheDocument();
   });
 
+  it('maintains consistent padding across all character states', () => {
+    render(<PracticeArea prompt="abc" />);
+    
+    // Get all character elements
+    const chars = screen.getAllByTestId('practice-char');
+    
+    // Check initial CSS classes - all should have consistent padding now
+    expect(chars[0]).toHaveClass('px-1'); // Untyped should have padding for consistency
+    expect(chars[1]).toHaveClass('px-1'); // Untyped should have padding for consistency
+    expect(chars[2]).toHaveClass('px-1'); // Untyped should have padding for consistency
+    
+    // Focus and type first character correctly
+    const container = screen.getByRole('textbox');
+    container.focus();
+    fireEvent.keyDown(container, { key: 'a' });
+    
+    // Check CSS classes after typing - all should still have consistent padding
+    expect(chars[0]).toHaveClass('px-1'); // Correct char should have padding
+    expect(chars[1]).toHaveClass('px-1'); // Untyped should still have padding
+    expect(chars[2]).toHaveClass('px-1'); // Untyped should still have padding
+    
+    // Type incorrect character
+    fireEvent.keyDown(container, { key: 'x' }); // incorrect for 'b'
+    
+    // Check CSS classes - all should still have consistent padding
+    expect(chars[0]).toHaveClass('px-1'); // Correct char should have padding
+    expect(chars[1]).toHaveClass('px-1'); // Incorrect char should have padding
+    expect(chars[2]).toHaveClass('px-1'); // Untyped should still have padding
+    
+    // Verify different background colors for visual feedback
+    expect(chars[0]).toHaveClass('bg-green-100'); // Correct char background
+    expect(chars[1]).toHaveClass('bg-red-100'); // Incorrect char background
+    // Untyped characters don't have a background class, just the base styling
+  });
+
   it('focuses when clicked', () => {
     render(<PracticeArea prompt={prompt} />);
     const practiceArea = screen.getByRole('textbox');
