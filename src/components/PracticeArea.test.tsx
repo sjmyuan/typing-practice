@@ -5,8 +5,16 @@ import PracticeArea from './PracticeArea';
 describe('PracticeArea', () => {
   const prompt = 'hello';
 
+  // Helper function to start practice session
+  const startPracticeSession = () => {
+    const startButton = screen.getByRole('button', { name: /start practice/i });
+    fireEvent.click(startButton);
+    return screen.getByRole('textbox');
+  };
+
   it('renders the prompt text', () => {
     render(<PracticeArea prompt={prompt} />);
+    startPracticeSession();
     const chars = screen.getAllByTestId('practice-char');
     expect(chars).toHaveLength(5);
     expect(chars[0]).toHaveTextContent('h');
@@ -18,7 +26,7 @@ describe('PracticeArea', () => {
 
   it('marks correct characters in green when typing', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     practiceArea.focus();
     fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
     const chars = screen.getAllByTestId('practice-char');
@@ -27,7 +35,7 @@ describe('PracticeArea', () => {
 
   it('marks incorrect characters in red when typing', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     practiceArea.focus();
     fireEvent.keyDown(practiceArea, { key: 'x', code: 'KeyX' });
     const chars = screen.getAllByTestId('practice-char');
@@ -36,7 +44,7 @@ describe('PracticeArea', () => {
 
   it('updates marking in real-time when using backspace', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     practiceArea.focus();
     fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
     fireEvent.keyDown(practiceArea, { key: 'x', code: 'KeyX' });
@@ -51,13 +59,14 @@ describe('PracticeArea', () => {
 
   it('shows cursor at current typing position', () => {
     render(<PracticeArea prompt={prompt} />);
+    startPracticeSession();
     const cursor = screen.getByTestId('cursor');
     expect(cursor).toBeInTheDocument();
   });
 
   it('prevents typing beyond prompt length', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     practiceArea.focus();
     // Type all characters of the prompt
     fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
@@ -65,17 +74,15 @@ describe('PracticeArea', () => {
     fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
     fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
     fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
-    // Check completion message appears
-    expect(screen.getByText('✓ Complete!')).toBeInTheDocument();
-    // Try to type beyond prompt length - should be ignored
-    fireEvent.keyDown(practiceArea, { key: 'x', code: 'KeyX' });
-    const chars = screen.getAllByTestId('practice-char');
-    expect(chars).toHaveLength(5); // Should still be 5 characters
+    // Check completion message appears - should transition to completed state
+    expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+    // Verify textbox is no longer present (practice is completed)
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('shows progress and accuracy information', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     practiceArea.focus();
     fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
     expect(screen.getByText(/Progress: 1\/5/)).toBeInTheDocument();
@@ -85,7 +92,11 @@ describe('PracticeArea', () => {
   it('maintains consistent padding across all character states', () => {
     render(<PracticeArea prompt="abc" />);
     
-    // Get all character elements
+    // Focus and start the practice session first
+    const container = startPracticeSession();
+    container.focus();
+    
+    // Get all character elements after practice has started
     const chars = screen.getAllByTestId('practice-char');
     
     // Check initial CSS classes - all should have consistent padding now
@@ -93,9 +104,7 @@ describe('PracticeArea', () => {
     expect(chars[1]).toHaveClass('px-1'); // Untyped should have padding for consistency
     expect(chars[2]).toHaveClass('px-1'); // Untyped should have padding for consistency
     
-    // Focus and type first character correctly
-    const container = screen.getByRole('textbox');
-    container.focus();
+    // Type first character correctly
     fireEvent.keyDown(container, { key: 'a' });
     
     // Check CSS classes after typing - all should still have consistent padding
@@ -119,7 +128,7 @@ describe('PracticeArea', () => {
 
   it('focuses when clicked', () => {
     render(<PracticeArea prompt={prompt} />);
-    const practiceArea = screen.getByRole('textbox');
+    const practiceArea = startPracticeSession();
     fireEvent.click(practiceArea);
     expect(practiceArea).toHaveFocus();
   });
@@ -128,6 +137,7 @@ describe('PracticeArea', () => {
   describe('Cursor State Management', () => {
     it('initializes cursor at position 0', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const cursor = screen.getByTestId('cursor');
       expect(cursor).toBeInTheDocument();
       // Cursor should be positioned at the first character
@@ -138,7 +148,7 @@ describe('PracticeArea', () => {
 
     it('moves cursor forward when typing correct characters', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       // Type first character correctly
@@ -152,7 +162,7 @@ describe('PracticeArea', () => {
 
     it('moves cursor backward when using backspace', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       // Type two characters
@@ -170,7 +180,7 @@ describe('PracticeArea', () => {
 
     it('moves cursor forward when typing incorrect character', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       // Type incorrect first character
@@ -184,7 +194,7 @@ describe('PracticeArea', () => {
 
     it('does not move cursor beyond prompt length', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       // Type all characters correctly
@@ -205,6 +215,7 @@ describe('PracticeArea', () => {
   describe('Character State Classification', () => {
     it('displays untyped characters in gray', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       // All characters should start as untyped (gray)
       chars.forEach(char => {
@@ -214,7 +225,7 @@ describe('PracticeArea', () => {
 
     it('displays correct characters with green background', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
@@ -226,7 +237,7 @@ describe('PracticeArea', () => {
 
     it('displays incorrect characters with red background', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       practiceArea.focus();
       
       fireEvent.keyDown(practiceArea, { key: 'x', code: 'KeyX' });
@@ -238,6 +249,7 @@ describe('PracticeArea', () => {
 
     it('displays skipped characters with distinctive styling', () => {
       render(<PracticeArea prompt="hello" />);
+      startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on third character to skip first two
@@ -258,7 +270,7 @@ describe('PracticeArea', () => {
 
     it('handles mixed character states correctly', () => {
       render(<PracticeArea prompt="hello" />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       practiceArea.focus();
       
@@ -279,7 +291,7 @@ describe('PracticeArea', () => {
 
     it('updates character states correctly when click a typed character', () => {
       render(<PracticeArea prompt="hello" />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       practiceArea.focus();
 
@@ -324,6 +336,7 @@ describe('PracticeArea', () => {
   describe('Manual Cursor Positioning', () => {
     it('moves cursor when clicking on a character', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on the third character (index 2)
@@ -335,6 +348,7 @@ describe('PracticeArea', () => {
 
     it('marks characters as skipped when clicking ahead', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on the fourth character (index 3) 
@@ -349,7 +363,7 @@ describe('PracticeArea', () => {
 
     it('does not mark characters as skipped when clicking backward', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Type first two characters
@@ -368,7 +382,7 @@ describe('PracticeArea', () => {
 
     it('allows typing after clicking to position cursor', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on third character
@@ -388,7 +402,7 @@ describe('PracticeArea', () => {
 
     it('handles clicking on already typed characters', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Type first three characters
@@ -415,6 +429,7 @@ describe('PracticeArea', () => {
   describe('Visual Indications', () => {
     it('applies correct styling for skipped characters', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on third character to skip first two
@@ -427,7 +442,7 @@ describe('PracticeArea', () => {
 
     it('applies correct styling for different character states', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Create a mixed scenario
@@ -447,7 +462,7 @@ describe('PracticeArea', () => {
   describe('Enhanced Input Handling', () => {
     it('types at cursor position after manual positioning', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Click on third character
@@ -466,7 +481,7 @@ describe('PracticeArea', () => {
 
     it('handles backspace from manual cursor position', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Type first character
@@ -491,7 +506,7 @@ describe('PracticeArea', () => {
 
     it('maintains typing accuracy with mixed correct/incorrect/skipped characters', () => {
       render(<PracticeArea prompt="hello" />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       practiceArea.focus();
@@ -508,7 +523,7 @@ describe('PracticeArea', () => {
 
     it('prevents invalid cursor movements', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       
       practiceArea.focus();
       
@@ -526,6 +541,7 @@ describe('PracticeArea', () => {
   describe('Visual Design and Accessibility', () => {
     it('cursor has distinct visual styling', () => {
       render(<PracticeArea prompt={prompt} />);
+      startPracticeSession();
       const cursor = screen.getByTestId('cursor');
       
       // Check cursor has animation and proper colors
@@ -536,7 +552,7 @@ describe('PracticeArea', () => {
 
     it('cursor remains visible across different character states', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       practiceArea.focus();
@@ -552,7 +568,7 @@ describe('PracticeArea', () => {
 
     it('characters have proper accessibility labels', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       const chars = screen.getAllByTestId('practice-char');
       
       // Initial state
@@ -575,7 +591,7 @@ describe('PracticeArea', () => {
 
     it('maintains responsive design', () => {
       render(<PracticeArea prompt={prompt} />);
-      const container = screen.getByRole('textbox');
+      const container = startPracticeSession();
       
       // Check responsive classes are applied
       expect(container.parentElement).toHaveClass('w-full');
@@ -585,7 +601,7 @@ describe('PracticeArea', () => {
 
     it('cursor is not visible when typing is complete', () => {
       render(<PracticeArea prompt={prompt} />);
-      const practiceArea = screen.getByRole('textbox');
+      const practiceArea = startPracticeSession();
       
       practiceArea.focus();
       
@@ -599,7 +615,104 @@ describe('PracticeArea', () => {
       expect(cursor).not.toBeInTheDocument();
       
       // Completion message should be visible
-      expect(screen.getByText('✓ Complete!')).toBeInTheDocument();
+      expect(screen.getByText(/practice complete/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Start/Restart Button Functionality', () => {
+    it('shows start practice button initially', () => {
+      render(<PracticeArea prompt={prompt} />);
+      const startButton = screen.getByRole('button', { name: /start practice/i });
+      expect(startButton).toBeInTheDocument();
+    });
+
+    it('hides typing area when start button is shown', () => {
+      render(<PracticeArea prompt={prompt} />);
+      const practiceArea = screen.queryByRole('textbox');
+      expect(practiceArea).not.toBeInTheDocument();
+    });
+
+    it('shows typing area and hides start button when start is clicked', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Typing area should be visible
+      const practiceArea = startPracticeSession();
+      expect(practiceArea).toBeInTheDocument();
+      
+      // Start button should be hidden
+      expect(screen.queryByRole('button', { name: /start practice/i })).not.toBeInTheDocument();
+    });
+
+    it('disables keyboard input when practice is not started', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Try to simulate typing before starting - should not work
+      // Since textbox is not rendered, we can't type
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    it('shows restart button when typing is completed', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Complete the typing
+      const practiceArea = startPracticeSession();
+      practiceArea.focus();
+      'hello'.split('').forEach(char => {
+        fireEvent.keyDown(practiceArea, { key: char, code: `Key${char.toUpperCase()}` });
+      });
+      
+      // Restart button should appear
+      const restartButton = screen.getByRole('button', { name: /practice again/i });
+      expect(restartButton).toBeInTheDocument();
+    });
+
+    it('hides typing area when practice is completed', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Complete the typing
+      const practiceArea = startPracticeSession();
+      practiceArea.focus();
+      'hello'.split('').forEach(char => {
+        fireEvent.keyDown(practiceArea, { key: char, code: `Key${char.toUpperCase()}` });
+      });
+      
+      // Typing area should be hidden after completion
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    it('resets to initial state when restart is clicked', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Start and complete practice
+      const practiceArea = startPracticeSession();
+      practiceArea.focus();
+      'hello'.split('').forEach(char => {
+        fireEvent.keyDown(practiceArea, { key: char, code: `Key${char.toUpperCase()}` });
+      });
+      
+      // Click restart
+      const restartButton = screen.getByRole('button', { name: /practice again/i });
+      fireEvent.click(restartButton);
+      
+      // Should be back to initial state with start button
+      expect(screen.getByRole('button', { name: /start practice/i })).toBeInTheDocument();
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /practice again/i })).not.toBeInTheDocument();
+    });
+
+    it('shows completion message and statistics when practice is finished', () => {
+      render(<PracticeArea prompt={prompt} />);
+      
+      // Complete the typing perfectly
+      const practiceArea = startPracticeSession();
+      practiceArea.focus();
+      'hello'.split('').forEach(char => {
+        fireEvent.keyDown(practiceArea, { key: char, code: `Key${char.toUpperCase()}` });
+      });
+      
+      // Should show completion message and 100% accuracy
+      expect(screen.getByText(/practice complete/i)).toBeInTheDocument();
+      expect(screen.getByText(/100%/)).toBeInTheDocument();
     });
   });
 });
