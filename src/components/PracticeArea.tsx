@@ -4,8 +4,20 @@ interface PracticeAreaProps {
   prompt: string;
 }
 
+// Character state types
+type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
+
+interface CharacterData {
+  char: string;
+  state: CharacterState;
+  typedChar?: string;
+}
+
 const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
-  const [input, setInput] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [characters, setCharacters] = useState<CharacterData[]>(() => 
+    prompt.split('').map(char => ({ char, state: 'untyped' as CharacterState }))
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Handle keyboard input
@@ -13,11 +25,99 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
     e.preventDefault(); // Prevent default browser behavior
     
     if (e.key === 'Backspace') {
-      setInput(prev => prev.slice(0, -1));
-    } else if (e.key.length === 1 && input.length < prompt.length) {
+      handleBackspace();
+    } else if (e.key.length === 1 && cursorPosition < prompt.length) {
       // Only accept single character keys and don't exceed prompt length
-      setInput(prev => prev + e.key);
+      handleCharacterInput(e.key);
     }
+  };
+
+  // Handle character input
+  const handleCharacterInput = (inputChar: string) => {
+    setCharacters(prev => {
+      const newCharacters = [...prev];
+      const expectedChar = prompt[cursorPosition];
+      
+      if (inputChar === expectedChar) {
+        newCharacters[cursorPosition] = {
+          char: expectedChar,
+          state: 'correct',
+          typedChar: inputChar
+        };
+      } else {
+        newCharacters[cursorPosition] = {
+          char: expectedChar,
+          state: 'incorrect',
+          typedChar: inputChar
+        };
+      }
+      
+      return newCharacters;
+    });
+    
+    // Move cursor forward
+    setCursorPosition(prev => Math.min(prev + 1, prompt.length));
+  };
+
+  // Handle backspace
+  const handleBackspace = () => {
+    if (cursorPosition > 0) {
+      const newPosition = cursorPosition - 1;
+      setCursorPosition(newPosition);
+      
+      setCharacters(prev => {
+        const newCharacters = [...prev];
+        // Reset character state to untyped and clear all characters after cursor
+        for (let i = newPosition; i < newCharacters.length; i++) {
+          newCharacters[i] = {
+            char: prompt[i],
+            state: 'untyped'
+          };
+        }
+        return newCharacters;
+      });
+    }
+  };
+
+  // Handle character click for manual cursor positioning
+  const handleCharacterClick = (index: number) => {
+    // Mark characters between current cursor and clicked position as skipped
+    setCharacters(prev => {
+      const newCharacters = [...prev];
+      
+      if (index > cursorPosition) {
+        // Moving forward - mark skipped characters
+        for (let i = cursorPosition; i < index; i++) {
+          if (newCharacters[i].state === 'untyped') {
+            newCharacters[i] = {
+              char: prompt[i],
+              state: 'skipped'
+            };
+          }
+        }
+      } else if (index < cursorPosition) {
+        // Moving backward - reset characters after clicked position to untyped
+        for (let i = index; i < newCharacters.length; i++) {
+          newCharacters[i] = {
+            char: prompt[i],
+            state: 'untyped'
+          };
+        }
+      }
+      
+      return newCharacters;
+    });
+    
+    setCursorPosition(index);
+  };
+
+  // Calculate statistics
+  const getTypedCharacters = () => {
+    return characters.filter(char => char.state === 'correct' || char.state === 'incorrect');
+  };
+
+  const getCorrectCharacters = () => {
+    return characters.filter(char => char.state === 'correct');
   };
 
   // Auto-focus the container when component mounts
@@ -50,16 +150,24 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
           aria-label="practice prompt"
           role="presentation"
         >
-          {prompt.split('').map((char, idx) => {
-            const isCurrentPosition = idx === input.length;
-            let className = 'relative inline-block min-w-[0.5rem]';
+          {characters.map((charData, idx) => {
+            const isCurrentPosition = idx === cursorPosition;
+            let className = 'relative inline-block min-w-[0.5rem] cursor-pointer';
             
-            if (input[idx] === undefined) {
-              className += ' text-gray-400';
-            } else if (input[idx] === char) {
-              className += ' text-green-600 font-bold bg-green-100 rounded px-1';
-            } else {
-              className += ' text-red-600 font-bold bg-red-100 rounded px-1';
+            // Apply styling based on character state
+            switch (charData.state) {
+              case 'untyped':
+                className += ' text-gray-400';
+                break;
+              case 'correct':
+                className += ' text-green-600 font-bold bg-green-100 rounded px-1';
+                break;
+              case 'incorrect':
+                className += ' text-red-600 font-bold bg-red-100 rounded px-1';
+                break;
+              case 'skipped':
+                className += ' text-yellow-700 font-bold bg-yellow-100 rounded px-1 line-through';
+                break;
             }
 
             return (
@@ -67,38 +175,36 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
                 key={idx}
                 data-testid="practice-char"
                 className={className}
-                aria-label={
-                  input[idx] === undefined
-                    ? 'untyped'
-                    : input[idx] === char
-                    ? 'correct'
-                    : 'incorrect'
-                }
+                onClick={() => handleCharacterClick(idx)}
+                aria-label={charData.state}
               >
-                {char === ' ' ? '\u00A0' : char}
-                {isCurrentPosition && (
+                {charData.char === ' ' ? '\u00A0' : charData.char}
+                {isCurrentPosition && cursorPosition < prompt.length && (
                   <span
                     data-testid="cursor"
-                    className="absolute top-0 left-0 animate-pulse bg-blue-500 w-0.5 h-full"
+                    className="absolute top-0 left-0 animate-pulse bg-blue-500 w-0.5 h-full shadow-lg"
+                    style={{
+                      animation: 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    }}
                     aria-hidden="true"
                   />
                 )}
               </span>
             );
           })}
-          {input.length === prompt.length && (
+          {cursorPosition === prompt.length && (
             <span className="text-green-600 font-bold ml-2">✓ Complete!</span>
           )}
         </div>
         <div className="mt-4 text-sm text-gray-600">
-          {input.length === 0 ? (
+          {getTypedCharacters().length === 0 ? (
             <p>Click here and start typing to begin practice</p>
           ) : (
             <p>
-              Progress: {input.length}/{prompt.length} characters
-              {input.length > 0 && (
+              Progress: {getTypedCharacters().length}/{prompt.length} characters
+              {getTypedCharacters().length > 0 && (
                 <span className="ml-4">
-                  Accuracy: {Math.round((input.split('').filter((char, idx) => char === prompt[idx]).length / input.length) * 100)}%
+                  Accuracy: {Math.round((getCorrectCharacters().length / getTypedCharacters().length) * 100)}%
                 </span>
               )}
             </p>

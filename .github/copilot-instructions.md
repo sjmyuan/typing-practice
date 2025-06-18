@@ -58,4 +58,5 @@ The rules section outlines decision criteria that determine which skills to appl
 <rule> After modifying the test code, run the test. </rule>
 <rule> After modifying the implementation code, run the test. </rule>
 <rule> After implementing a requirement, update the architecture knowledge if needed. </rule>
+<rule> When run a command in terminal, redirect stdout and stderr to a file, then read the file to get the output</rule>
 </rules>
