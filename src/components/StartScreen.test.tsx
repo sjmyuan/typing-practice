@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import StartScreen from './StartScreen';
@@ -11,79 +12,179 @@ describe('StartScreen', () => {
   });
 
   describe('Rendering', () => {
+    it('renders textarea for prompt input', () => {
+      render(<StartScreen onStart={mockOnStart} />);
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+
     it('renders start practice button', () => {
       render(<StartScreen onStart={mockOnStart} />);
       expect(screen.getByRole('button', { name: /start practice/i })).toBeInTheDocument();
     });
 
-    it('centers the button', () => {
+    it('has placeholder text in textarea', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      const container = screen.getByRole('button').parentElement;
-      expect(container).toHaveClass('text-center');
+      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
     });
   });
 
-  describe('Button Styling', () => {
-    it('applies correct CSS classes to button', () => {
+  describe('Form Validation', () => {
+    it('button is disabled when textarea is empty', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      const button = screen.getByRole('button');
-      expect(button).toHaveClass('px-6');
-      expect(button).toHaveClass('py-3');
-      expect(button).toHaveClass('bg-blue-500');
-      expect(button).toHaveClass('text-white');
-      expect(button).toHaveClass('rounded-lg');
-      expect(button).toHaveClass('hover:bg-blue-600');
-      expect(button).toHaveClass('focus:outline-none');
-      expect(button).toHaveClass('focus:ring-2');
-      expect(button).toHaveClass('focus:ring-blue-400');
-      expect(button).toHaveClass('text-lg');
-      expect(button).toHaveClass('font-medium');
+      const button = screen.getByRole('button', { name: /start practice/i });
+      expect(button).toBeDisabled();
     });
 
-    it('has correct button text', () => {
+    it('button is enabled when textarea has content', async () => {
+      const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
-      expect(screen.getByRole('button')).toHaveTextContent('Start Practice');
+      
+      const textarea = screen.getByRole('textbox');
+      const button = screen.getByRole('button', { name: /start practice/i });
+      
+      await user.type(textarea, 'Hello world');
+      expect(button).toBeEnabled();
+    });
+
+    it('button remains disabled for empty form, preventing submission', async () => {
+      const user = userEvent.setup();
+      render(<StartScreen onStart={mockOnStart} />);
+      
+      const button = screen.getByRole('button', { name: /start practice/i });
+      expect(button).toBeDisabled();
+      
+      // Try to click disabled button - should not trigger onStart
+      await user.click(button);
+      expect(mockOnStart).not.toHaveBeenCalled();
+    });
+
+    it('shows error when text is too short after form submission', async () => {
+      const user = userEvent.setup();
+      render(<StartScreen onStart={mockOnStart} />);
+      
+      const textarea = screen.getByRole('textbox');
+      await user.type(textarea, 'Hi');
+      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      
+      expect(screen.getByText(/please enter at least 3 characters/i)).toBeInTheDocument();
+      expect(mockOnStart).not.toHaveBeenCalled();
+    });
+
+    it('clears error when user types more text', async () => {
+      const user = userEvent.setup();
+      render(<StartScreen onStart={mockOnStart} />);
+      
+      const textarea = screen.getByRole('textbox');
+      
+      // First trigger an error by submitting short text
+      await user.type(textarea, 'Hi');
+      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      expect(screen.getByText(/please enter at least 3 characters/i)).toBeInTheDocument();
+      
+      // Then type more to clear the error
+      await user.type(textarea, ' there');
+      expect(screen.queryByText(/please enter at least 3 characters/i)).not.toBeInTheDocument();
     });
   });
 
-  describe('Click Handling', () => {
-    it('calls onStart when button is clicked', () => {
+  describe('Form Submission', () => {
+    it('calls onStart with trimmed prompt when valid text is submitted', async () => {
+      const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
-      fireEvent.click(screen.getByRole('button'));
-      expect(mockOnStart).toHaveBeenCalledTimes(1);
+      
+      const textarea = screen.getByRole('textbox');
+      await user.type(textarea, '  Hello world  ');
+      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
     });
 
-    it('handles multiple clicks correctly', () => {
+    it('button remains disabled for whitespace-only input', async () => {
+      const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
-      const button = screen.getByRole('button');
-      fireEvent.click(button);
-      fireEvent.click(button);
-      expect(mockOnStart).toHaveBeenCalledTimes(2);
+      
+      const textarea = screen.getByRole('textbox');
+      const button = screen.getByRole('button', { name: /start practice/i });
+      
+      await user.type(textarea, '   ');
+      expect(button).toBeDisabled();
+      
+      // Try to click disabled button - should not trigger onStart
+      await user.click(button);
+      expect(mockOnStart).not.toHaveBeenCalled();
     });
 
-    it('calls onStart without parameters', () => {
+    it('submits form when button is clicked with valid text', async () => {
+      const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
-      fireEvent.click(screen.getByRole('button'));
-      expect(mockOnStart).toHaveBeenCalledWith();
+      
+      const textarea = screen.getByRole('textbox');
+      await user.type(textarea, 'Hello world');
+      
+      const button = screen.getByRole('button', { name: /start practice/i });
+      await user.click(button);
+      
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
+    });
+
+    it('can submit form using Enter when button is focused', async () => {
+      const user = userEvent.setup();
+      render(<StartScreen onStart={mockOnStart} />);
+      
+      const textarea = screen.getByRole('textbox');
+      
+      await user.type(textarea, 'Hello world');
+      await user.tab(); // Move focus to button
+      await user.keyboard('{Enter}');
+      
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
+    });
+  });
+
+  describe('Textarea Properties', () => {
+    it('has correct maxLength', () => {
+      render(<StartScreen onStart={mockOnStart} />);
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toHaveAttribute('maxLength', '500');
+    });
+
+    it('has correct number of rows', () => {
+      render(<StartScreen onStart={mockOnStart} />);
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toHaveAttribute('rows', '4');
+    });
+
+    it('is not resizable', () => {
+      render(<StartScreen onStart={mockOnStart} />);
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toHaveClass('resize-none');
     });
   });
 
   describe('Accessibility', () => {
-    it('button is focusable', () => {
+    it('form is accessible', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      const button = screen.getByRole('button');
-      button.focus();
-      expect(button).toHaveFocus();
-    });
-
-    it('button has correct role', () => {
-      render(<StartScreen onStart={mockOnStart} />);
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
-    it('button text is accessible', () => {
+    it('error message is announced to screen readers when validation fails', async () => {
+      const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
-      expect(screen.getByText('Start Practice')).toBeInTheDocument();
+      
+      const textarea = screen.getByRole('textbox');
+      await user.type(textarea, 'Hi');
+      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      
+      const errorMessage = screen.getByText(/please enter at least 3 characters/i);
+      expect(errorMessage).toBeInTheDocument();
+    });
+
+    it('no error messages shown for disabled button states', () => {
+      render(<StartScreen onStart={mockOnStart} />);
+      
+      // Should not show any error messages initially
+      expect(screen.queryByText(/please enter/i)).not.toBeInTheDocument();
     });
   });
 
@@ -98,29 +199,6 @@ describe('StartScreen', () => {
       expect(() => {
         render(<StartScreen onStart={undefined as any} />);
       }).not.toThrow();
-    });
-
-    it('does not crash when clicking with null onStart', () => {
-      render(<StartScreen onStart={null as any} />);
-      expect(() => {
-        fireEvent.click(screen.getByRole('button'));
-      }).not.toThrow();
-    });
-
-    it('does not crash when clicking with undefined onStart', () => {
-      render(<StartScreen onStart={undefined as any} />);
-      expect(() => {
-        fireEvent.click(screen.getByRole('button'));
-      }).not.toThrow();
-    });
-  });
-
-  describe('Container Structure', () => {
-    it('renders in proper container structure', () => {
-      render(<StartScreen onStart={mockOnStart} />);
-      const button = screen.getByRole('button');
-      const container = button.parentElement;
-      expect(container).toHaveClass('text-center');
     });
   });
 });

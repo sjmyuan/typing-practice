@@ -4,7 +4,7 @@ import TypingArea from './TypingArea';
 import CompletionScreen from './CompletionScreen';
 
 interface PracticeAreaProps {
-  prompt: string;
+  initialPrompt?: string;
 }
 
 // Practice state types
@@ -17,12 +17,14 @@ interface CompletionStats {
   incorrectCharacters: number;
 }
 
-const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
+const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
   const [practiceState, setPracticeState] = useState<PracticeState>('ready');
+  const [currentPrompt, setCurrentPrompt] = useState<string>(initialPrompt);
   const [completionStats, setCompletionStats] = useState<CompletionStats | null>(null);
 
   // State transition functions
-  const startPractice = () => {
+  const startPractice = (prompt: string) => {
+    setCurrentPrompt(prompt);
     setPracticeState('active');
   };
 
@@ -34,6 +36,7 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
   const restartPractice = () => {
     setPracticeState('ready');
     setCompletionStats(null);
+    setCurrentPrompt(initialPrompt);
   };
 
   return (
@@ -42,9 +45,9 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ prompt }) => {
         <StartScreen onStart={startPractice} />
       )}
       
-      {practiceState === 'active' && (
+      {practiceState === 'active' && currentPrompt && (
         <TypingArea 
-          prompt={prompt}
+          prompt={currentPrompt}
           onComplete={completePractice}
         />
       )}
