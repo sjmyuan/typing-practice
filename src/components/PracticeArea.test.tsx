@@ -94,7 +94,7 @@ describe('PracticeArea', () => {
   });
 
   describe('State Management', () => {
-    it('allows restarting practice after completion', async () => {
+    it('shows completion screen after practice completion', async () => {
       render(<PracticeArea />);
       const practiceArea = await startPracticeSessionWithPrompt();
       practiceArea.focus();
@@ -106,16 +106,10 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       
-      // Verify completion screen
+      // Verify completion screen with both buttons
       expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
-      
-      // Click restart button
-      const restartButton = screen.getByRole('button', { name: /practice again/i });
-      fireEvent.click(restartButton);
-      
-      // Should be back to start screen
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
     });
   });
 
@@ -149,6 +143,81 @@ describe('PracticeArea', () => {
       // Should still show start screen initially
       expect(screen.getByRole('textbox')).toBeInTheDocument();
       expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Completion Screen Navigation', () => {
+    it('Practice Again button restarts same prompt without going to start screen', async () => {
+      render(<PracticeArea />);
+      const practiceArea = await startPracticeSessionWithPrompt();
+      practiceArea.focus();
+      
+      // Complete the practice
+      fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
+      fireEvent.keyDown(practiceArea, { key: 'e', code: 'KeyE' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
+      
+      // Verify completion screen
+      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      
+      // Click Practice Again button
+      const practiceAgainButton = screen.getByRole('button', { name: /practice again/i });
+      fireEvent.click(practiceAgainButton);
+      
+      // Should go directly to practice area with same prompt
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars).toHaveLength(5);
+      expect(chars[0]).toHaveTextContent('h');
+      
+      // Should not show start screen elements
+      expect(screen.queryByPlaceholderText(/enter the text you want to practice typing/i)).not.toBeInTheDocument();
+    });
+
+    it('Start New Practice button goes back to start screen', async () => {
+      render(<PracticeArea />);
+      const practiceArea = await startPracticeSessionWithPrompt();
+      practiceArea.focus();
+      
+      // Complete the practice
+      fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
+      fireEvent.keyDown(practiceArea, { key: 'e', code: 'KeyE' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
+      
+      // Verify completion screen
+      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      
+      // Click Start New Practice button
+      const startNewButton = screen.getByRole('button', { name: /start new practice/i });
+      fireEvent.click(startNewButton);
+      
+      // Should be back to start screen
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      
+      // Should not show practice characters
+      expect(screen.queryAllByTestId('practice-char')).toHaveLength(0);
+    });
+
+    it('both buttons are present on completion screen', async () => {
+      render(<PracticeArea />);
+      const practiceArea = await startPracticeSessionWithPrompt();
+      practiceArea.focus();
+      
+      // Complete the practice
+      fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
+      fireEvent.keyDown(practiceArea, { key: 'e', code: 'KeyE' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
+      fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
+      
+      // Verify completion screen has both buttons
+      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
     });
   });
 });

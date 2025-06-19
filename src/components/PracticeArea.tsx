@@ -33,10 +33,17 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
     setPracticeState('completed');
   };
 
+  // Restart practice by returning to start screen and clearing prompt
   const restartPractice = () => {
     setPracticeState('ready');
     setCompletionStats(null);
     setCurrentPrompt(initialPrompt);
+  };
+
+  // Repeat practice with same prompt by going directly to practice area
+  const repeatPractice = () => {
+    setPracticeState('active');
+    setCompletionStats(null);
   };
 
   return (
@@ -55,7 +62,8 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
       {practiceState === 'completed' && completionStats && (
         <CompletionScreen 
           accuracy={completionStats.accuracy}
-          onRestart={restartPractice}
+          onRestart={repeatPractice}
+          onStartNew={restartPractice}
         />
       )}
     </div>

@@ -3,12 +3,19 @@ import React from 'react';
 interface CompletionScreenProps {
   accuracy: number;
   onRestart: () => void;
+  onStartNew: () => void;
 }
 
-const CompletionScreen: React.FC<CompletionScreenProps> = ({ accuracy, onRestart }) => {
-  const handleClick = () => {
+const CompletionScreen: React.FC<CompletionScreenProps> = ({ accuracy, onRestart, onStartNew }) => {
+  const handleRestartClick = () => {
     if (typeof onRestart === 'function') {
       onRestart();
+    }
+  };
+
+  const handleStartNewClick = () => {
+    if (typeof onStartNew === 'function') {
+      onStartNew();
     }
   };
 
@@ -20,12 +27,20 @@ const CompletionScreen: React.FC<CompletionScreenProps> = ({ accuracy, onRestart
           Final Accuracy: {accuracy}%
         </p>
       </div>
-      <button
-        onClick={handleClick}
-        className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200"
-      >
-        Practice Again
-      </button>
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
+        <button
+          onClick={handleRestartClick}
+          className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200"
+        >
+          Practice Again
+        </button>
+        <button
+          onClick={handleStartNewClick}
+          className="px-8 py-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 text-lg font-semibold shadow-lg transition-all duration-200"
+        >
+          Start New Practice
+        </button>
+      </div>
     </div>
   );
 };

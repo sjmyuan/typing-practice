@@ -14,8 +14,12 @@ const meta: Meta<typeof CompletionScreen> = {
       description: 'Accuracy percentage achieved',
     },
     onRestart: {
-      action: 'restarted',
-      description: 'Function called when restart button is clicked',
+      action: 'practice-again',
+      description: 'Function called when Practice Again button is clicked',
+    },
+    onStartNew: {
+      action: 'start-new',
+      description: 'Function called when Start New Practice button is clicked',
     },
   },
 };
@@ -26,41 +30,47 @@ type Story = StoryObj<typeof meta>;
 export const Perfect: Story = {
   args: {
     accuracy: 100,
-    onRestart: () => console.log('Practice restarted!'),
+    onRestart: () => console.log('Practice Again clicked!'),
+    onStartNew: () => console.log('Start New Practice clicked!'),
   },
 };
 
 export const Good: Story = {
   args: {
     accuracy: 85,
-    onRestart: () => console.log('Practice restarted!'),
+    onRestart: () => console.log('Practice Again clicked!'),
+    onStartNew: () => console.log('Start New Practice clicked!'),
   },
 };
 
 export const Average: Story = {
   args: {
     accuracy: 65,
-    onRestart: () => console.log('Practice restarted!'),
+    onRestart: () => console.log('Practice Again clicked!'),
+    onStartNew: () => console.log('Start New Practice clicked!'),
   },
 };
 
 export const Poor: Story = {
   args: {
     accuracy: 30,
-    onRestart: () => console.log('Practice restarted!'),
+    onRestart: () => console.log('Practice Again clicked!'),
+    onStartNew: () => console.log('Start New Practice clicked!'),
   },
 };
 
 export const Zero: Story = {
   args: {
     accuracy: 0,
-    onRestart: () => console.log('Practice restarted!'),
+    onRestart: () => console.log('Practice Again clicked!'),
+    onStartNew: () => console.log('Start New Practice clicked!'),
   },
 };
 
 export const Interactive: Story = {
   args: {
     accuracy: 78,
-    onRestart: () => alert('Practice would restart now!'),
+    onRestart: () => alert('Practice Again clicked!'),
+    onStartNew: () => alert('Start New Practice clicked!'),
   },
 };
