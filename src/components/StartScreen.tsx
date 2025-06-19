@@ -59,7 +59,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
         
         <button
           type="submit"
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           disabled={isButtonDisabled}
         >
           Start Practice

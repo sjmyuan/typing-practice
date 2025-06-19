@@ -13,7 +13,6 @@ Typing Practice is a typing practice program designed for younger elementary sch
 - Vitest
 </tech-stack>
 <architecture>
- - [Architecture](../docs/architecture.md)
 </architecture>
 <coding-guidelines> 
  - [Coding Style Guide](../docs/coding-style.md)

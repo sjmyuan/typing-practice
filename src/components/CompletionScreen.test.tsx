@@ -81,17 +81,20 @@ describe('CompletionScreen', () => {
     it('applies correct CSS classes to button', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} />);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('px-6');
-      expect(button).toHaveClass('py-3');
-      expect(button).toHaveClass('bg-green-500');
+      expect(button).toHaveClass('px-8');
+      expect(button).toHaveClass('py-4');
+      expect(button).toHaveClass('bg-blue-600');
       expect(button).toHaveClass('text-white');
       expect(button).toHaveClass('rounded-lg');
-      expect(button).toHaveClass('hover:bg-green-600');
+      expect(button).toHaveClass('hover:bg-blue-700');
       expect(button).toHaveClass('focus:outline-none');
-      expect(button).toHaveClass('focus:ring-2');
-      expect(button).toHaveClass('focus:ring-green-400');
+      expect(button).toHaveClass('focus:ring-4');
+      expect(button).toHaveClass('focus:ring-blue-300');
       expect(button).toHaveClass('text-lg');
-      expect(button).toHaveClass('font-medium');
+      expect(button).toHaveClass('font-semibold');
+      expect(button).toHaveClass('shadow-lg');
+      expect(button).toHaveClass('transition-all');
+      expect(button).toHaveClass('duration-200');
     });
 
     it('has correct button text', () => {

@@ -22,7 +22,7 @@ const CompletionScreen: React.FC<CompletionScreenProps> = ({ accuracy, onRestart
       </div>
       <button
         onClick={handleClick}
-        className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 text-lg font-medium"
+        className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200"
       >
         Practice Again
       </button>
