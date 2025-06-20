@@ -252,8 +252,14 @@ describe('TypingArea', () => {
       fireEvent.keyDown(container, { key: 'Shift', code: 'ShiftLeft' });
       fireEvent.keyDown(container, { key: 'Control', code: 'ControlLeft' });
       
-      // No characters should be typed
-      expect(screen.getByText('Click here and start typing to begin practice')).toBeInTheDocument();
+      // No characters should be typed - progress should still show 0 typed
+      expect(screen.getByText('Progress: 0/5 characters')).toBeInTheDocument();
+      
+      // All characters should still be untyped
+      const chars = screen.getAllByTestId('practice-char');
+      chars.forEach(char => {
+        expect(char).toHaveClass('text-gray-400'); // Untyped character color
+      });
     });
 
     it('handles space character correctly', () => {

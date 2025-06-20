@@ -4,11 +4,6 @@ import ProgressDisplay from './ProgressDisplay';
 
 describe('ProgressDisplay', () => {
   describe('Initial State', () => {
-    it('does not display initial message when no characters typed', () => {
-      render(<ProgressDisplay typedCount={0} totalCount={10} correctCount={0} />);
-      expect(screen.queryByText('Click here and start typing to begin practice')).not.toBeInTheDocument();
-    });
-
     it('displays progress when no characters typed', () => {
       render(<ProgressDisplay typedCount={0} totalCount={10} correctCount={0} />);
       expect(screen.getByText('Progress: 0/10 characters')).toBeInTheDocument();
@@ -72,12 +67,13 @@ describe('ProgressDisplay', () => {
   describe('Edge Cases', () => {
     it('handles zero total count gracefully', () => {
       render(<ProgressDisplay typedCount={0} totalCount={0} correctCount={0} />);
-      expect(screen.getByText('Click here and start typing to begin practice')).toBeInTheDocument();
+      expect(screen.getByText('Progress: 0/0 characters')).toBeInTheDocument();
     });
 
     it('handles negative values gracefully', () => {
       render(<ProgressDisplay typedCount={-1} totalCount={10} correctCount={-1} />);
-      expect(screen.getByText('Click here and start typing to begin practice')).toBeInTheDocument();
+      expect(screen.getByText('Progress: -1/10 characters')).toBeInTheDocument();
+      expect(screen.queryByText(/Accuracy:/)).not.toBeInTheDocument();
     });
 
     it('handles correctCount greater than typedCount', () => {
