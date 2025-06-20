@@ -36,9 +36,10 @@ describe('TypingArea', () => {
       expect(screen.getByTestId('cursor')).toBeInTheDocument();
     });
 
-    it('displays initial progress message', () => {
+    it('auto focuses the typing area on mount', () => {
       render(<TypingArea {...mockProps} />);
-      expect(screen.getByText('Click here and start typing to begin practice')).toBeInTheDocument();
+      const container = screen.getByRole('textbox');
+      expect(document.activeElement).toBe(container);
     });
 
     it('has correct accessibility attributes', () => {

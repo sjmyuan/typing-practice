@@ -4,14 +4,14 @@ import ProgressDisplay from './ProgressDisplay';
 
 describe('ProgressDisplay', () => {
   describe('Initial State', () => {
-    it('displays initial message when no characters typed', () => {
+    it('does not display initial message when no characters typed', () => {
       render(<ProgressDisplay typedCount={0} totalCount={10} correctCount={0} />);
-      expect(screen.getByText('Click here and start typing to begin practice')).toBeInTheDocument();
+      expect(screen.queryByText('Click here and start typing to begin practice')).not.toBeInTheDocument();
     });
 
-    it('does not display progress when no characters typed', () => {
+    it('displays progress when no characters typed', () => {
       render(<ProgressDisplay typedCount={0} totalCount={10} correctCount={0} />);
-      expect(screen.queryByText(/Progress:/)).not.toBeInTheDocument();
+      expect(screen.getByText('Progress: 0/10 characters')).toBeInTheDocument();
       expect(screen.queryByText(/Accuracy:/)).not.toBeInTheDocument();
     });
   });

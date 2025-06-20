@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 
@@ -27,6 +27,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
     prompt.split('').map(char => ({ char, state: 'untyped' as CharacterState }))
   );
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-focus the typing area on mount
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.focus();
+    }
+  }, []);
 
   // Handle keyboard input
   const handleKeyDown = (e: React.KeyboardEvent) => {
