@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
+import FontSizeControl from './FontSizeControl';
 
 // Character state types
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
+
+// Font size types
+type FontSize = 'small' | 'medium' | 'large' | 'extra-large';
 
 interface CharacterData {
   char: string;
@@ -26,6 +30,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
   const [characters, setCharacters] = useState<CharacterData[]>(() => 
     prompt.split('').map(char => ({ char, state: 'untyped' as CharacterState }))
   );
+  const [fontSize, setFontSize] = useState<FontSize>(() => {
+    const saved = localStorage.getItem('typingPracticeFontSize');
+    if (saved && ['small', 'medium', 'large', 'extra-large'].includes(saved)) {
+      return saved as FontSize;
+    }
+    return 'medium';
+  });
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-focus the typing area on mount and add global click listener
@@ -176,6 +187,37 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
     }
   };
 
+  // Font size management
+  const fontSizeClasses = {
+    small: 'text-xl',
+    medium: 'text-3xl',
+    large: 'text-5xl',
+    'extra-large': 'text-7xl'
+  };
+
+  const fontSizeOrder: FontSize[] = ['small', 'medium', 'large', 'extra-large'];
+
+  const handleIncreaseFontSize = () => {
+    const currentIndex = fontSizeOrder.indexOf(fontSize);
+    if (currentIndex < fontSizeOrder.length - 1) {
+      const newFontSize = fontSizeOrder[currentIndex + 1];
+      setFontSize(newFontSize);
+      localStorage.setItem('typingPracticeFontSize', newFontSize);
+    }
+  };
+
+  const handleDecreaseFontSize = () => {
+    const currentIndex = fontSizeOrder.indexOf(fontSize);
+    if (currentIndex > 0) {
+      const newFontSize = fontSizeOrder[currentIndex - 1];
+      setFontSize(newFontSize);
+      localStorage.setItem('typingPracticeFontSize', newFontSize);
+    }
+  };
+
+  const canIncreaseFontSize = fontSizeOrder.indexOf(fontSize) < fontSizeOrder.length - 1;
+  const canDecreaseFontSize = fontSizeOrder.indexOf(fontSize) > 0;
+
   return (
     <div
       ref={containerRef}
@@ -186,8 +228,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
       className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors min-h-[60vh]"
       aria-label="practice area - click here and start typing"
     >
+      <div className="flex justify-end mb-4">
+        <FontSizeControl 
+          onIncrease={handleIncreaseFontSize} 
+          onDecrease={handleDecreaseFontSize} 
+          canIncrease={canIncreaseFontSize} 
+          canDecrease={canDecreaseFontSize}
+        />
+      </div>
       <div
-        className="flex flex-wrap gap-1 text-3xl font-mono select-none leading-relaxed mb-8"
+        className={`flex flex-wrap gap-1 ${fontSizeClasses[fontSize]} font-mono select-none leading-relaxed mb-8`}
         aria-label="practice prompt"
         role="presentation"
       >

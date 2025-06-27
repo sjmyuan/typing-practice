@@ -458,4 +458,96 @@ describe('TypingArea', () => {
       removeEventListenerSpy.mockRestore();
     });
   });
+
+  describe('Font Size Control', () => {
+    beforeEach(() => {
+      // Clear localStorage before each test
+      localStorage.clear();
+    });
+
+    it('renders font size controls', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      expect(screen.getByLabelText('Increase font size')).toBeInTheDocument();
+      expect(screen.getByLabelText('Decrease font size')).toBeInTheDocument();
+    });
+
+    it('starts with medium font size by default', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-3xl');
+    });
+
+    it('increases font size when increase button is clicked', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const increaseButton = screen.getByLabelText('Increase font size');
+      fireEvent.click(increaseButton);
+      
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-5xl');
+    });
+
+    it('decreases font size when decrease button is clicked', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const decreaseButton = screen.getByLabelText('Decrease font size');
+      fireEvent.click(decreaseButton);
+      
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-xl');
+    });
+
+    it('disables increase button at maximum font size', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const increaseButton = screen.getByLabelText('Increase font size');
+      
+      // Click twice to reach maximum (medium -> large -> extra-large)
+      fireEvent.click(increaseButton);
+      fireEvent.click(increaseButton);
+      
+      expect(increaseButton).toBeDisabled();
+    });
+
+    it('disables decrease button at minimum font size', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const decreaseButton = screen.getByLabelText('Decrease font size');
+      
+      // Click twice to reach minimum (medium -> small -> can't go smaller)
+      fireEvent.click(decreaseButton);
+      fireEvent.click(decreaseButton);
+      
+      expect(decreaseButton).toBeDisabled();
+    });
+
+    it('saves font size preference to localStorage', () => {
+      render(<TypingArea {...mockProps} />);
+      
+      const increaseButton = screen.getByLabelText('Increase font size');
+      fireEvent.click(increaseButton);
+      
+      expect(localStorage.getItem('typingPracticeFontSize')).toBe('large');
+    });
+
+    it('loads font size preference from localStorage', () => {
+      localStorage.setItem('typingPracticeFontSize', 'large');
+      
+      render(<TypingArea {...mockProps} />);
+      
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-5xl');
+    });
+
+    it('uses default font size when localStorage has invalid value', () => {
+      localStorage.setItem('typingPracticeFontSize', 'invalid');
+      
+      render(<TypingArea {...mockProps} />);
+      
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-3xl');
+    });
+  });
 });
