@@ -124,7 +124,7 @@ describe('PinyinCharacterDisplay', () => {
         />
       );
       const pinyinElement = screen.getByTestId('pinyin-display');
-      expect(pinyinElement).toHaveClass('text-base');
+      expect(pinyinElement).toHaveClass('text-[0.75em]');
       expect(pinyinElement).toHaveClass('text-gray-600');
       expect(pinyinElement).toHaveClass('leading-none');
       expect(pinyinElement).toHaveClass('mb-1');
@@ -345,7 +345,7 @@ describe('PinyinCharacterDisplay', () => {
   });
 
   describe('Pinyin Individual Character Display', () => {
-    it('renders pinyin as individual CharacterDisplay components', () => {
+    it('renders pinyin as individual character spans', () => {
       render(
         <PinyinCharacterDisplay 
           char="你" 
@@ -359,7 +359,7 @@ describe('PinyinCharacterDisplay', () => {
       );
       
       const pinyinDisplay = screen.getByTestId('pinyin-display');
-      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      const pinyinChars = pinyinDisplay.querySelectorAll('span.relative');
       
       expect(pinyinChars).toHaveLength(2); // 'n' and 'ǐ'
       expect(pinyinChars[0]).toHaveTextContent('n');
@@ -380,7 +380,7 @@ describe('PinyinCharacterDisplay', () => {
       );
       
       const pinyinDisplay = screen.getByTestId('pinyin-display');
-      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      const pinyinChars = pinyinDisplay.querySelectorAll('span.relative');
       
       // First character should be correct (typed)
       expect(pinyinChars[0]).toHaveClass('text-green-600');
@@ -402,7 +402,7 @@ describe('PinyinCharacterDisplay', () => {
       );
       
       const pinyinDisplay = screen.getByTestId('pinyin-display');
-      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      const pinyinChars = pinyinDisplay.querySelectorAll('span.relative');
       
       // First character should be correct
       expect(pinyinChars[0]).toHaveClass('text-green-600');
@@ -427,7 +427,7 @@ describe('PinyinCharacterDisplay', () => {
       );
       
       const pinyinDisplay = screen.getByTestId('pinyin-display');
-      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      const pinyinChars = pinyinDisplay.children;
       
       // Both characters should be correct even though user typed "ni" for "nǐ"
       expect(pinyinChars[0]).toHaveClass('text-green-600'); // 'n' should be correct
@@ -448,10 +448,105 @@ describe('PinyinCharacterDisplay', () => {
       );
       
       const pinyinDisplay = screen.getByTestId('pinyin-display');
-      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      const pinyinChars = pinyinDisplay.children;
       
       expect(pinyinChars[0]).toHaveClass('text-green-600'); // 'n' is correct
       expect(pinyinChars[1]).toHaveClass('text-red-600'); // 'a' is incorrect for 'ǐ'
+    });
+  });
+
+  describe('Font Size Scaling', () => {
+    it('does not apply hardcoded font sizes that would override parent container sizing', () => {
+      render(
+        <div className="text-5xl">
+          <PinyinCharacterDisplay
+            char="你"
+            state="untyped"
+            index={0}
+            onClick={() => {}}
+            showCursor={false}
+            showPinyin={true}
+            pinyinInput=""
+            pinyinState="neutral"
+          />
+        </div>
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const mainCharacter = screen.getByTestId('main-character');
+      
+      // Should not have hardcoded font sizes that override parent
+      expect(pinyinDisplay).not.toHaveClass('text-base');
+      expect(mainCharacter).not.toHaveClass('text-sm');
+      
+      // Should use relative sizing classes instead
+      expect(pinyinDisplay.className).toMatch(/text-\[0\.75em\]/);
+      // Main character should inherit from parent (no explicit font size class)
+      expect(mainCharacter.className).not.toMatch(/text-(xs|sm|base|lg|xl)/);
+    });
+
+    it('scales pinyin display relative to main character when parent font size changes', () => {
+      const { rerender } = render(
+        <div className="text-xl">
+          <PinyinCharacterDisplay
+            char="你"
+            state="untyped"
+            index={0}
+            onClick={() => {}}
+            showCursor={false}
+            showPinyin={true}
+            pinyinInput=""
+            pinyinState="neutral"
+          />
+        </div>
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const initialPinyinClasses = pinyinDisplay.className;
+      
+      // Re-render with larger parent font size
+      rerender(
+        <div className="text-7xl">
+          <PinyinCharacterDisplay
+            char="你"
+            state="untyped"
+            index={0}
+            onClick={() => {}}
+            showCursor={false}
+            showPinyin={true}
+            pinyinInput=""
+            pinyinState="neutral"
+          />
+        </div>
+      );
+      
+      // The classes should be the same (relative sizing), allowing CSS inheritance to work
+      expect(pinyinDisplay.className).toBe(initialPinyinClasses);
+    });
+
+    it('maintains proper visual hierarchy between pinyin and main character at all font sizes', () => {
+      render(
+        <div className="text-3xl">
+          <PinyinCharacterDisplay
+            char="你"
+            state="untyped"
+            index={0}
+            onClick={() => {}}
+            showCursor={false}
+            showPinyin={true}
+            pinyinInput=""
+            pinyinState="neutral"
+          />
+        </div>
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const mainCharacter = screen.getByTestId('main-character');
+      
+      // Pinyin should be smaller than main character (relative sizing)
+      // This test ensures we maintain visual hierarchy without hardcoded sizes
+      expect(pinyinDisplay.className).toMatch(/text-\[0\.75em\]/);
+      expect(mainCharacter.className).not.toMatch(/text-\[0\.75em\]/);
     });
   });
 });

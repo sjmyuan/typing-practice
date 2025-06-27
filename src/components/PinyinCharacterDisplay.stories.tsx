@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 
 const meta = {
@@ -410,4 +411,79 @@ export const InteractiveExample: Story = {
       />
     </div>
   ),
+};
+
+// Integration test for font size scaling in actual usage
+export const FontSizeScaling: Story = {
+  name: 'Font Size Scaling Demo',
+  render: () => {
+    const [fontSize, setFontSize] = React.useState<'text-xl' | 'text-3xl' | 'text-5xl' | 'text-7xl'>('text-3xl');
+    
+    const fontSizes = ['text-xl', 'text-3xl', 'text-5xl', 'text-7xl'] as const;
+    const currentIndex = fontSizes.indexOf(fontSize);
+    
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+        <div>
+          <button 
+            onClick={() => setFontSize(fontSizes[Math.max(0, currentIndex - 1)])}
+            disabled={currentIndex === 0}
+            style={{ marginRight: '10px', padding: '8px 16px' }}
+          >
+            Decrease Font Size
+          </button>
+          <span>Current: {fontSize}</span>
+          <button 
+            onClick={() => setFontSize(fontSizes[Math.min(fontSizes.length - 1, currentIndex + 1)])}
+            disabled={currentIndex === fontSizes.length - 1}
+            style={{ marginLeft: '10px', padding: '8px 16px' }}
+          >
+            Increase Font Size
+          </button>
+        </div>
+        
+        <div className={`${fontSize} font-mono`} style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '20px' }}>
+            <h3>English Character</h3>
+            <PinyinCharacterDisplay 
+              char="A" 
+              state="untyped" 
+              index={0} 
+              onClick={() => {}} 
+              showCursor={false} 
+              showPinyin={false}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '20px' }}>
+            <h3>Chinese Character with Pinyin</h3>
+            <PinyinCharacterDisplay 
+              char="你" 
+              state="untyped" 
+              index={1} 
+              onClick={() => {}} 
+              showCursor={false} 
+              showPinyin={true} 
+              pinyinInput=""
+              pinyinState="neutral"
+            />
+          </div>
+          
+          <div>
+            <h3>Chinese Character with Typed Pinyin</h3>
+            <PinyinCharacterDisplay 
+              char="好" 
+              state="untyped" 
+              index={2} 
+              onClick={() => {}} 
+              showCursor={true} 
+              showPinyin={true} 
+              pinyinInput="ha"
+              pinyinState="neutral"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  },
 };

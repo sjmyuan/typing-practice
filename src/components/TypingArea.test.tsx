@@ -550,5 +550,35 @@ describe('TypingArea', () => {
       const characterContainer = screen.getByRole('presentation');
       expect(characterContainer).toHaveClass('text-3xl');
     });
+
+    it('font size control works with pinyin characters', () => {
+      const pinyinProps = {
+        ...mockProps,
+        prompt: '你好',
+        practiceMode: 'pinyin' as const
+      };
+      
+      render(<TypingArea {...pinyinProps} />);
+      
+      // Check initial font size
+      const characterContainer = screen.getByRole('presentation');
+      expect(characterContainer).toHaveClass('text-3xl');
+      
+      // Increase font size
+      const increaseButton = screen.getByLabelText('Increase font size');
+      fireEvent.click(increaseButton);
+      
+      expect(characterContainer).toHaveClass('text-5xl');
+      
+      // Check that pinyin displays are present and should scale with parent
+      const pinyinDisplays = screen.getAllByTestId('pinyin-display');
+      expect(pinyinDisplays).toHaveLength(2); // Two Chinese characters
+      
+      // Pinyin should use relative sizing (text-[0.75em]) to scale with parent
+      pinyinDisplays.forEach(pinyin => {
+        expect(pinyin).toHaveClass('text-[0.75em]');
+        expect(pinyin).not.toHaveClass('text-base'); // Should not have hardcoded font size
+      });
+    });
   });
 });
