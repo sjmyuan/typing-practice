@@ -28,11 +28,25 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
   );
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-focus the typing area on mount
+  // Auto-focus the typing area on mount and add global click listener
   useEffect(() => {
     if (containerRef.current) {
       containerRef.current.focus();
     }
+
+    // Add global click listener to always refocus typing area
+    const handleGlobalClick = () => {
+      if (containerRef.current) {
+        containerRef.current.focus();
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick);
+
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener('click', handleGlobalClick);
+    };
   }, []);
 
   // Handle keyboard input
@@ -169,7 +183,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
-      className="outline-none focus:ring-2 focus:ring-blue-400 rounded-lg p-8 cursor-text bg-gray-50 focus:bg-white transition-colors min-h-[60vh]"
+      className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors min-h-[60vh]"
       aria-label="practice area - click here and start typing"
     >
       <div

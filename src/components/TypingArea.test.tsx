@@ -210,13 +210,15 @@ describe('TypingArea', () => {
       expect(container).toHaveFocus();
     });
 
-    it('has correct focus styling', () => {
+    it('has correct styling without focus ring', () => {
       render(<TypingArea {...mockProps} />);
       const container = screen.getByRole('textbox');
       
-      expect(container).toHaveClass('focus:ring-2');
-      expect(container).toHaveClass('focus:ring-blue-400');
-      expect(container).toHaveClass('focus:bg-white');
+      expect(container).toHaveClass('outline-none');
+      expect(container).toHaveClass('rounded-lg');
+      expect(container).toHaveClass('cursor-text');
+      expect(container).not.toHaveClass('focus:ring-2');
+      expect(container).not.toHaveClass('focus:ring-blue-400');
     });
   });
 
@@ -393,6 +395,67 @@ describe('TypingArea', () => {
       // Should show cursor from TypingCursor
       expect(screen.getByTestId('cursor')).toBeInTheDocument();
       expect(screen.getByTestId('cursor')).toHaveClass('animate-pulse');
+    });
+  });
+
+  describe('Global Focus Behavior', () => {
+    it('maintains focus when clicking anywhere on document', () => {
+      render(<TypingArea {...mockProps} />);
+      const container = screen.getByRole('textbox');
+      
+      // Initially focused
+      expect(document.activeElement).toBe(container);
+      
+      // Click somewhere else (like a progress element)
+      const progressElement = screen.getByText((content, element) => {
+        return element?.tagName.toLowerCase() === 'p' && content.includes('Progress:');
+      });
+      fireEvent.click(progressElement);
+      
+      // Should still be focused
+      expect(document.activeElement).toBe(container);
+    });
+
+    it('maintains focus when clicking on character display', () => {
+      render(<TypingArea {...mockProps} />);
+      const container = screen.getByRole('textbox');
+      const firstChar = screen.getAllByTestId('practice-char')[0];
+      
+      // Initially focused
+      expect(document.activeElement).toBe(container);
+      
+      // Click on a character
+      fireEvent.click(firstChar);
+      
+      // Should still be focused
+      expect(document.activeElement).toBe(container);
+    });
+
+    it('does not show focus ring styles', () => {
+      render(<TypingArea {...mockProps} />);
+      const container = screen.getByRole('textbox');
+      
+      // Focus ring classes should not be present
+      expect(container).not.toHaveClass('focus:ring-2');
+      expect(container).not.toHaveClass('focus:ring-blue-400');
+    });
+
+    it('cleans up global click listener on unmount', () => {
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+      
+      const { unmount } = render(<TypingArea {...mockProps} />);
+      
+      // Should have added click listener
+      expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
+      
+      unmount();
+      
+      // Should have removed click listener
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
+      
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
     });
   });
 });
