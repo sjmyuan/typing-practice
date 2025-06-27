@@ -137,7 +137,7 @@ describe('CharacterDisplay', () => {
         expect(char).toHaveClass('inline-block');
         expect(char).toHaveClass('min-w-[0.5rem]');
         expect(char).toHaveClass('cursor-pointer');
-        expect(char).toHaveClass('px-1');
+        expect(char).toHaveClass('px-0.5');
         expect(char).toHaveClass('rounded');
         unmount();
       });

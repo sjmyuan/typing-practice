@@ -19,7 +19,7 @@ const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
   showCursor
 }) => {
   // Apply consistent base styling to all characters to maintain uniform width
-  let className = 'relative inline-block min-w-[0.5rem] cursor-pointer px-1 rounded';
+  let className = 'relative inline-block min-w-[0.5rem] cursor-pointer px-0.5 rounded';
   
   // Apply color and background styling based on character state
   switch (state) {
