@@ -230,6 +230,9 @@ const Button = () => (
    - Use Testing Library for React testing
    - Test prop types and component behavior
 
+6. **Empty Line**
+   - Avoid spaces in the empty line
+
 ## ESLint Configuration
 
 Recommended `.eslintrc`:
