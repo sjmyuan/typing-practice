@@ -80,16 +80,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
     
     if (e.key === 'Backspace') {
       handleBackspace();
-    } else if (e.key === ' ') {
-      // Space key
-      if (practiceMode === 'pinyin') {
-        validatePinyinInput();
-      } else {
-        handleCharacterInput(' ');
-      }
-    } else if (e.key === 'Enter' && practiceMode === 'pinyin') {
-      // Enter confirms pinyin input only in pinyin mode
-      validatePinyinInput();
+    } else if (e.key === ' ' && practiceMode !== 'pinyin') {
+      // Space key only for non-pinyin modes
+      handleCharacterInput(' ');
     } else if (e.key.length === 1 && cursorPosition < prompt.length) {
       // Only accept single character keys and don't exceed prompt length
       if (practiceMode === 'pinyin') {
@@ -138,11 +131,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       // Automatically validate and move to next character
       validatePinyinInputWithValue(newInput);
     }
-  };
-
-  // Validate collected pinyin input
-  const validatePinyinInput = () => {
-    validatePinyinInputWithValue(currentPinyinInput);
   };
 
   // Validate pinyin input with a specific value
