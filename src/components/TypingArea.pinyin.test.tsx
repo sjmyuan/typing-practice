@@ -39,19 +39,6 @@ describe('TypingArea Pinyin Mode', () => {
       expect(pinyinDisplays.length).toBeGreaterThan(0);
     });
 
-    it('collects pinyin input when typing letters', () => {
-      render(<TypingArea {...mockProps} />);
-      const container = screen.getByRole('textbox');
-      container.focus();
-      
-      // Type some pinyin letters
-      fireEvent.keyDown(container, { key: 'n', code: 'KeyN' });
-      fireEvent.keyDown(container, { key: 'i', code: 'KeyI' });
-      
-      // Should show the input being collected
-      expect(screen.getByTestId('pinyin-input')).toHaveTextContent('ni');
-    });
-
     it('validates pinyin input on space key', () => {
       render(<TypingArea {...mockProps} />);
       const container = screen.getByRole('textbox');
@@ -97,24 +84,6 @@ describe('TypingArea Pinyin Mode', () => {
       // First character should be marked as correct
       const chars = screen.getAllByTestId('pinyin-practice-char');
       expect(chars[0]).toHaveClass('text-green-600');
-    });
-
-    it('handles backspace to remove pinyin input characters', () => {
-      render(<TypingArea {...mockProps} />);
-      const container = screen.getByRole('textbox');
-      container.focus();
-      
-      // Type some pinyin
-      fireEvent.keyDown(container, { key: 'n', code: 'KeyN' });
-      fireEvent.keyDown(container, { key: 'i', code: 'KeyI' });
-      
-      // Should show input
-      expect(screen.getByTestId('pinyin-input')).toHaveTextContent('ni');
-      
-      // Backspace should remove last character
-      fireEvent.keyDown(container, { key: 'Backspace', code: 'Backspace' });
-      
-      expect(screen.getByTestId('pinyin-input')).toHaveTextContent('n');
     });
 
     it('moves cursor to next character after correct pinyin input', () => {

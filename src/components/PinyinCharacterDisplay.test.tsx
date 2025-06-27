@@ -410,4 +410,48 @@ describe('PinyinCharacterDisplay', () => {
       expect(pinyinChars[1]).toHaveClass('text-red-600');
     });
   });
+
+  describe('Tone Handling', () => {
+    it('should accept keyboard input without tones for pinyin characters', () => {
+      // Test that typing "ni" matches the pinyin "nǐ" for character "你"
+      render(
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={mockOnClick}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="ni" // User types "ni" for "nǐ"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      
+      // Both characters should be correct even though user typed "ni" for "nǐ"
+      expect(pinyinChars[0]).toHaveClass('text-green-600'); // 'n' should be correct
+      expect(pinyinChars[1]).toHaveClass('text-green-600'); // 'i' should be correct for 'ǐ'
+    });
+
+    it('should show incorrect state when typing wrong pinyin', () => {
+      render(
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={mockOnClick}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="na" // Wrong pinyin - should be "ni"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      
+      expect(pinyinChars[0]).toHaveClass('text-green-600'); // 'n' is correct
+      expect(pinyinChars[1]).toHaveClass('text-red-600'); // 'a' is incorrect for 'ǐ'
+    });
+  });
 });

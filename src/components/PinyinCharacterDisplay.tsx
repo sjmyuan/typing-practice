@@ -1,7 +1,7 @@
 import React from 'react';
 import TypingCursor from './TypingCursor';
 import CharacterDisplay from './CharacterDisplay';
-import { getPinyinForChar, containsChinese } from '../utils/pinyinUtils';
+import { getPinyinForChar, getPinyinWithoutTonesForChar, containsChinese } from '../utils/pinyinUtils';
 
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
 type PinyinState = 'neutral' | 'correct' | 'incorrect';
@@ -54,10 +54,11 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
 
   const displayChar = char === ' ' ? '\u00A0' : char;
   const pinyin = showPinyin && containsChinese(char) ? getPinyinForChar(char) : null;
+  const pinyinWithoutTones = showPinyin && containsChinese(char) ? getPinyinWithoutTonesForChar(char) : null;
   
   // For pinyin display with cursor positioning using CharacterDisplay
   const renderPinyinWithCursor = () => {
-    if (!pinyin) {
+    if (!pinyin || !pinyinWithoutTones) {
       return null;
     }
 
@@ -67,9 +68,10 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
       let charState: CharacterState = 'untyped';
       
       if (charIndex < inputLength) {
-        // Character already typed - determine if correct or incorrect
+        // Character already typed - compare against pinyin without tones
         const typedChar = pinyinInput[charIndex];
-        charState = typedChar === pinyinChar ? 'correct' : 'incorrect';
+        const expectedChar = pinyinWithoutTones[charIndex];
+        charState = typedChar === expectedChar ? 'correct' : 'incorrect';
       }
       
       // Show cursor at current typing position
