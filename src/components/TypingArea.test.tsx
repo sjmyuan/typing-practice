@@ -6,6 +6,7 @@ import TypingArea from './TypingArea';
 describe('TypingArea', () => {
   const mockProps = {
     prompt: 'hello',
+    practiceMode: 'english' as const,
     onComplete: vi.fn(),
   };
 

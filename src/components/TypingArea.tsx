@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import CharacterDisplay from './CharacterDisplay';
+import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
+import { getPinyinWithoutTonesForChar, normalizePinyinInput } from '../utils/pinyinUtils';
+import { type PracticeMode } from './StartScreen';
 
 // Character state types
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
@@ -13,10 +16,13 @@ interface CharacterData {
   char: string;
   state: CharacterState;
   typedChar?: string;
+  pinyinInput?: string; // For collecting pinyin input
+  expectedPinyin?: string; // Expected pinyin for the character
 }
 
 interface TypingAreaProps {
   prompt: string;
+  practiceMode?: PracticeMode;
   onComplete: (stats: {
     accuracy: number;
     totalCharacters: number;
@@ -25,11 +31,17 @@ interface TypingAreaProps {
   }) => void;
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english', onComplete }) => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [characters, setCharacters] = useState<CharacterData[]>(() => 
-    prompt.split('').map(char => ({ char, state: 'untyped' as CharacterState }))
+    prompt.split('').map(char => ({
+      char,
+      state: 'untyped' as CharacterState,
+      expectedPinyin: practiceMode === 'pinyin' ? getPinyinWithoutTonesForChar(char) : undefined,
+      pinyinInput: ''
+    }))
   );
+  const [currentPinyinInput, setCurrentPinyinInput] = useState<string>('');
   const [fontSize, setFontSize] = useState<FontSize>(() => {
     const saved = localStorage.getItem('typingPracticeFontSize');
     if (saved && ['small', 'medium', 'large', 'extra-large'].includes(saved)) {
@@ -66,10 +78,89 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
     
     if (e.key === 'Backspace') {
       handleBackspace();
+    } else if (e.key === ' ') {
+      // Space key
+      if (practiceMode === 'pinyin') {
+        validatePinyinInput();
+      } else {
+        handleCharacterInput(' ');
+      }
+    } else if (e.key === 'Enter' && practiceMode === 'pinyin') {
+      // Enter confirms pinyin input only in pinyin mode
+      validatePinyinInput();
     } else if (e.key.length === 1 && cursorPosition < prompt.length) {
       // Only accept single character keys and don't exceed prompt length
-      handleCharacterInput(e.key);
+      if (practiceMode === 'pinyin') {
+        handlePinyinInput(e.key);
+      } else {
+        handleCharacterInput(e.key);
+      }
     }
+  };
+
+  // Handle pinyin input collection
+  const handlePinyinInput = (inputChar: string) => {
+    const newInput = currentPinyinInput + inputChar.toLowerCase();
+    setCurrentPinyinInput(newInput);
+    
+    // Update the current character's pinyin input display
+    setCharacters(prev => {
+      const newCharacters = [...prev];
+      if (cursorPosition < newCharacters.length) {
+        newCharacters[cursorPosition] = {
+          ...newCharacters[cursorPosition],
+          pinyinInput: newInput
+        };
+      }
+      return newCharacters;
+    });
+  };
+
+  // Validate collected pinyin input
+  const validatePinyinInput = () => {
+    if (cursorPosition >= prompt.length) return;
+    
+    const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
+    const normalizedInput = normalizePinyinInput(currentPinyinInput);
+    const isCorrect = normalizedInput === expectedPinyin;
+    
+    // Move to next character and reset pinyin input first
+    const newPosition = cursorPosition + 1;
+    setCursorPosition(newPosition);
+    setCurrentPinyinInput('');
+    
+    setCharacters(prev => {
+      const newCharacters = [...prev];
+      newCharacters[cursorPosition] = {
+        ...newCharacters[cursorPosition],
+        state: isCorrect ? 'correct' : 'incorrect',
+        typedChar: currentPinyinInput,
+        pinyinInput: currentPinyinInput
+      };
+      
+      // Check for completion after updating the character
+      if (newPosition === prompt.length) {
+        // Calculate stats with the updated characters
+        const typedCharacters = newCharacters.filter(char => char.state === 'correct' || char.state === 'incorrect');
+        const correctCharacters = newCharacters.filter(char => char.state === 'correct');
+        const incorrectCharacters = newCharacters.filter(char => char.state === 'incorrect');
+        
+        const stats = {
+          accuracy: Math.round((correctCharacters.length / typedCharacters.length) * 100),
+          totalCharacters: prompt.length,
+          correctCharacters: correctCharacters.length,
+          incorrectCharacters: incorrectCharacters.length
+        };
+
+        // Call onComplete after state update
+        if (typeof onComplete === 'function') {
+          // Use requestAnimationFrame to ensure state has updated
+          requestAnimationFrame(() => onComplete(stats));
+        }
+      }
+      
+      return newCharacters;
+    });
   };
 
   // Handle character input
@@ -80,19 +171,23 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
       const newCharacters = [...prev];
       const expectedChar = prompt[cursorPosition];
       
-      if (inputChar === expectedChar) {
-        newCharacters[cursorPosition] = {
-          char: expectedChar,
-          state: 'correct',
-          typedChar: inputChar
-        };
+      let isCorrect = false;
+      
+      if (practiceMode === 'pinyin') {
+        // For pinyin mode, compare normalized pinyin
+        const expectedPinyin = getPinyinWithoutTonesForChar(expectedChar);
+        const normalizedInput = normalizePinyinInput(inputChar);
+        isCorrect = normalizedInput === expectedPinyin;
       } else {
-        newCharacters[cursorPosition] = {
-          char: expectedChar,
-          state: 'incorrect',
-          typedChar: inputChar
-        };
+        // For English mode, direct character comparison
+        isCorrect = inputChar === expectedChar;
       }
+      
+      newCharacters[cursorPosition] = {
+        char: expectedChar,
+        state: isCorrect ? 'correct' : 'incorrect',
+        typedChar: inputChar
+      };
       
       // Check for completion with updated characters
       if (newPosition === prompt.length) {
@@ -121,17 +216,35 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
 
   // Handle backspace
   const handleBackspace = () => {
-    if (cursorPosition > 0) {
+    if (practiceMode === 'pinyin' && currentPinyinInput.length > 0) {
+      // Remove last character from current pinyin input
+      const newInput = currentPinyinInput.slice(0, -1);
+      setCurrentPinyinInput(newInput);
+      
+      setCharacters(prev => {
+        const newCharacters = [...prev];
+        if (cursorPosition < newCharacters.length) {
+          newCharacters[cursorPosition] = {
+            ...newCharacters[cursorPosition],
+            pinyinInput: newInput
+          };
+        }
+        return newCharacters;
+      });
+    } else if (cursorPosition > 0) {
+      // Move cursor back and reset characters
       const newPosition = cursorPosition - 1;
       setCursorPosition(newPosition);
+      setCurrentPinyinInput('');
       
       setCharacters(prev => {
         const newCharacters = [...prev];
         // Reset character state to untyped and clear all characters after cursor
         for (let i = newPosition; i < newCharacters.length; i++) {
           newCharacters[i] = {
-            char: prompt[i],
-            state: 'untyped'
+            ...newCharacters[i],
+            state: 'untyped',
+            pinyinInput: ''
           };
         }
         return newCharacters;
@@ -150,7 +263,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
         for (let i = cursorPosition; i < index; i++) {
           if (newCharacters[i].state === 'untyped') {
             newCharacters[i] = {
-              char: prompt[i],
+              ...newCharacters[i],
               state: 'skipped'
             };
           }
@@ -159,8 +272,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
         // Moving backward - reset characters after clicked position to untyped
         for (let i = index; i < newCharacters.length; i++) {
           newCharacters[i] = {
-            char: prompt[i],
-            state: 'untyped'
+            ...newCharacters[i],
+            state: 'untyped',
+            pinyinInput: ''
           };
         }
       }
@@ -169,6 +283,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
     });
     
     setCursorPosition(index);
+    setCurrentPinyinInput('');
   };
 
   // Calculate statistics for display
@@ -236,21 +351,44 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
           canDecrease={canDecreaseFontSize}
         />
       </div>
+      
+      {/* Instructions for pinyin mode */}
+      {practiceMode === 'pinyin' && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>Pinyin Practice Mode:</strong> Type the pinyin for each Chinese character, then press <kbd className="px-1 py-0.5 bg-blue-200 rounded text-xs">Space</kbd> or <kbd className="px-1 py-0.5 bg-blue-200 rounded text-xs">Enter</kbd> to confirm. Tones are not required.
+          </p>
+        </div>
+      )}
+      
       <div
         className={`flex flex-wrap gap-1 ${fontSizeClasses[fontSize]} font-mono select-none leading-relaxed mb-8`}
         aria-label="practice prompt"
         role="presentation"
       >
-        {characters.map((charData, idx) => (
-          <CharacterDisplay
-            key={idx}
-            char={charData.char}
-            state={charData.state}
-            index={idx}
-            onClick={handleCharacterClick}
-            showCursor={idx === cursorPosition && cursorPosition < prompt.length}
-          />
-        ))}
+        {characters.map((charData, idx) => 
+          practiceMode === 'pinyin' ? (
+            <PinyinCharacterDisplay
+              key={idx}
+              char={charData.char}
+              state={charData.state}
+              index={idx}
+              onClick={handleCharacterClick}
+              showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+              showPinyin={true}
+              pinyinInput={charData.pinyinInput || ''}
+            />
+          ) : (
+            <CharacterDisplay
+              key={idx}
+              char={charData.char}
+              state={charData.state}
+              index={idx}
+              onClick={handleCharacterClick}
+              showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+            />
+          )
+        )}
       </div>
       <ProgressDisplay
         typedCount={getTypedCharacters().length}

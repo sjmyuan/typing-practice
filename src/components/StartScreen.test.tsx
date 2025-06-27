@@ -96,7 +96,7 @@ describe('StartScreen', () => {
       await user.type(textarea, '  Hello world  ');
       await user.click(screen.getByRole('button', { name: /start practice/i }));
       
-      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world', 'english');
     });
 
     it('button remains disabled for whitespace-only input', async () => {
@@ -124,7 +124,7 @@ describe('StartScreen', () => {
       const button = screen.getByRole('button', { name: /start practice/i });
       await user.click(button);
       
-      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world', 'english');
     });
 
     it('can submit form using Enter when button is focused', async () => {
@@ -137,7 +137,7 @@ describe('StartScreen', () => {
       await user.tab(); // Move focus to button
       await user.keyboard('{Enter}');
       
-      expect(mockOnStart).toHaveBeenCalledWith('Hello world');
+      expect(mockOnStart).toHaveBeenCalledWith('Hello world', 'english');
     });
   });
 
