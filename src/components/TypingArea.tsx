@@ -3,7 +3,7 @@ import CharacterDisplay from './CharacterDisplay';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
-import { getPinyinWithoutTonesForChar, normalizePinyinInput } from '../utils/pinyinUtils';
+import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese } from '../utils/pinyinUtils';
 import { type PracticeMode } from './StartScreen';
 
 // Character state types
@@ -86,7 +86,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
     } else if (e.key.length === 1 && cursorPosition < prompt.length) {
       // Only accept single character keys and don't exceed prompt length
       if (practiceMode === 'pinyin') {
-        handlePinyinInput(e.key);
+        // In pinyin mode, check if current character is Chinese
+        const currentChar = prompt[cursorPosition];
+        if (containsChinese(currentChar)) {
+          handlePinyinInput(e.key);
+        } else {
+          // For non-Chinese characters (punctuation, English, etc.), handle directly
+          handleCharacterInput(e.key);
+        }
       } else {
         handleCharacterInput(e.key);
       }
@@ -239,38 +246,46 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
 
   // Handle backspace
   const handleBackspace = () => {
-    if (practiceMode === 'pinyin' && currentPinyinInput.length > 0) {
-      // Remove last character from current pinyin input
-      const newInput = currentPinyinInput.slice(0, -1);
-      setCurrentPinyinInput(newInput);
-      
-      // Determine real-time pinyin state
-      const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
-      let pinyinState: 'neutral' | 'correct' | 'incorrect' = 'neutral';
-      
-      if (newInput.length > 0 && expectedPinyin.length > 0) {
-        const normalizedInput = normalizePinyinInput(newInput);
-        const normalizedExpected = expectedPinyin;
+    if (practiceMode === 'pinyin' && cursorPosition < prompt.length) {
+      const currentChar = prompt[cursorPosition];
+      // Only handle pinyin input backspace for Chinese characters
+      if (containsChinese(currentChar) && currentPinyinInput.length > 0) {
+        // Remove last character from current pinyin input
+        const newInput = currentPinyinInput.slice(0, -1);
+        setCurrentPinyinInput(newInput);
         
-        if (normalizedExpected.startsWith(normalizedInput)) {
-          pinyinState = 'correct';
-        } else {
-          pinyinState = 'incorrect';
+        // Determine real-time pinyin state
+        const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
+        let pinyinState: 'neutral' | 'correct' | 'incorrect' = 'neutral';
+        
+        if (newInput.length > 0 && expectedPinyin.length > 0) {
+          const normalizedInput = normalizePinyinInput(newInput);
+          const normalizedExpected = expectedPinyin;
+          
+          if (normalizedExpected.startsWith(normalizedInput)) {
+            pinyinState = 'correct';
+          } else {
+            pinyinState = 'incorrect';
+          }
         }
+        
+        setCharacters(prev => {
+          const newCharacters = [...prev];
+          if (cursorPosition < newCharacters.length) {
+            newCharacters[cursorPosition] = {
+              ...newCharacters[cursorPosition],
+              pinyinInput: newInput,
+              pinyinState: pinyinState
+            };
+          }
+          return newCharacters;
+        });
+        return; // Don't proceed to regular backspace logic
       }
-      
-      setCharacters(prev => {
-        const newCharacters = [...prev];
-        if (cursorPosition < newCharacters.length) {
-          newCharacters[cursorPosition] = {
-            ...newCharacters[cursorPosition],
-            pinyinInput: newInput,
-            pinyinState: pinyinState
-          };
-        }
-        return newCharacters;
-      });
-    } else if (cursorPosition > 0) {
+    }
+    
+    // Regular backspace logic for moving cursor back
+    if (cursorPosition > 0) {
       // Move cursor back and reset characters
       const newPosition = cursorPosition - 1;
       setCursorPosition(newPosition);
@@ -406,8 +421,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
         aria-label="practice prompt"
         role="presentation"
       >
-        {characters.map((charData, idx) => 
-          practiceMode === 'pinyin' ? (
+        {characters.map((charData, idx) => {
+          // Determine whether to use pinyin display based on character type and practice mode
+          const shouldUsePinyinDisplay = practiceMode === 'pinyin' && containsChinese(charData.char);
+          
+          return shouldUsePinyinDisplay ? (
             <PinyinCharacterDisplay
               key={idx}
               char={charData.char}
@@ -428,8 +446,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
               onClick={handleCharacterClick}
               showCursor={idx === cursorPosition && cursorPosition < prompt.length}
             />
-          )
-        )}
+          );
+        })}
       </div>
       <ProgressDisplay
         typedCount={getTypedCharacters().length}
