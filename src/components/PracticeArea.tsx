@@ -47,7 +47,7 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto">
+    <div className="w-full max-w-[2048px] mx-auto">
       {practiceState === 'ready' && (
         <StartScreen onStart={startPractice} />
       )}

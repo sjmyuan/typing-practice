@@ -169,11 +169,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, onComplete }) => {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
-      className="outline-none focus:ring-2 focus:ring-blue-400 rounded p-4 cursor-text bg-gray-50 focus:bg-white transition-colors"
+      className="outline-none focus:ring-2 focus:ring-blue-400 rounded-lg p-8 cursor-text bg-gray-50 focus:bg-white transition-colors min-h-[60vh]"
       aria-label="practice area - click here and start typing"
     >
       <div
-        className="flex flex-wrap gap-1 text-2xl font-mono select-none leading-relaxed"
+        className="flex flex-wrap gap-1 text-3xl font-mono select-none leading-relaxed mb-8"
         aria-label="practice prompt"
         role="presentation"
       >
