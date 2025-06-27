@@ -33,6 +33,13 @@ const meta = {
     showPinyin: {
       control: { type: 'boolean' },
     },
+    pinyinInput: {
+      control: { type: 'text' },
+    },
+    pinyinState: {
+      control: { type: 'select' },
+      options: ['neutral', 'correct', 'incorrect'],
+    },
   },
 } satisfies Meta<typeof PinyinCharacterDisplay>;
 
@@ -216,4 +223,191 @@ export const MixedTextExample: Story = {
       </div>
     ),
   ],
+};
+
+export const PinyinTypingStates: Story = {
+  name: 'Pinyin Typing Progress',
+  render: () => (
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div>Ready to Type</div>
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}} 
+          showCursor={true} 
+          showPinyin={true} 
+          pinyinInput=""
+          pinyinState="neutral"
+        />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>Typing "n"</div>
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={1} 
+          onClick={() => {}} 
+          showCursor={true} 
+          showPinyin={true} 
+          pinyinInput="n"
+          pinyinState="correct"
+        />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>Typing "ni" (Complete)</div>
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={2} 
+          onClick={() => {}} 
+          showCursor={true} 
+          showPinyin={true} 
+          pinyinInput="ni"
+          pinyinState="correct"
+        />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>Wrong Input "nx"</div>
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={3} 
+          onClick={() => {}} 
+          showCursor={true} 
+          showPinyin={true} 
+          pinyinInput="nx"
+          pinyinState="incorrect"
+        />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>Completed Character</div>
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="correct" 
+          index={4} 
+          onClick={() => {}} 
+          showCursor={false} 
+          showPinyin={true} 
+          pinyinInput=""
+          pinyinState="neutral"
+        />
+      </div>
+    </div>
+  ),
+};
+
+export const FontSizeComparison: Story = {
+  name: 'Font Size Comparison',
+  render: () => (
+    <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div>With Pinyin (Larger Pinyin, Smaller Character)</div>
+        <PinyinCharacterDisplay 
+          char="学" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}} 
+          showCursor={false} 
+          showPinyin={true} 
+        />
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>English Character (Normal Size)</div>
+        <PinyinCharacterDisplay 
+          char="A" 
+          state="untyped" 
+          index={1} 
+          onClick={() => {}} 
+          showCursor={false} 
+          showPinyin={false} 
+        />
+      </div>
+    </div>
+  ),
+};
+
+export const CursorPositions: Story = {
+  name: 'Cursor Movement in Pinyin',
+  render: () => (
+    <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div>Chinese: Cursor moves in Pinyin</div>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <PinyinCharacterDisplay 
+            char="好" 
+            state="untyped" 
+            index={0} 
+            onClick={() => {}} 
+            showCursor={true} 
+            showPinyin={true} 
+            pinyinInput=""
+          />
+          <PinyinCharacterDisplay 
+            char="好" 
+            state="untyped" 
+            index={1} 
+            onClick={() => {}} 
+            showCursor={true} 
+            showPinyin={true} 
+            pinyinInput="h"
+          />
+          <PinyinCharacterDisplay 
+            char="好" 
+            state="untyped" 
+            index={2} 
+            onClick={() => {}} 
+            showCursor={true} 
+            showPinyin={true} 
+            pinyinInput="ha"
+          />
+          <PinyinCharacterDisplay 
+            char="好" 
+            state="untyped" 
+            index={3} 
+            onClick={() => {}} 
+            showCursor={true} 
+            showPinyin={true} 
+            pinyinInput="hao"
+          />
+        </div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div>English: Cursor in Character</div>
+        <div style={{ marginTop: '10px' }}>
+          <PinyinCharacterDisplay 
+            char="H" 
+            state="untyped" 
+            index={4} 
+            onClick={() => {}} 
+            showCursor={true} 
+            showPinyin={false} 
+          />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const InteractiveExample: Story = {
+  render: () => (
+    <div className="flex flex-col items-center gap-4">
+      <div className="text-xl">
+        Type the pinyin for the character: 
+        <span className="font-bold text-2xl"> 你 </span>
+        (Press Enter after typing)
+      </div>
+      <PinyinCharacterDisplay 
+        char="你" 
+        state="untyped" 
+        index={0} 
+        onClick={() => {}} 
+        showCursor={true} 
+        showPinyin={true} 
+        pinyinInput=""
+        pinyinState="neutral"
+      />
+    </div>
+  ),
 };

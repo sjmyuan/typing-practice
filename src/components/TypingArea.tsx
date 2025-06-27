@@ -18,6 +18,7 @@ interface CharacterData {
   typedChar?: string;
   pinyinInput?: string; // For collecting pinyin input
   expectedPinyin?: string; // Expected pinyin for the character
+  pinyinState?: 'neutral' | 'correct' | 'incorrect'; // State of pinyin typing
 }
 
 interface TypingAreaProps {
@@ -103,13 +104,29 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
     const newInput = currentPinyinInput + inputChar.toLowerCase();
     setCurrentPinyinInput(newInput);
     
+    // Determine real-time pinyin state
+    const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
+    let pinyinState: 'neutral' | 'correct' | 'incorrect' = 'neutral';
+    
+    if (newInput.length > 0 && expectedPinyin.length > 0) {
+      const normalizedInput = normalizePinyinInput(newInput);
+      const normalizedExpected = expectedPinyin;
+      
+      if (normalizedExpected.startsWith(normalizedInput)) {
+        pinyinState = 'correct';
+      } else {
+        pinyinState = 'incorrect';
+      }
+    }
+    
     // Update the current character's pinyin input display
     setCharacters(prev => {
       const newCharacters = [...prev];
       if (cursorPosition < newCharacters.length) {
         newCharacters[cursorPosition] = {
           ...newCharacters[cursorPosition],
-          pinyinInput: newInput
+          pinyinInput: newInput,
+          pinyinState: pinyinState
         };
       }
       return newCharacters;
@@ -135,7 +152,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
         ...newCharacters[cursorPosition],
         state: isCorrect ? 'correct' : 'incorrect',
         typedChar: currentPinyinInput,
-        pinyinInput: currentPinyinInput
+        pinyinInput: currentPinyinInput,
+        pinyinState: 'neutral' // Reset pinyin state after completion
       };
       
       // Check for completion after updating the character
@@ -221,12 +239,28 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       const newInput = currentPinyinInput.slice(0, -1);
       setCurrentPinyinInput(newInput);
       
+      // Determine real-time pinyin state
+      const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
+      let pinyinState: 'neutral' | 'correct' | 'incorrect' = 'neutral';
+      
+      if (newInput.length > 0 && expectedPinyin.length > 0) {
+        const normalizedInput = normalizePinyinInput(newInput);
+        const normalizedExpected = expectedPinyin;
+        
+        if (normalizedExpected.startsWith(normalizedInput)) {
+          pinyinState = 'correct';
+        } else {
+          pinyinState = 'incorrect';
+        }
+      }
+      
       setCharacters(prev => {
         const newCharacters = [...prev];
         if (cursorPosition < newCharacters.length) {
           newCharacters[cursorPosition] = {
             ...newCharacters[cursorPosition],
-            pinyinInput: newInput
+            pinyinInput: newInput,
+            pinyinState: pinyinState
           };
         }
         return newCharacters;
@@ -244,7 +278,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
           newCharacters[i] = {
             ...newCharacters[i],
             state: 'untyped',
-            pinyinInput: ''
+            pinyinInput: '',
+            pinyinState: 'neutral'
           };
         }
         return newCharacters;
@@ -377,6 +412,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
               showCursor={idx === cursorPosition && cursorPosition < prompt.length}
               showPinyin={true}
               pinyinInput={charData.pinyinInput || ''}
+              pinyinState={charData.pinyinState || 'neutral'}
             />
           ) : (
             <CharacterDisplay

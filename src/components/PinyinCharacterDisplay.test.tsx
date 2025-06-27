@@ -124,7 +124,7 @@ describe('PinyinCharacterDisplay', () => {
         />
       );
       const pinyinElement = screen.getByTestId('pinyin-display');
-      expect(pinyinElement).toHaveClass('text-xs');
+      expect(pinyinElement).toHaveClass('text-base');
       expect(pinyinElement).toHaveClass('text-gray-600');
       expect(pinyinElement).toHaveClass('leading-none');
       expect(pinyinElement).toHaveClass('mb-1');
@@ -341,6 +341,73 @@ describe('PinyinCharacterDisplay', () => {
           />
         );
       }).not.toThrow();
+    });
+  });
+
+  describe('Pinyin Individual Character Display', () => {
+    it('renders pinyin as individual CharacterDisplay components', () => {
+      render(
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={mockOnClick}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="n"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      
+      expect(pinyinChars).toHaveLength(2); // 'n' and 'ǐ'
+      expect(pinyinChars[0]).toHaveTextContent('n');
+      expect(pinyinChars[1]).toHaveTextContent('ǐ');
+    });
+
+    it('shows cursor at correct position within pinyin', () => {
+      render(
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={mockOnClick}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="n"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      
+      // First character should be correct (typed)
+      expect(pinyinChars[0]).toHaveClass('text-green-600');
+      // Second character should have cursor
+      expect(pinyinChars[1].querySelector('[data-testid="cursor"]')).toBeInTheDocument();
+    });
+
+    it('shows correct/incorrect states for individual pinyin characters', () => {
+      render(
+        <PinyinCharacterDisplay 
+          char="你" 
+          state="untyped" 
+          index={0} 
+          onClick={mockOnClick}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="nx" // wrong second character
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      const pinyinChars = pinyinDisplay.querySelectorAll('[data-testid="practice-char"]');
+      
+      // First character should be correct
+      expect(pinyinChars[0]).toHaveClass('text-green-600');
+      // Second character should be incorrect  
+      expect(pinyinChars[1]).toHaveClass('text-red-600');
     });
   });
 });

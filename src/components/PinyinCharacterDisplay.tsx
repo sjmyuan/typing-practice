@@ -1,8 +1,10 @@
 import React from 'react';
 import TypingCursor from './TypingCursor';
+import CharacterDisplay from './CharacterDisplay';
 import { getPinyinForChar, containsChinese } from '../utils/pinyinUtils';
 
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
+type PinyinState = 'neutral' | 'correct' | 'incorrect';
 
 interface PinyinCharacterDisplayProps {
   char: string;
@@ -12,6 +14,7 @@ interface PinyinCharacterDisplayProps {
   showCursor: boolean;
   showPinyin?: boolean;
   pinyinInput?: string;
+  pinyinState?: PinyinState;
 }
 
 const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
@@ -21,7 +24,8 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
   onClick,
   showCursor,
   showPinyin = false,
-  pinyinInput = ''
+  pinyinInput = '',
+  pinyinState = 'neutral'
 }) => {
   // Apply consistent base styling to all characters to maintain uniform width
   let className = 'relative inline-flex flex-col items-center cursor-pointer px-0.5 rounded min-w-[2rem]';
@@ -51,8 +55,52 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
   const displayChar = char === ' ' ? '\u00A0' : char;
   const pinyin = showPinyin && containsChinese(char) ? getPinyinForChar(char) : null;
   
-  // Show current pinyin input if typing this character
-  const showInputProgress = showCursor && pinyinInput.length > 0;
+  // For pinyin display with cursor positioning using CharacterDisplay
+  const renderPinyinWithCursor = () => {
+    if (!pinyin) {
+      return null;
+    }
+
+    const inputLength = pinyinInput.length;
+    
+    return pinyin.split('').map((pinyinChar, charIndex) => {
+      let charState: CharacterState = 'untyped';
+      
+      if (charIndex < inputLength) {
+        // Character already typed - determine if correct or incorrect
+        const typedChar = pinyinInput[charIndex];
+        charState = typedChar === pinyinChar ? 'correct' : 'incorrect';
+      }
+      
+      // Show cursor at current typing position
+      const showCharCursor = showCursor && charIndex === inputLength;
+      
+      return (
+        <CharacterDisplay
+          key={`pinyin-${index}-${charIndex}`}
+          char={pinyinChar}
+          state={charState}
+          index={charIndex}
+          onClick={() => {}} // No click handling for individual pinyin characters
+          showCursor={showCharCursor}
+        />
+      );
+    });
+  };
+  
+  // Determine pinyin styling based on typing state
+  let pinyinClassName = 'text-base leading-none mb-1 select-none relative';
+  switch (pinyinState) {
+    case 'correct':
+      pinyinClassName += ' text-green-600';
+      break;
+    case 'incorrect':
+      pinyinClassName += ' text-red-600';
+      break;
+    default:
+      pinyinClassName += ' text-gray-600';
+      break;
+  }
 
   return (
     <span
@@ -64,27 +112,17 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
       {/* Pinyin display above character */}
       {pinyin && (
         <span 
-          className="text-xs text-gray-600 leading-none mb-1 select-none"
+          className={pinyinClassName}
           data-testid="pinyin-display"
         >
-          {pinyin}
-        </span>
-      )}
-      
-      {/* Current pinyin input progress */}
-      {showInputProgress && (
-        <span 
-          className="text-xs text-blue-600 leading-none mb-1 font-mono bg-blue-100 px-1 rounded"
-          data-testid="pinyin-input"
-        >
-          {pinyinInput}
+          {renderPinyinWithCursor()}
         </span>
       )}
       
       {/* Main character */}
-      <span className="relative">
+      <span className="relative text-sm" data-testid="main-character">
         {displayChar}
-        {showCursor && <TypingCursor visible={true} />}
+        {showCursor && !containsChinese(char) && <TypingCursor visible={true} />}
       </span>
     </span>
   );
