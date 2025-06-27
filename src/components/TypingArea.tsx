@@ -43,6 +43,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
     }))
   );
   const [currentPinyinInput, setCurrentPinyinInput] = useState<string>('');
+  const [isCompleted, setIsCompleted] = useState(false);
   const [fontSize, setFontSize] = useState<FontSize>(() => {
     const saved = localStorage.getItem('typingPracticeFontSize');
     if (saved && ['small', 'medium', 'large', 'extra-large'].includes(saved)) {
@@ -131,14 +132,25 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       }
       return newCharacters;
     });
+    
+    // Check if we've typed enough characters to match the expected pinyin length
+    if (newInput.length === expectedPinyin.length && expectedPinyin.length > 0) {
+      // Automatically validate and move to next character
+      validatePinyinInputWithValue(newInput);
+    }
   };
 
   // Validate collected pinyin input
   const validatePinyinInput = () => {
-    if (cursorPosition >= prompt.length) return;
+    validatePinyinInputWithValue(currentPinyinInput);
+  };
+
+  // Validate pinyin input with a specific value
+  const validatePinyinInputWithValue = (inputValue: string) => {
+    if (cursorPosition >= prompt.length || isCompleted) return;
     
     const expectedPinyin = characters[cursorPosition]?.expectedPinyin || '';
-    const normalizedInput = normalizePinyinInput(currentPinyinInput);
+    const normalizedInput = normalizePinyinInput(inputValue);
     const isCorrect = normalizedInput === expectedPinyin;
     
     // Move to next character and reset pinyin input first
@@ -151,13 +163,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       newCharacters[cursorPosition] = {
         ...newCharacters[cursorPosition],
         state: isCorrect ? 'correct' : 'incorrect',
-        typedChar: currentPinyinInput,
-        pinyinInput: currentPinyinInput,
+        typedChar: inputValue,
+        pinyinInput: inputValue,
         pinyinState: 'neutral' // Reset pinyin state after completion
       };
       
       // Check for completion after updating the character
-      if (newPosition === prompt.length) {
+      if (newPosition === prompt.length && !isCompleted) {
+        setIsCompleted(true);
+        
         // Calculate stats with the updated characters
         const typedCharacters = newCharacters.filter(char => char.state === 'correct' || char.state === 'incorrect');
         const correctCharacters = newCharacters.filter(char => char.state === 'correct');
@@ -170,10 +184,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
           incorrectCharacters: incorrectCharacters.length
         };
 
-        // Call onComplete after state update
+        // Call onComplete synchronously
         if (typeof onComplete === 'function') {
-          // Use requestAnimationFrame to ensure state has updated
-          requestAnimationFrame(() => onComplete(stats));
+          setTimeout(() => onComplete(stats), 0);
         }
       }
       
@@ -183,6 +196,8 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
 
   // Handle character input
   const handleCharacterInput = (inputChar: string) => {
+    if (isCompleted) return;
+    
     const newPosition = Math.min(cursorPosition + 1, prompt.length);
     
     setCharacters(prev => {
@@ -208,7 +223,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       };
       
       // Check for completion with updated characters
-      if (newPosition === prompt.length) {
+      if (newPosition === prompt.length && !isCompleted) {
+        setIsCompleted(true);
+        
         const typedCharacters = newCharacters.filter(char => char.state === 'correct' || char.state === 'incorrect');
         const correctCharacters = newCharacters.filter(char => char.state === 'correct');
         const incorrectCharacters = newCharacters.filter(char => char.state === 'incorrect');
@@ -391,7 +408,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       {practiceMode === 'pinyin' && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>Pinyin Practice Mode:</strong> Type the pinyin for each Chinese character, then press <kbd className="px-1 py-0.5 bg-blue-200 rounded text-xs">Space</kbd> or <kbd className="px-1 py-0.5 bg-blue-200 rounded text-xs">Enter</kbd> to confirm. Tones are not required.
+            <strong>Pinyin Practice Mode:</strong> Type the pinyin for each Chinese character. The cursor will automatically move to the next character when you've typed the correct number of characters. Tones are not required.
           </p>
         </div>
       )}
