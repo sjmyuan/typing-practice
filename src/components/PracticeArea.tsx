@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import StartScreen, { type PracticeMode } from './StartScreen';
+import StartScreen from './StartScreen';
 import TypingArea from './TypingArea';
 import CompletionScreen from './CompletionScreen';
 
@@ -20,13 +20,11 @@ interface CompletionStats {
 const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
   const [practiceState, setPracticeState] = useState<PracticeState>('ready');
   const [currentPrompt, setCurrentPrompt] = useState<string>(initialPrompt);
-  const [practiceMode, setPracticeMode] = useState<PracticeMode>('english');
   const [completionStats, setCompletionStats] = useState<CompletionStats | null>(null);
 
   // State transition functions
-  const startPractice = (prompt: string, mode: PracticeMode) => {
+  const startPractice = (prompt: string) => {
     setCurrentPrompt(prompt);
-    setPracticeMode(mode);
     setPracticeState('active');
   };
 
@@ -57,7 +55,6 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
       {practiceState === 'active' && currentPrompt && (
         <TypingArea 
           prompt={currentPrompt}
-          practiceMode={practiceMode}
           onComplete={completePractice}
         />
       )}

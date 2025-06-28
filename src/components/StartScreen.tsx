@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { isPinyinPracticeText } from '../utils/pinyinUtils';
 
 export type PracticeMode = 'auto' | 'english' | 'pinyin';
 
 interface StartScreenProps {
-  onStart: (prompt: string, mode: PracticeMode) => void;
+  onStart: (prompt: string) => void;
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
   const [prompt, setPrompt] = useState<string>('');
-  const [practiceMode, setPracticeMode] = useState<PracticeMode>('auto');
   const [error, setError] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,16 +25,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
       return;
     }
 
-    // Determine practice mode
-    let finalMode = practiceMode;
-    if (practiceMode === 'auto') {
-      finalMode = isPinyinPracticeText(trimmedPrompt) ? 'pinyin' : 'english';
-    }
-
     // Clear error and start practice
     setError('');
     if (typeof onStart === 'function') {
-      onStart(trimmedPrompt, finalMode);
+      onStart(trimmedPrompt);
     }
   };
 
@@ -65,48 +57,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
           {error && (
             <p className="text-red-500 text-sm mt-2">{error}</p>
           )}
-        </div>
-
-        {/* Practice Mode Selection */}
-        <div className="text-left">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Practice Mode
-          </label>
-          <div className="space-y-2">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="auto"
-                checked={practiceMode === 'auto'}
-                onChange={(e) => setPracticeMode(e.target.value as PracticeMode)}
-                className="mr-2"
-              />
-              <span className="text-sm">Auto-detect (Recommended)</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="english"
-                checked={practiceMode === 'english'}
-                onChange={(e) => setPracticeMode(e.target.value as PracticeMode)}
-                className="mr-2"
-              />
-              <span className="text-sm">English typing</span>
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                value="pinyin"
-                checked={practiceMode === 'pinyin'}
-                onChange={(e) => setPracticeMode(e.target.value as PracticeMode)}
-                className="mr-2"
-              />
-              <span className="text-sm">Chinese pinyin typing</span>
-            </label>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Auto-detect will choose pinyin mode for Chinese characters and English mode for other text.
-          </p>
         </div>
         
         <button

@@ -581,4 +581,112 @@ describe('TypingArea', () => {
       });
     });
   });
+
+  describe('Auto Practice Mode Detection', () => {
+    it('automatically detects English mode for English text', () => {
+      const englishProps = {
+        prompt: 'hello world',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...englishProps} />);
+      
+      // Should not show pinyin instructions for English text
+      expect(screen.queryByText(/Pinyin Practice Mode/)).not.toBeInTheDocument();
+      
+      // Should use regular character display, not pinyin display
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars).toHaveLength(11);
+      
+      // No pinyin displays should be present
+      expect(screen.queryAllByTestId('pinyin-display')).toHaveLength(0);
+    });
+
+    it('automatically detects pinyin mode for Chinese text', () => {
+      const chineseProps = {
+        prompt: '你好',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...chineseProps} />);
+      
+      // Should show pinyin instructions for Chinese text
+      expect(screen.getByText(/Pinyin Practice Mode/)).toBeInTheDocument();
+      
+      // Should use pinyin displays for Chinese characters
+      const pinyinDisplays = screen.getAllByTestId('pinyin-display');
+      expect(pinyinDisplays).toHaveLength(2);
+    });
+
+    it('automatically detects pinyin mode for mixed text with Chinese characters', () => {
+      const mixedProps = {
+        prompt: 'Hello 你好 World',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...mixedProps} />);
+      
+      // Should show pinyin instructions for mixed text containing Chinese
+      expect(screen.getByText(/Pinyin Practice Mode/)).toBeInTheDocument();
+      
+      // Should have both regular and pinyin displays
+      const regularChars = screen.getAllByTestId('practice-char');
+      const pinyinDisplays = screen.getAllByTestId('pinyin-display');
+      
+      // Should have pinyin displays for Chinese characters only
+      expect(pinyinDisplays).toHaveLength(2); // 你 and 好
+      expect(regularChars.length + pinyinDisplays.length).toBe(14); // Total characters: 'Hello 你好 World' = 14
+    });
+
+    it('works correctly when practiceMode prop is not provided', () => {
+      const propsWithoutMode = {
+        prompt: 'test',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...propsWithoutMode} />);
+      
+      // Should render without errors and default to English mode
+      expect(screen.queryByText(/Pinyin Practice Mode/)).not.toBeInTheDocument();
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars).toHaveLength(4);
+    });
+
+    it('handles typing correctly in auto-detected English mode', () => {
+      const englishProps = {
+        prompt: 'hi',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...englishProps} />);
+      const container = screen.getByRole('textbox');
+      container.focus();
+      
+      // Type correct character
+      fireEvent.keyDown(container, { key: 'h', code: 'KeyH' });
+      
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars[0]).toHaveClass('text-green-600');
+    });
+
+    it('handles typing correctly in auto-detected pinyin mode', () => {
+      const chineseProps = {
+        prompt: '你',
+        onComplete: vi.fn(),
+      };
+      
+      render(<TypingArea {...chineseProps} />);
+      const container = screen.getByRole('textbox');
+      container.focus();
+      
+      // Type pinyin for 你 (ni)
+      fireEvent.keyDown(container, { key: 'n', code: 'KeyN' });
+      fireEvent.keyDown(container, { key: 'i', code: 'KeyI' });
+      
+      // Should complete the character and mark as correct
+      const pinyinChars = screen.getAllByTestId('pinyin-practice-char');
+      expect(pinyinChars[0]).toHaveClass('text-green-600');
+      expect(pinyinChars[0]).toHaveClass('bg-green-100');
+    });
+  });
 });

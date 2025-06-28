@@ -3,7 +3,7 @@ import CharacterDisplay from './CharacterDisplay';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
-import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese } from '../utils/pinyinUtils';
+import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese, isPinyinPracticeText } from '../utils/pinyinUtils';
 import { type PracticeMode } from './StartScreen';
 
 // Character state types
@@ -32,13 +32,16 @@ interface TypingAreaProps {
   }) => void;
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english', onComplete }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplete }) => {
+  // Auto-detect practice mode based on prompt content
+  const detectedPracticeMode: PracticeMode = practiceMode || (isPinyinPracticeText(prompt) ? 'pinyin' : 'english');
+  
   const [cursorPosition, setCursorPosition] = useState(0);
   const [characters, setCharacters] = useState<CharacterData[]>(() => 
     prompt.split('').map(char => ({
       char,
       state: 'untyped' as CharacterState,
-      expectedPinyin: practiceMode === 'pinyin' && containsChinese(char) ? getPinyinWithoutTonesForChar(char) : undefined,
+      expectedPinyin: detectedPracticeMode === 'pinyin' && containsChinese(char) ? getPinyinWithoutTonesForChar(char) : undefined,
       pinyinInput: ''
     }))
   );
@@ -80,12 +83,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
     
     if (e.key === 'Backspace') {
       handleBackspace();
-    } else if (e.key === ' ' && practiceMode !== 'pinyin') {
+    } else if (e.key === ' ' && detectedPracticeMode !== 'pinyin') {
       // Space key only for non-pinyin modes
       handleCharacterInput(' ');
     } else if (e.key.length === 1 && cursorPosition < prompt.length) {
       // Only accept single character keys and don't exceed prompt length
-      if (practiceMode === 'pinyin') {
+      if (detectedPracticeMode === 'pinyin') {
         // In pinyin mode, check if current character is Chinese or Chinese punctuation
         const currentChar = prompt[cursorPosition];
         if (isChineseCharacterOrPunctuation(currentChar)) {
@@ -207,7 +210,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       
       let isCorrect = false;
       
-      if (practiceMode === 'pinyin') {
+      if (detectedPracticeMode === 'pinyin') {
         if (containsChinese(expectedChar)) {
           // For Chinese characters, compare normalized pinyin
           const expectedPinyin = getPinyinWithoutTonesForChar(expectedChar);
@@ -261,7 +264,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
 
   // Handle backspace
   const handleBackspace = () => {
-    if (practiceMode === 'pinyin' && cursorPosition < prompt.length) {
+    if (detectedPracticeMode === 'pinyin' && cursorPosition < prompt.length) {
       const currentChar = prompt[cursorPosition];
       // Only handle pinyin input backspace for Chinese characters (not Chinese punctuation)
       if (containsChinese(currentChar) && currentPinyinInput.length > 0) {
@@ -423,7 +426,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       </div>
       
       {/* Instructions for pinyin mode */}
-      {practiceMode === 'pinyin' && (
+      {detectedPracticeMode === 'pinyin' && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
             <strong>Pinyin Practice Mode:</strong> Type the pinyin for each Chinese character. The cursor will automatically move to the next character when you've typed the correct number of characters. Tones are not required.
@@ -438,7 +441,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode = 'english
       >
         {characters.map((charData, idx) => {
           // Determine whether to use pinyin display based on character type and practice mode
-          const shouldUsePinyinDisplay = practiceMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
+          const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
           
           return shouldUsePinyinDisplay ? (
             <PinyinCharacterDisplay

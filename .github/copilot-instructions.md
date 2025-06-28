@@ -44,6 +44,7 @@ Step 3: **Implement Minimal Code**, Write the simplest code required to pass the
 Step 4: **Verify Implementation**, Re-run the tests to confirm that the implemented code passes all test cases successfully. Debug and refine as necessary.  
 Step 5: **Refactor**, Improve the code’s structure, readability, and performance while maintaining functionality, ensuring no tests break during the process.  
 Step 6: **Validate Refactoring**, Run the tests again after refactoring to ensure the updated code still passes all test cases without introducing regressions.
+Step 7: **Validate Linting**, Run the linter to confirm that the code complies with the project's coding standards and guidelines.
 </custom-tdd>
 
 <skills>
