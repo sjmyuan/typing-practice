@@ -83,6 +83,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     
     if (e.key === 'Backspace') {
       handleBackspace();
+    } else if (e.key === 'Enter' && cursorPosition < prompt.length && prompt[cursorPosition] === '\n') {
+      // Handle Enter key for newline characters
+      handleCharacterInput('\n');
     } else if (e.key === ' ' && detectedPracticeMode !== 'pinyin') {
       // Space key only for non-pinyin modes
       handleCharacterInput(' ');
@@ -435,15 +438,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       )}
       
       <div
-        className={`flex flex-wrap gap-1 ${fontSizeClasses[fontSize]} font-mono select-none leading-relaxed mb-8`}
+        className={`${fontSizeClasses[fontSize]} font-mono select-none leading-relaxed mb-8`}
         aria-label="practice prompt"
         role="presentation"
       >
-        {characters.map((charData, idx) => {
+        {characters.reduce((acc, charData, idx) => {
           // Determine whether to use pinyin display based on character type and practice mode
           const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
           
-          return shouldUsePinyinDisplay ? (
+          const charElement = shouldUsePinyinDisplay ? (
             <PinyinCharacterDisplay
               key={idx}
               char={charData.char}
@@ -465,7 +468,16 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               showCursor={idx === cursorPosition && cursorPosition < prompt.length}
             />
           );
-        })}
+
+          acc.push(charElement);
+          
+          // Add line break after newline characters
+          if (charData.char === '\n') {
+            acc.push(<br key={`br-${idx}`} />);
+          }
+          
+          return acc;
+        }, [] as React.ReactNode[])}
       </div>
       <ProgressDisplay
         typedCount={getTypedCharacters().length}

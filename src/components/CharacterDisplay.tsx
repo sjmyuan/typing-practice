@@ -50,7 +50,7 @@ const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
       onClick={handleClick}
       aria-label={state}
     >
-      {char === ' ' ? '\u00A0' : char}
+      {char === ' ' ? '\u00A0' : char === '\n' ? '↵' : char}
       {showCursor && <TypingCursor visible={true} />}
     </span>
   );

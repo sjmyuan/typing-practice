@@ -689,4 +689,105 @@ describe('TypingArea', () => {
       expect(pinyinChars[0]).toHaveClass('bg-green-100');
     });
   });
+
+  describe('Newline Support', () => {
+    const multiLinePrompt = 'hello\nworld';
+    const multiLineProps = {
+      prompt: multiLinePrompt,
+      practiceMode: 'english' as const,
+      onComplete: vi.fn(),
+    };
+
+    it('renders multi-line prompt with line breaks', () => {
+      render(<TypingArea {...multiLineProps} />);
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars).toHaveLength(11); // h-e-l-l-o-\n-w-o-r-l-d
+      
+      // Check that newline character is present and rendered as line break symbol
+      const newlineChar = chars[5];
+      expect(newlineChar).toHaveTextContent('↵'); // line break symbol
+    });
+
+    it('handles Enter key input for newline characters', () => {
+      render(<TypingArea {...multiLineProps} />);
+      const container = screen.getByRole('textbox');
+      
+      // Type "hello" first
+      fireEvent.keyDown(container, { key: 'h' });
+      fireEvent.keyDown(container, { key: 'e' });
+      fireEvent.keyDown(container, { key: 'l' });
+      fireEvent.keyDown(container, { key: 'l' });
+      fireEvent.keyDown(container, { key: 'o' });
+      
+      // Now cursor should be at newline character
+      const chars = screen.getAllByTestId('practice-char');
+      expect(chars[5]).toHaveClass('text-gray-400'); // untyped newline character
+      
+      // Press Enter to match newline
+      fireEvent.keyDown(container, { key: 'Enter' });
+      
+      // Newline should be marked as correct
+      expect(chars[5]).toHaveClass('bg-green-100');
+      
+      // Cursor should move to next character
+      expect(chars[6]).toHaveClass('text-gray-400'); // next untyped character
+    });
+
+    it('displays multi-line layout correctly', () => {
+      render(<TypingArea {...multiLineProps} />);
+      const container = screen.getByLabelText('practice prompt');
+      
+      // The container should have the proper styling for displaying characters
+      expect(container).toHaveClass('font-mono');
+      
+      // Check that line breaks are present in the DOM
+      const lineBreaks = container.querySelectorAll('br');
+      expect(lineBreaks).toHaveLength(1); // Should have one line break for the newline character
+    });
+
+    it('handles backspace across newlines correctly', () => {
+      render(<TypingArea {...multiLineProps} />);
+      const container = screen.getByRole('textbox');
+      
+      // Type through the newline
+      'hello\n'.split('').forEach(char => {
+        if (char === '\n') {
+          fireEvent.keyDown(container, { key: 'Enter' });
+        } else {
+          fireEvent.keyDown(container, { key: char });
+        }
+      });
+      
+      // Start typing "world"
+      fireEvent.keyDown(container, { key: 'w' });
+      
+      // Now backspace should work normally
+      fireEvent.keyDown(container, { key: 'Backspace' });
+      
+      const chars = screen.getAllByTestId('practice-char');
+      // Cursor should be back at the 'w' position (index 6) and it should be untyped
+      expect(chars[6]).toHaveClass('text-gray-400');
+    });
+
+    it('calculates progress correctly with newlines', () => {
+      render(<TypingArea {...multiLineProps} />);
+      
+      // Check initial progress display
+      expect(screen.getByText(/Progress: 0\/11 characters/)).toBeInTheDocument();
+      
+      const container = screen.getByRole('textbox');
+      
+      // Type complete first line including newline
+      'hello\n'.split('').forEach(char => {
+        if (char === '\n') {
+          fireEvent.keyDown(container, { key: 'Enter' });
+        } else {
+          fireEvent.keyDown(container, { key: char });
+        }
+      });
+      
+      // Progress should show 6 characters typed
+      expect(screen.getByText(/Progress: 6\/11 characters/)).toBeInTheDocument();
+    });
+  });
 });
