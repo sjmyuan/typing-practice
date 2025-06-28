@@ -238,8 +238,8 @@ describe('TypingArea Pinyin Mode', () => {
       fireEvent.keyDown(container, { key: 'a', code: 'KeyA' });
       fireEvent.keyDown(container, { key: 'o', code: 'KeyO' });
       
-      // Now we should be at the comma, which should be typed directly
-      fireEvent.keyDown(container, { key: '，', code: 'Comma' });
+      // Now we should be at the comma, type English equivalent ','
+      fireEvent.keyDown(container, { key: ',', code: 'Comma' });
       
       // Verify the comma is marked as correct
       const characters = screen.getAllByTestId(/practice-char|pinyin-practice-char/);
@@ -283,11 +283,10 @@ describe('TypingArea Pinyin Mode', () => {
     it('displays non-Chinese characters without pinyin', () => {
       render(<TypingArea {...punctuationProps} />);
       
-      // Check that punctuation characters don't have pinyin displays
-      // The comma and exclamation mark should not have pinyin displays
-      // We can check this by counting pinyin displays vs total characters
+      // Check that Chinese punctuation now shows English equivalents above them
+      // This should include 6 displays: 4 for Chinese characters and 2 for Chinese punctuation
       const pinyinDisplays = screen.getAllByTestId('pinyin-display');
-      expect(pinyinDisplays).toHaveLength(4); // For 你好世界, not for punctuation (，！)
+      expect(pinyinDisplays).toHaveLength(6); // For 你好世界 and punctuation (，！)
     });
 
     it('handles Chinese punctuation correctly in pinyin mode', () => {
@@ -304,8 +303,8 @@ describe('TypingArea Pinyin Mode', () => {
       fireEvent.keyDown(container, { key: 'a', code: 'KeyA' });
       fireEvent.keyDown(container, { key: 'o', code: 'KeyO' });
       
-      // Now we should be at the Chinese comma (，), which should be typed directly
-      fireEvent.keyDown(container, { key: '，', code: 'Comma' });
+      // Now we should be at the Chinese comma (，), type English equivalent ','
+      fireEvent.keyDown(container, { key: ',', code: 'Comma' });
       
       // Type pinyin for 世 (shi)
       fireEvent.keyDown(container, { key: 's', code: 'KeyS' });
@@ -317,8 +316,8 @@ describe('TypingArea Pinyin Mode', () => {
       fireEvent.keyDown(container, { key: 'i', code: 'KeyI' });
       fireEvent.keyDown(container, { key: 'e', code: 'KeyE' });
       
-      // Now we should be at the Chinese exclamation mark (！), which should be typed directly
-      fireEvent.keyDown(container, { key: '！', code: 'Exclamation' });
+      // Now we should be at the Chinese exclamation mark (！), type English equivalent '!'
+      fireEvent.keyDown(container, { key: '!', code: 'Exclamation' });
       
       // Verify that the Chinese punctuation marks are correctly typed
       const characters = screen.getAllByTestId(/practice-char|pinyin-practice-char/);
@@ -328,6 +327,54 @@ describe('TypingArea Pinyin Mode', () => {
       
       // The exclamation mark should be marked as correct (position 5)
       expect(characters[5]).toHaveClass('text-green-600');
+    });
+
+    it('displays Chinese punctuation with English equivalents above', () => {
+      render(<TypingArea {...punctuationProps} />);
+      
+      // Check that Chinese punctuation shows English equivalents above them
+      const pinyinDisplays = screen.getAllByTestId('pinyin-display');
+      
+      // Verify we have pinyin displays for Chinese characters and punctuation
+      expect(pinyinDisplays).toHaveLength(6);
+      
+      // Find the comma and exclamation mark displays
+      // The comma should show ","
+      const commaDisplay = pinyinDisplays.find(display => display.textContent === ',');
+      expect(commaDisplay).toBeInTheDocument();
+      
+      // The exclamation mark should show "!"
+      const exclamationDisplay = pinyinDisplays.find(display => display.textContent === '!');
+      expect(exclamationDisplay).toBeInTheDocument();
+    });
+
+    it('allows typing English punctuation for Chinese punctuation input', () => {
+      const onComplete = vi.fn();
+      const testProps = {
+        prompt: '，！',
+        practiceMode: 'pinyin' as const,
+        onComplete,
+      };
+      
+      render(<TypingArea {...testProps} />);
+      const container = screen.getByRole('textbox');
+      container.focus();
+      
+      // Type English comma for Chinese comma
+      fireEvent.keyDown(container, { key: ',', code: 'Comma' });
+      
+      // Type English exclamation for Chinese exclamation
+      fireEvent.keyDown(container, { key: '!', code: 'Exclamation' });
+      
+      // Wait a short time for completion to be called
+      setTimeout(() => {
+        expect(onComplete).toHaveBeenCalledWith({
+          accuracy: 100,
+          totalCharacters: 2,
+          correctCharacters: 2,
+          incorrectCharacters: 0
+        });
+      }, 10);
     });
   });
 });

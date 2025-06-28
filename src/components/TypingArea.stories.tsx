@@ -81,3 +81,19 @@ export const Interactive: Story = {
     ),
   ],
 };
+
+export const ChinesePinyinMixed: Story = {
+  args: {
+    prompt: 'Hello 你好世界！',
+    practiceMode: 'pinyin',
+    onComplete: (stats) => console.log('Completed with stats:', stats),
+  },
+};
+
+export const ChineseWithPunctuation: Story = {
+  args: {
+    prompt: '你好，世界！我很高兴。',
+    practiceMode: 'pinyin',
+    onComplete: (stats) => console.log('Completed with stats:', stats),
+  },
+};

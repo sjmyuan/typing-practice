@@ -5,7 +5,10 @@ import {
   getPinyinForChar,
   getPinyinWithoutTonesForChar,
   normalizePinyinInput,
-  isPinyinPracticeText
+  isPinyinPracticeText,
+  containsChinesePunctuation,
+  getEnglishPunctuationForChinese,
+  isChineseCharacterOrPunctuation
 } from './pinyinUtils';
 
 describe('pinyinUtils', () => {
@@ -96,6 +99,84 @@ describe('pinyinUtils', () => {
       expect(isPinyinPracticeText('hello world')).toBe(false);
       expect(isPinyinPracticeText('123')).toBe(false);
       expect(isPinyinPracticeText('')).toBe(false);
+    });
+  });
+
+  // Add tests for Chinese punctuation functionality
+  describe('containsChinesePunctuation', () => {
+    it('returns true for Chinese punctuation', () => {
+      expect(containsChinesePunctuation('。')).toBe(true);
+      expect(containsChinesePunctuation('，')).toBe(true);
+      expect(containsChinesePunctuation('！')).toBe(true);
+      expect(containsChinesePunctuation('？')).toBe(true);
+      expect(containsChinesePunctuation('；')).toBe(true);
+      expect(containsChinesePunctuation('：')).toBe(true);
+      expect(containsChinesePunctuation('（')).toBe(true);
+      expect(containsChinesePunctuation('）')).toBe(true);
+      expect(containsChinesePunctuation('「')).toBe(true);
+      expect(containsChinesePunctuation('」')).toBe(true);
+    });
+
+    it('returns false for English punctuation', () => {
+      expect(containsChinesePunctuation('.')).toBe(false);
+      expect(containsChinesePunctuation(',')).toBe(false);
+      expect(containsChinesePunctuation('!')).toBe(false);
+      expect(containsChinesePunctuation('?')).toBe(false);
+      expect(containsChinesePunctuation(';')).toBe(false);
+      expect(containsChinesePunctuation(':')).toBe(false);
+      expect(containsChinesePunctuation('(')).toBe(false);
+      expect(containsChinesePunctuation(')')).toBe(false);
+    });
+
+    it('returns false for Chinese characters', () => {
+      expect(containsChinesePunctuation('你')).toBe(false);
+      expect(containsChinesePunctuation('好')).toBe(false);
+    });
+
+    it('returns false for English characters', () => {
+      expect(containsChinesePunctuation('a')).toBe(false);
+      expect(containsChinesePunctuation('A')).toBe(false);
+      expect(containsChinesePunctuation('1')).toBe(false);
+    });
+  });
+
+  describe('getEnglishPunctuationForChinese', () => {
+    it('returns correct English punctuation for Chinese punctuation', () => {
+      expect(getEnglishPunctuationForChinese('。')).toBe('.');
+      expect(getEnglishPunctuationForChinese('，')).toBe(',');
+      expect(getEnglishPunctuationForChinese('！')).toBe('!');
+      expect(getEnglishPunctuationForChinese('？')).toBe('?');
+      expect(getEnglishPunctuationForChinese('；')).toBe(';');
+      expect(getEnglishPunctuationForChinese('：')).toBe(':');
+      expect(getEnglishPunctuationForChinese('（')).toBe('(');
+      expect(getEnglishPunctuationForChinese('）')).toBe(')');
+      expect(getEnglishPunctuationForChinese('「')).toBe('"');
+      expect(getEnglishPunctuationForChinese('」')).toBe('"');
+    });
+
+    it('returns original character for non-Chinese punctuation', () => {
+      expect(getEnglishPunctuationForChinese('.')).toBe('.');
+      expect(getEnglishPunctuationForChinese('a')).toBe('a');
+      expect(getEnglishPunctuationForChinese('你')).toBe('你');
+    });
+  });
+
+  describe('isChineseCharacterOrPunctuation', () => {
+    it('returns true for Chinese characters', () => {
+      expect(isChineseCharacterOrPunctuation('你')).toBe(true);
+      expect(isChineseCharacterOrPunctuation('好')).toBe(true);
+    });
+
+    it('returns true for Chinese punctuation', () => {
+      expect(isChineseCharacterOrPunctuation('。')).toBe(true);
+      expect(isChineseCharacterOrPunctuation('，')).toBe(true);
+      expect(isChineseCharacterOrPunctuation('！')).toBe(true);
+    });
+
+    it('returns false for English characters and punctuation', () => {
+      expect(isChineseCharacterOrPunctuation('a')).toBe(false);
+      expect(isChineseCharacterOrPunctuation('.')).toBe(false);
+      expect(isChineseCharacterOrPunctuation('!')).toBe(false);
     });
   });
 });

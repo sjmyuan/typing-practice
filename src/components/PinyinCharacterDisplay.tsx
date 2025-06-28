@@ -1,6 +1,6 @@
 import React from 'react';
 import TypingCursor from './TypingCursor';
-import { getPinyinForChar, getPinyinWithoutTonesForChar, containsChinese } from '../utils/pinyinUtils';
+import { getPinyinForChar, getPinyinWithoutTonesForChar, containsChinese, containsChinesePunctuation, getEnglishPunctuationForChinese } from '../utils/pinyinUtils';
 
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
 type PinyinState = 'neutral' | 'correct' | 'incorrect';
@@ -55,6 +55,10 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
   const pinyin = showPinyin && containsChinese(char) ? getPinyinForChar(char) : null;
   const pinyinWithoutTones = showPinyin && containsChinese(char) ? getPinyinWithoutTonesForChar(char) : null;
   
+  // Handle Chinese punctuation display
+  const isChinesePunct = containsChinesePunctuation(char);
+  const englishPunctuation = isChinesePunct ? getEnglishPunctuationForChinese(char) : null;
+  
   // For pinyin display with cursor positioning
   const renderPinyinWithCursor = () => {
     if (!pinyin || !pinyinWithoutTones) {
@@ -108,20 +112,20 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
       onClick={handleClick}
       aria-label={state}
     >
-      {/* Pinyin display above character */}
-      {pinyin && (
+      {/* Pinyin display above Chinese character OR English punctuation above Chinese punctuation */}
+      {(pinyin || (showPinyin && englishPunctuation)) && (
         <span 
           className={pinyinClassName}
           data-testid="pinyin-display"
         >
-          {renderPinyinWithCursor()}
+          {pinyin ? renderPinyinWithCursor() : englishPunctuation}
         </span>
       )}
       
       {/* Main character */}
       <span className="relative" data-testid="main-character">
         {displayChar}
-        {showCursor && !containsChinese(char) && <TypingCursor visible={true} />}
+        {showCursor && !containsChinese(char) && !isChinesePunct && <TypingCursor visible={true} />}
       </span>
     </span>
   );

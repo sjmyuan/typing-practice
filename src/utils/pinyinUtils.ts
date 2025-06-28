@@ -83,3 +83,51 @@ export const normalizePinyinInput = (input: string): string => {
 export const isPinyinPracticeText = (text: string): boolean => {
   return containsChinese(text);
 };
+
+/**
+ * Detect if a character is Chinese punctuation
+ */
+export const containsChinesePunctuation = (char: string): boolean => {
+  // Common Chinese punctuation marks
+  const chinesePunctuationPattern = /[。，！？；：（）「」『』【】《》〈〉""'']/;
+  return chinesePunctuationPattern.test(char);
+};
+
+/**
+ * Map Chinese punctuation to English equivalent
+ * @param chinesePunct - Chinese punctuation character
+ * @returns Corresponding English punctuation
+ */
+export const getEnglishPunctuationForChinese = (chinesePunct: string): string => {
+  const punctuationMap: { [key: string]: string } = {
+    '。': '.',
+    '，': ',',
+    '！': '!',
+    '？': '?',
+    '；': ';',
+    '：': ':',
+    '（': '(',
+    '）': ')',
+    '「': '"',
+    '」': '"',
+    '『': '"',
+    '』': '"',
+    '【': '[',
+    '】': ']',
+    '《': '<',
+    '》': '>',
+    '〈': '<',
+    '〉': '>'
+  };
+  
+  return punctuationMap[chinesePunct] || chinesePunct;
+};
+
+/**
+ * Check if a character is either Chinese character or Chinese punctuation
+ * @param char - Character to check
+ * @returns True if character is Chinese character or Chinese punctuation
+ */
+export const isChineseCharacterOrPunctuation = (char: string): boolean => {
+  return containsChinese(char) || containsChinesePunctuation(char);
+};

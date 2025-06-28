@@ -487,3 +487,53 @@ export const FontSizeScaling: Story = {
     );
   },
 };
+
+export const UntypedIncorrectState: Story = {
+  args: {
+    char: '你',
+    state: 'incorrect',
+    showPinyin: true,
+    pinyinInput: 'xin',
+    pinyinState: 'incorrect',
+  },
+};
+
+export const ChinesePunctuationComma: Story = {
+  args: {
+    char: '，',
+    state: 'untyped',
+    showPinyin: true,
+    pinyinInput: '',
+    pinyinState: 'neutral',
+  },
+};
+
+export const ChinesePunctuationExclamation: Story = {
+  args: {
+    char: '！',
+    state: 'correct',
+    showPinyin: true,
+    pinyinInput: '',
+    pinyinState: 'neutral',
+  },
+};
+
+export const ChinesePunctuationPeriod: Story = {
+  args: {
+    char: '。',
+    state: 'untyped',
+    showPinyin: true,
+    pinyinInput: '',
+    pinyinState: 'neutral',
+  },
+};
+
+export const ChinesePunctuationQuestion: Story = {
+  args: {
+    char: '？',
+    state: 'incorrect',
+    showPinyin: true,
+    pinyinInput: '',
+    pinyinState: 'neutral',
+  },
+};
