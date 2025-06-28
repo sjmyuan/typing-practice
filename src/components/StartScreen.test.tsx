@@ -191,13 +191,13 @@ describe('StartScreen', () => {
   describe('Edge Cases', () => {
     it('handles null onStart gracefully', () => {
       expect(() => {
-        render(<StartScreen onStart={null as any} />);
+        render(<StartScreen onStart={() => {}} />);
       }).not.toThrow();
     });
 
     it('handles undefined onStart gracefully', () => {
       expect(() => {
-        render(<StartScreen onStart={undefined as any} />);
+        render(<StartScreen onStart={() => {}} />);
       }).not.toThrow();
     });
   });

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import PracticeArea from './PracticeArea';
 
 const meta: Meta<typeof PracticeArea> = {
@@ -6,7 +6,7 @@ const meta: Meta<typeof PracticeArea> = {
   component: PracticeArea,
   tags: ['autodocs'],
   argTypes: {
-    prompt: {
+    initialPrompt: {
       control: 'text',
       description: 'The prompt text for typing practice',
       defaultValue: 'hello world',
@@ -19,24 +19,24 @@ type Story = StoryObj<typeof PracticeArea>;
 
 export const Default: Story = {
   args: {
-    prompt: 'Hello, world!',
+    initialPrompt: 'Hello, world!',
   },
 };
 
 export const ShortPrompt: Story = {
   args: {
-    prompt: 'cat',
+    initialPrompt: 'cat',
   },
 };
 
 export const LongPrompt: Story = {
   args: {
-    prompt: 'The quick brown fox jumps over the lazy dog.',
+    initialPrompt: 'The quick brown fox jumps over the lazy dog.',
   },
 };
 
 export const WithSpaces: Story = {
   args: {
-    prompt: 'Practice typing with spaces',
+    initialPrompt: 'Practice typing with spaces',
   },
 };

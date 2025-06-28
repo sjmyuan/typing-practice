@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 
@@ -300,7 +300,6 @@ export const PinyinTypingStates: Story = {
 };
 
 export const FontSizeComparison: Story = {
-  name: 'Font Size Comparison',
   render: () => (
     <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
       <div style={{ textAlign: 'center' }}>

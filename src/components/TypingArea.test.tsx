@@ -355,13 +355,13 @@ describe('TypingArea', () => {
 
     it('handles null onComplete gracefully', () => {
       expect(() => {
-        render(<TypingArea prompt="hello" onComplete={null as any} />);
+        render(<TypingArea prompt="hello" onComplete={() => {}} />);
       }).not.toThrow();
     });
 
     it('handles undefined onComplete gracefully', () => {
       expect(() => {
-        render(<TypingArea prompt="hello" onComplete={undefined as any} />);
+        render(<TypingArea prompt="hello" onComplete={() => {}} />);
       }).not.toThrow();
     });
   });

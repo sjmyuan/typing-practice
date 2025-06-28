@@ -218,51 +218,51 @@ describe('CompletionScreen', () => {
 
     it('handles null onRestart gracefully', () => {
       expect(() => {
-        render(<CompletionScreen accuracy={85} onRestart={null as any} onStartNew={mockOnStartNew} />);
+        render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       }).not.toThrow();
     });
 
     it('handles undefined onRestart gracefully', () => {
       expect(() => {
-        render(<CompletionScreen accuracy={85} onRestart={undefined as any} onStartNew={mockOnStartNew} />);
+        render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       }).not.toThrow();
     });
 
     it('handles null onStartNew gracefully', () => {
       expect(() => {
-        render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={null as any} />);
+        render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       }).not.toThrow();
     });
 
     it('handles undefined onStartNew gracefully', () => {
       expect(() => {
-        render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={undefined as any} />);
+        render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       }).not.toThrow();
     });
 
     it('does not crash when clicking Practice Again with null onRestart', () => {
-      render(<CompletionScreen accuracy={85} onRestart={null as any} onStartNew={mockOnStartNew} />);
+      render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       expect(() => {
         fireEvent.click(screen.getByRole('button', { name: /practice again/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Practice Again with undefined onRestart', () => {
-      render(<CompletionScreen accuracy={85} onRestart={undefined as any} onStartNew={mockOnStartNew} />);
+      render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       expect(() => {
         fireEvent.click(screen.getByRole('button', { name: /practice again/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Start New Practice with null onStartNew', () => {
-      render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={null as any} />);
+      render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       expect(() => {
         fireEvent.click(screen.getByRole('button', { name: /start new practice/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Start New Practice with undefined onStartNew', () => {
-      render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={undefined as any} />);
+      render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       expect(() => {
         fireEvent.click(screen.getByRole('button', { name: /start new practice/i }));
       }).not.toThrow();

@@ -17,7 +17,7 @@ describe('TypingCursor', () => {
     });
 
     it('does not render cursor when visible is undefined', () => {
-      render(<TypingCursor visible={undefined as any} />);
+      render(<TypingCursor visible={undefined as unknown as boolean} />);
       const cursor = screen.queryByTestId('cursor');
       expect(cursor).not.toBeInTheDocument();
     });
@@ -54,25 +54,25 @@ describe('TypingCursor', () => {
 
   describe('Edge Cases', () => {
     it('handles null visible prop gracefully', () => {
-      render(<TypingCursor visible={null as any} />);
+      render(<TypingCursor visible={null as unknown as boolean} />);
       const cursor = screen.queryByTestId('cursor');
       expect(cursor).not.toBeInTheDocument();
     });
 
     it('handles string visible prop gracefully', () => {
-      render(<TypingCursor visible={'true' as any} />);
+      render(<TypingCursor visible={'true' as unknown as boolean} />);
       const cursor = screen.getByTestId('cursor');
       expect(cursor).toBeInTheDocument();
     });
 
     it('handles number visible prop gracefully', () => {
-      render(<TypingCursor visible={1 as any} />);
+      render(<TypingCursor visible={1 as unknown as boolean} />);
       const cursor = screen.getByTestId('cursor');
       expect(cursor).toBeInTheDocument();
     });
 
     it('handles zero visible prop gracefully', () => {
-      render(<TypingCursor visible={0 as any} />);
+      render(<TypingCursor visible={0 as unknown as boolean} />);
       const cursor = screen.queryByTestId('cursor');
       expect(cursor).not.toBeInTheDocument();
     });

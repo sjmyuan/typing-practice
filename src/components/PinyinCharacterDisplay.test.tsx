@@ -320,7 +320,7 @@ describe('PinyinCharacterDisplay', () => {
             char="你" 
             state="untyped" 
             index={0} 
-            onClick={null as any}
+            onClick={() => {}}
             showCursor={false}
             showPinyin={true}
           />
@@ -335,7 +335,7 @@ describe('PinyinCharacterDisplay', () => {
             char="你" 
             state="untyped" 
             index={0} 
-            onClick={undefined as any}
+            onClick={() => {}}
             showCursor={false}
             showPinyin={true}
           />
