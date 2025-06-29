@@ -93,6 +93,37 @@ const PinyinCharacterDisplay = forwardRef<HTMLSpanElement, PinyinCharacterDispla
     });
   };
   
+  // For English punctuation display with cursor positioning
+  const renderEnglishPunctuationWithCursor = () => {
+    if (!englishPunctuation) {
+      return null;
+    }
+
+    const inputLength = pinyinInput.length;
+    
+    return englishPunctuation.split('').map((punctChar, charIndex) => {
+      let charStyle = '';
+      
+      if (charIndex < inputLength) {
+        // Character already typed
+        const typedChar = pinyinInput[charIndex];
+        charStyle = typedChar === punctChar ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+      } else {
+        charStyle = 'text-gray-400';
+      }
+      
+      // Show cursor at current typing position
+      const showCharCursor = showCursor && charIndex === inputLength;
+      
+      return (
+        <span key={`punct-${index}-${charIndex}`} className={`relative ${charStyle}`}>
+          {punctChar}
+          {showCharCursor && <TypingCursor visible={true} />}
+        </span>
+      );
+    });
+  };
+  
   // Determine pinyin styling based on typing state
   let pinyinClassName = 'leading-none mb-1 select-none relative text-[0.75em]';
   switch (pinyinState) {
@@ -121,7 +152,7 @@ const PinyinCharacterDisplay = forwardRef<HTMLSpanElement, PinyinCharacterDispla
           className={pinyinClassName}
           data-testid="pinyin-display"
         >
-          {pinyin ? renderPinyinWithCursor() : englishPunctuation}
+          {pinyin ? renderPinyinWithCursor() : renderEnglishPunctuationWithCursor()}
         </span>
       )}
       

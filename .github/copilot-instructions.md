@@ -15,7 +15,7 @@ Typing Practice is a typing practice program designed for younger elementary sch
 <architecture>
 </architecture>
 <coding-guidelines> 
-- avoid spaces in empty lines
+- avoid trailing whitespace.
 </coding-guidelines>
 
 </knowledge>
