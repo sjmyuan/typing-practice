@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlignLeft, AlignCenter, AlignRight, AlignJustify } from 'lucide-react';
 
 type CharacterAlignment = 'left' | 'center' | 'right' | 'justify';
 
@@ -11,11 +12,11 @@ const CharacterAlignmentControl: React.FC<CharacterAlignmentControlProps> = ({
   currentAlignment,
   onAlignmentChange
 }) => {
-  const alignmentOptions: { value: CharacterAlignment; label: string; icon: string }[] = [
-    { value: 'left', label: 'Left align characters', icon: '⫷' },
-    { value: 'center', label: 'Center characters', icon: '⫶' },
-    { value: 'right', label: 'Right align characters', icon: '⫸' },
-    { value: 'justify', label: 'Justify characters', icon: '⫹' }
+  const alignmentOptions: { value: CharacterAlignment; label: string; Icon: React.ComponentType<{ size?: number }> }[] = [
+    { value: 'left', label: 'Left align characters', Icon: AlignLeft },
+    { value: 'center', label: 'Center characters', Icon: AlignCenter },
+    { value: 'right', label: 'Right align characters', Icon: AlignRight },
+    { value: 'justify', label: 'Justify characters', Icon: AlignJustify }
   ];
 
   return (
@@ -41,7 +42,7 @@ const CharacterAlignmentControl: React.FC<CharacterAlignmentControlProps> = ({
           role="radio"
           aria-checked={currentAlignment === option.value}
         >
-          <span className="text-lg" aria-hidden="true">{option.icon}</span>
+          <option.Icon size={18} aria-hidden="true" />
         </button>
       ))}
     </div>
