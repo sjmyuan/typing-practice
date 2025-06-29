@@ -21,7 +21,8 @@ const CharacterDisplay = forwardRef<HTMLSpanElement, CharacterDisplayProps>(({
   characterWidth = 'min-w-[0.5rem]'
 }, ref) => {
   // Apply consistent base styling to all characters to maintain uniform width
-  let className = `relative inline-flex items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
+  // Use flex-col layout with justify-end to match PinyinCharacterDisplay height
+  let className = `relative inline-flex flex-col items-center justify-end cursor-pointer px-0.5 rounded ${characterWidth}`;
   
   // Apply color and background styling based on character state
   switch (state) {
@@ -53,8 +54,16 @@ const CharacterDisplay = forwardRef<HTMLSpanElement, CharacterDisplayProps>(({
       onClick={handleClick}
       aria-label={state}
     >
-      {char === ' ' ? '\u00A0' : char === '\n' ? '↵' : char}
-      {showCursor && <TypingCursor visible={true} />}
+      {/* Invisible spacer to match pinyin height */}
+      <span className="leading-none mb-1 select-none text-[0.75em] invisible">
+        &nbsp;
+      </span>
+      
+      {/* Main character */}
+      <span className="relative">
+        {char === ' ' ? '\u00A0' : char === '\n' ? '↵' : char}
+        {showCursor && <TypingCursor visible={true} />}
+      </span>
     </span>
   );
 });

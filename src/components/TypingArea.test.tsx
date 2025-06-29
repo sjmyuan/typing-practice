@@ -376,8 +376,9 @@ describe('TypingArea', () => {
       chars.forEach(char => {
         expect(char).toHaveClass('relative');
         expect(char).toHaveClass('inline-flex');
+        expect(char).toHaveClass('flex-col');
         expect(char).toHaveClass('items-center');
-        expect(char).toHaveClass('justify-center');
+        expect(char).toHaveClass('justify-end');  
       });
     });
 
@@ -889,7 +890,7 @@ describe('TypingArea', () => {
       expect(mockScrollIntoView).toHaveBeenCalledWith({
         behavior: 'smooth',
         block: 'center',
-        inline: 'nearest'
+        inline: 'start'
       });
     });
 
@@ -960,7 +961,7 @@ describe('TypingArea', () => {
         expect(mockScrollIntoView).toHaveBeenCalledWith({
           behavior: 'smooth',
           block: 'center',
-          inline: 'nearest'
+          inline: 'start'
         });
       }
     });

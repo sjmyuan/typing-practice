@@ -35,7 +35,9 @@ describe('CharacterDisplay', () => {
         />
       );
       const element = screen.getByTestId('practice-char');
-      expect(element.textContent).toBe('\u00A0');
+      // The element now contains both invisible spacer and the main character
+      const mainCharacter = element.querySelector('span:last-child');
+      expect(mainCharacter?.textContent).toBe('\u00A0');
     });
 
     it('has correct aria-label for character state', () => {
@@ -135,8 +137,9 @@ describe('CharacterDisplay', () => {
         const char = screen.getByTestId('practice-char');
         expect(char).toHaveClass('relative');
         expect(char).toHaveClass('inline-flex');
+        expect(char).toHaveClass('flex-col');
         expect(char).toHaveClass('items-center');
-        expect(char).toHaveClass('justify-center');
+        expect(char).toHaveClass('justify-end');
         expect(char).toHaveClass('min-w-[0.5rem]');
         expect(char).toHaveClass('cursor-pointer');
         expect(char).toHaveClass('px-0.5');

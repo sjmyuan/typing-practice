@@ -29,7 +29,7 @@ const PinyinCharacterDisplay = forwardRef<HTMLSpanElement, PinyinCharacterDispla
   characterWidth = 'min-w-[2rem]'
 }, ref) => {
   // Apply consistent base styling to all characters to maintain uniform width
-  let className = `relative inline-flex flex-col items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
+  let className = `relative inline-flex flex-col items-center justify-end cursor-pointer px-0.5 rounded ${characterWidth}`;
   
   // Apply color and background styling based on character state
   switch (state) {
