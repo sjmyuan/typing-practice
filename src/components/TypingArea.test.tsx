@@ -375,7 +375,9 @@ describe('TypingArea', () => {
       expect(chars).toHaveLength(5);
       chars.forEach(char => {
         expect(char).toHaveClass('relative');
-        expect(char).toHaveClass('inline-block');
+        expect(char).toHaveClass('inline-flex');
+        expect(char).toHaveClass('items-center');
+        expect(char).toHaveClass('justify-center');
       });
     });
 

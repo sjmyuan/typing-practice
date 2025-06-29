@@ -14,6 +14,7 @@ interface PinyinCharacterDisplayProps {
   showPinyin?: boolean;
   pinyinInput?: string;
   pinyinState?: PinyinState;
+  characterWidth?: string;
 }
 
 const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
@@ -24,10 +25,11 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
   showCursor,
   showPinyin = false,
   pinyinInput = '',
-  pinyinState = 'neutral'
+  pinyinState = 'neutral',
+  characterWidth = 'min-w-[2rem]'
 }) => {
   // Apply consistent base styling to all characters to maintain uniform width
-  let className = 'relative inline-flex flex-col items-center cursor-pointer px-0.5 rounded min-w-[2rem]';
+  let className = `relative inline-flex flex-col items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
   
   // Apply color and background styling based on character state
   switch (state) {

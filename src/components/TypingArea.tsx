@@ -386,6 +386,15 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     'extra-large': 'text-7xl'
   };
 
+  // Character width classes that scale with font size for consistent alignment
+  // Widths are designed to accommodate longest pinyin (up to 7 characters like "chuang", "shuang")
+  const characterWidthClasses = {
+    small: 'w-16',         // 64px width for text-xl - fits ~7 chars
+    medium: 'w-24',        // 96px width for text-3xl - fits ~7 chars  
+    large: 'w-44',         // 176px width for text-5xl - fits ~7 chars
+    'extra-large': 'w-56'  // 224px width for text-7xl - fits ~7 chars
+  };
+
   const fontSizeOrder: FontSize[] = ['small', 'medium', 'large', 'extra-large'];
 
   const handleIncreaseFontSize = () => {
@@ -457,6 +466,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               showPinyin={true}
               pinyinInput={charData.pinyinInput || ''}
               pinyinState={charData.pinyinState || 'neutral'}
+              characterWidth={characterWidthClasses[fontSize]}
             />
           ) : (
             <CharacterDisplay

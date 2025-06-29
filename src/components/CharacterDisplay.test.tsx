@@ -134,7 +134,9 @@ describe('CharacterDisplay', () => {
         );
         const char = screen.getByTestId('practice-char');
         expect(char).toHaveClass('relative');
-        expect(char).toHaveClass('inline-block');
+        expect(char).toHaveClass('inline-flex');
+        expect(char).toHaveClass('items-center');
+        expect(char).toHaveClass('justify-center');
         expect(char).toHaveClass('min-w-[0.5rem]');
         expect(char).toHaveClass('cursor-pointer');
         expect(char).toHaveClass('px-0.5');

@@ -9,6 +9,7 @@ interface CharacterDisplayProps {
   index: number;
   onClick: (index: number) => void;
   showCursor: boolean;
+  characterWidth?: string;
 }
 
 const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
@@ -16,10 +17,11 @@ const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
   state,
   index,
   onClick,
-  showCursor
+  showCursor,
+  characterWidth = 'min-w-[0.5rem]'
 }) => {
   // Apply consistent base styling to all characters to maintain uniform width
-  let className = 'relative inline-block min-w-[0.5rem] cursor-pointer px-0.5 rounded';
+  let className = `relative inline-flex items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
   
   // Apply color and background styling based on character state
   switch (state) {
