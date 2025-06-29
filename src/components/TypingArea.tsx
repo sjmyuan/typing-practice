@@ -62,7 +62,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     characterRefs.current = new Array(prompt.length).fill(null);
   }, [prompt.length]);
 
-  // Check if current character needs scrolling (proactive visibility check - vertical only)
+  // Check if current character needs scrolling (visibility check - vertical only)
   const isCharacterNearViewportEdge = useCallback(() => {
     if (cursorPosition >= characterRefs.current.length || !containerRef.current) {
       return false;
@@ -76,14 +76,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     const containerRect = containerRef.current.getBoundingClientRect();
     const charRect = currentCharElement.getBoundingClientRect();
     
-    // Define buffer zone (20% of container height for vertical scrolling only)
+    // Define buffer zone only for bottom edge (20% of container height)
     const verticalBuffer = containerRect.height * 0.2;
     
-    // Check if character is approaching vertical viewport edges only
-    const isNearTopEdge = charRect.top < containerRect.top + verticalBuffer;
+    // Check if character is not visible at top (no buffer) or approaching bottom edge (with buffer)
+    const isNotVisibleAtTop = charRect.top < containerRect.top;
     const isNearBottomEdge = charRect.bottom > containerRect.bottom - verticalBuffer;
     
-    return isNearTopEdge || isNearBottomEdge;
+    return isNotVisibleAtTop || isNearBottomEdge;
   }, [cursorPosition]);
 
   // Smart scroll function that only scrolls when necessary
