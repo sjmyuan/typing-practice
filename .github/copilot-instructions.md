@@ -25,16 +25,16 @@ Typing Practice is a typing practice program designed for younger elementary sch
 The skills section describes additional capabilities that you can refer to, including defining requirements, planning, test-driven development, etc.
 
 <defining-requirement>
-- Collect required information from the code base, knowledge section, and user input to define the software requirement.
-- Clarify ambiguous terms or assumptions to ensure alignment.
-- Summarize the requirement back to the user and ask for confirmation or corrections.
+- Gather necessary information from the code base, knowledge section, and user input to clearly define the software requirement.
+- Clarify any ambiguous terms or assumptions to ensure mutual understanding; pause and request clarification from the user before proceeding.
+- Summarize the requirement to the user and request confirmation or corrections; wait for the user's confirmation before moving forward.
 </defining-requirement>
 
 <planning>
 - Break down high-level software requirements into specific, independently testable functionalities.
 - Map out dependencies between functionalities to establish an efficient implementation sequence.
 - Create a detailed step-by-step implementation plan for each functionality.
-- Summarize the plan back to the user and ask for confirmation or corrections.
+- Summarize the plan back to the user and ask for confirmation or corrections; wait for the user's confirmation before moving forward.
 </planning>
 
 <custom-tdd>

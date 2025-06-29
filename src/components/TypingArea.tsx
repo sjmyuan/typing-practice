@@ -416,7 +416,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
-      className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors min-h-[60vh]"
+      className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors"
       aria-label="practice area - click here and start typing"
     >
       <div className="flex justify-end mb-4">

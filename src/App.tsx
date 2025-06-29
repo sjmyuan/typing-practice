@@ -3,8 +3,8 @@ import PracticeArea from './components/PracticeArea'
 
 function App() {
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col">
-      <div className="container mx-auto px-4 py-6 flex-1 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col">
+      <div className="container mx-auto px-4 py-6 flex flex-col">
         <header className="text-center mb-8 flex-shrink-0">
           <div className="bg-white rounded-3xl shadow-lg p-6 mb-6 mx-auto max-w-2xl border-4 border-gradient-to-r from-blue-400 to-purple-400">
             <div className="flex items-center justify-center mb-4">
@@ -23,7 +23,7 @@ function App() {
           </div>
         </header>
         
-        <main className="flex-1 flex flex-col">
+        <main className="flex flex-col">
           <PracticeArea />
         </main>
       </div>
