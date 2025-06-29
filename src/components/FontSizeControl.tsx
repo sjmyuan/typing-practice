@@ -1,4 +1,5 @@
 import React from 'react';
+import { Minus, Plus } from 'lucide-react';
 
 interface FontSizeControlProps {
   onIncrease: () => void;
@@ -14,24 +15,38 @@ const FontSizeControl: React.FC<FontSizeControlProps> = ({
   canDecrease,
 }) => {
   return (
-    <div className="flex items-center gap-2 mb-4">
+    <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
       <button
         type="button"
         onClick={onDecrease}
         disabled={!canDecrease}
         aria-label="Decrease font size"
-        className="flex items-center justify-center w-12 h-12 text-lg font-bold bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        className={`
+          px-3 py-2 rounded-md text-sm font-medium transition-colors
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+          ${!canDecrease
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+          }
+        `}
       >
-        A-
+        <Minus size={18} aria-hidden="true" />
       </button>
       <button
         type="button"
         onClick={onIncrease}
         disabled={!canIncrease}
         aria-label="Increase font size"
-        className="flex items-center justify-center w-12 h-12 text-lg font-bold bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        className={`
+          px-3 py-2 rounded-md text-sm font-medium transition-colors
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+          ${!canIncrease
+            ? 'text-gray-400 cursor-not-allowed'
+            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+          }
+        `}
       >
-        A+
+        <Plus size={18} aria-hidden="true" />
       </button>
     </div>
   );

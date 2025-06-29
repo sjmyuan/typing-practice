@@ -118,7 +118,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    expect(screen.getByText('A+')).toBeInTheDocument();
-    expect(screen.getByText('A-')).toBeInTheDocument();
+    expect(screen.getByLabelText('Increase font size')).toBeInTheDocument();
+    expect(screen.getByLabelText('Decrease font size')).toBeInTheDocument();
   });
 });
