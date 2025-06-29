@@ -536,7 +536,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
   };
 
   const isWordBreaker = (char: string): boolean => {
-    return char === ' ' || char === '\n';
+    return char === ' ';
   };
 
   // Group characters into words for better justify alignment
@@ -578,7 +578,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     characters.forEach((charData, index) => {
       const char = charData.char;
 
-      // Handle newlines and spaces as separate word groups
+      // Handle spaces as separate word groups
       if (isWordBreaker(char)) {
         finalizeCurrentWord(index - 1);
         addSingleCharacterWord(charData, index);
@@ -586,21 +586,36 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
         return;
       }
 
-      // Handle Chinese characters - each forms its own group, potentially with following Chinese punctuation
+      // Handle Chinese characters - each forms its own group, potentially with following Chinese punctuation or line breaks
       if (containsChinese(char)) {
         finalizeCurrentWord(index - 1);
         addCharacterToCurrentWord(charData, index);
 
-        // Check if next character is Chinese punctuation that should be grouped with this character
+        // Check if next character is Chinese punctuation or line break that should be grouped with this character
         const nextIndex = index + 1;
         const nextChar = nextIndex < characters.length ? characters[nextIndex] : null;
         
-        if (!nextChar || !isChinesePunctuation(nextChar.char)) {
-          // No Chinese punctuation follows, complete this Chinese character group
+        if (!nextChar || (!isChinesePunctuation(nextChar.char) && nextChar.char !== '\n')) {
+          // No Chinese punctuation or line break follows, complete this Chinese character group
           finalizeCurrentWord(index);
           startNewWord(nextIndex);
         }
-        // If Chinese punctuation follows, let it be handled in the next iteration
+        // If Chinese punctuation or line break follows, let it be handled in the next iteration
+        return;
+      }
+
+      // Handle line breaks - group with preceding word (especially Chinese characters)
+      if (char === '\n') {
+        if (currentWord.length > 0) {
+          // Add to current word and finalize
+          addCharacterToCurrentWord(charData, index);
+          finalizeCurrentWord(index);
+          startNewWord(index + 1);
+        } else {
+          // Standalone line break - treat as its own group
+          addSingleCharacterWord(charData, index);
+          startNewWord(index + 1);
+        }
         return;
       }
 
@@ -678,51 +693,32 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
         role="presentation"
       >
         {groupCharactersIntoWords(characters).map((wordGroup, wordIndex) => {
-          // Check if this word group is a newline
-          const isNewline = wordGroup.characters.length === 1 && wordGroup.characters[0].char === '\n';
+          // Check if this word group contains only a space (standalone space)
+          const isStandaloneSpace = wordGroup.characters.length === 1 && wordGroup.characters[0].char === ' ';
           
-          if (isNewline) {
-            // Render newline as a full-width break
+          if (isStandaloneSpace) {
+            // Render standalone space
             const charData = wordGroup.characters[0];
             const idx = wordGroup.startIndex;
-            const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
-            
-            const charElement = shouldUsePinyinDisplay ? (
-              <PinyinCharacterDisplay
-                key={idx}
-                char={charData.char}
-                state={charData.state}
-                index={idx}
-                onClick={handleCharacterClick}
-                showCursor={idx === cursorPosition && cursorPosition < prompt.length}
-                showPinyin={true}
-                pinyinInput={charData.pinyinInput || ''}
-                pinyinState={charData.pinyinState || 'neutral'}
-                characterWidth={characterWidthClasses[fontSize]}
-                ref={el => { characterRefs.current[idx] = el; }}
-              />
-            ) : (
-              <CharacterDisplay
-                key={idx}
-                char={charData.char}
-                state={charData.state}
-                index={idx}
-                onClick={handleCharacterClick}
-                showCursor={idx === cursorPosition && cursorPosition < prompt.length}
-                ref={el => { characterRefs.current[idx] = el; }}
-              />
-            );
             
             return (
-              <React.Fragment key={`word-${wordIndex}`}>
-                {charElement}
-                <div className="w-full" role="separator" aria-hidden="true" />
-              </React.Fragment>
+              <CharacterDisplay
+                key={`word-${wordIndex}`}
+                char={charData.char}
+                state={charData.state}
+                index={idx}
+                onClick={handleCharacterClick}
+                showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+                ref={el => { characterRefs.current[idx] = el; }}
+              />
             );
           }
           
+          // Check if this word group contains a line break
+          const hasLineBreak = wordGroup.characters.some(char => char.char === '\n');
+          
           // Render word group as a unit
-          return (
+          const wordElement = (
             <div key={`word-${wordIndex}`} className="inline-flex">
               {wordGroup.characters.map((charData, charIndex) => {
                 const idx = wordGroup.startIndex + charIndex;
@@ -756,6 +752,18 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               })}
             </div>
           );
+          
+          // If the word group contains a line break, add a line break after it
+          if (hasLineBreak) {
+            return (
+              <React.Fragment key={`word-${wordIndex}`}>
+                {wordElement}
+                <div className="w-full" role="separator" aria-hidden="true" />
+              </React.Fragment>
+            );
+          }
+          
+          return wordElement;
         })}
       </div>
       <ProgressDisplay
