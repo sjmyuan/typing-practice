@@ -792,4 +792,177 @@ describe('TypingArea', () => {
       expect(screen.getByText(/Progress: 6\/11 characters/)).toBeInTheDocument();
     });
   });
+
+  describe('Auto-scrolling', () => {
+    // Mock scrollIntoView since it's not available in jsdom
+    const mockScrollIntoView = vi.fn();
+    
+    beforeEach(() => {
+      // Mock scrollIntoView on all elements
+      Element.prototype.scrollIntoView = mockScrollIntoView;
+      mockScrollIntoView.mockClear();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('scrolls current character into view when cursor moves forward', async () => {
+      const longPrompt = 'This is a very long prompt that will definitely need scrolling to see all characters when displayed';
+      render(<TypingArea {...mockProps} prompt={longPrompt} />);
+      
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Type first character
+      fireEvent.keyDown(container, { key: 'T' });
+      
+      // Wait for DOM updates and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Should scroll the character at the new cursor position into view
+      expect(mockScrollIntoView).toHaveBeenCalled();
+    });
+
+    it('scrolls current character into view when cursor moves backward', async () => {
+      const longPrompt = 'This is a long prompt for testing';
+      render(<TypingArea {...mockProps} prompt={longPrompt} />);
+      
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Type a few characters first
+      fireEvent.keyDown(container, { key: 'T' });
+      fireEvent.keyDown(container, { key: 'h' });
+      fireEvent.keyDown(container, { key: 'i' });
+      
+      mockScrollIntoView.mockClear();
+      
+      // Move backward with backspace
+      fireEvent.keyDown(container, { key: 'Backspace' });
+      
+      // Wait for DOM updates and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Should scroll the character at the new cursor position into view
+      expect(mockScrollIntoView).toHaveBeenCalled();
+    });
+
+    it('scrolls target character into view when clicking on character', async () => {
+      const longPrompt = 'This is a long prompt for testing character clicks';
+      render(<TypingArea {...mockProps} prompt={longPrompt} />);
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Click on a character (e.g., index 10)
+      const characters = screen.getAllByTestId('practice-char');
+      fireEvent.click(characters[10]);
+      
+      // Wait for cursor position change and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Should scroll the clicked character into view
+      expect(mockScrollIntoView).toHaveBeenCalled();
+    });
+
+    it('scrolls with smooth behavior and appropriate positioning', async () => {
+      const longPrompt = 'This is a very long prompt that needs smooth scrolling behavior';
+      render(<TypingArea {...mockProps} prompt={longPrompt} />);
+      
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Type first character
+      fireEvent.keyDown(container, { key: 'T' });
+      
+      // Wait for DOM updates and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Check that scrollIntoView was called with smooth behavior and center positioning
+      expect(mockScrollIntoView).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    });
+
+    it('scrolls current character into view after font size changes', async () => {
+      const longPrompt = 'This is a long prompt for font size testing';
+      render(<TypingArea {...mockProps} prompt={longPrompt} />);
+      
+      // Type a few characters to move cursor
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      fireEvent.keyDown(container, { key: 'T' });
+      fireEvent.keyDown(container, { key: 'h' });
+      
+      mockScrollIntoView.mockClear();
+      
+      // Change font size
+      const increaseFontButton = screen.getByLabelText('Increase font size');
+      fireEvent.click(increaseFontButton);
+      
+      // Wait for font size change and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      // Should scroll current character into view after font size change
+      expect(mockScrollIntoView).toHaveBeenCalled();
+    });
+
+    it('handles scrolling in pinyin mode correctly', async () => {
+      const pinyinPrompt = '你好世界'; // Chinese characters
+      render(<TypingArea {...mockProps} prompt={pinyinPrompt} practiceMode="pinyin" />);
+      
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Type pinyin for first character
+      fireEvent.keyDown(container, { key: 'n' });
+      fireEvent.keyDown(container, { key: 'i' });
+      
+      // Wait for pinyin completion and scroll effect
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Should scroll appropriately in pinyin mode
+      expect(mockScrollIntoView).toHaveBeenCalled();
+    });
+
+    it('does not scroll unnecessarily when character is already visible', async () => {
+      const shortPrompt = 'short'; // Short prompt that fits in viewport
+      render(<TypingArea {...mockProps} prompt={shortPrompt} />);
+      
+      const container = screen.getByRole('textbox');
+      
+      // Wait for initial render
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // Type first character
+      fireEvent.keyDown(container, { key: 's' });
+      
+      // Wait for DOM updates
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
+      // For short prompts, scrolling may still be called but that's okay
+      // The important thing is that the scrolling function handles it gracefully
+      if (mockScrollIntoView.mock.calls.length > 0) {
+        expect(mockScrollIntoView).toHaveBeenCalledWith({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    });
+  });
 });

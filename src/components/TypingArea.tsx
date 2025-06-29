@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
@@ -55,6 +55,60 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     return 'medium';
   });
   const containerRef = useRef<HTMLDivElement>(null);
+  const characterRefs = useRef<(HTMLElement | null)[]>([]);
+
+  // Initialize character refs array
+  useEffect(() => {
+    characterRefs.current = new Array(prompt.length).fill(null);
+  }, [prompt.length]);
+
+  // Auto-scroll function to bring current character into view
+  const scrollToCurrentCharacter = useCallback(() => {
+    if (cursorPosition < characterRefs.current.length) {
+      const currentCharElement = characterRefs.current[cursorPosition];
+      if (currentCharElement && typeof currentCharElement.scrollIntoView === 'function') {
+        currentCharElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }
+  }, [cursorPosition]);
+
+  // Scroll to current character when cursor position changes
+  useEffect(() => {
+    // Use requestAnimationFrame to ensure DOM is updated, with timeout fallback
+    const animFrameId = requestAnimationFrame(() => {
+      scrollToCurrentCharacter();
+    });
+    // Fallback for test environments where requestAnimationFrame might not work
+    const timeoutId = setTimeout(() => {
+      scrollToCurrentCharacter();
+    }, 0);
+
+    return () => {
+      cancelAnimationFrame(animFrameId);
+      clearTimeout(timeoutId);
+    };
+  }, [cursorPosition, scrollToCurrentCharacter]);
+
+  // Scroll to current character when font size changes
+  useEffect(() => {
+    // Use requestAnimationFrame to ensure font size changes are rendered
+    const animFrameId = requestAnimationFrame(() => {
+      scrollToCurrentCharacter();
+    });
+    // Fallback for test environments
+    const timeoutId = setTimeout(() => {
+      scrollToCurrentCharacter();
+    }, 100);
+
+    return () => {
+      cancelAnimationFrame(animFrameId);
+      clearTimeout(timeoutId);
+    };
+  }, [fontSize, scrollToCurrentCharacter]);
 
   // Auto-focus the typing area on mount and add global click listener
   useEffect(() => {
@@ -467,6 +521,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               pinyinInput={charData.pinyinInput || ''}
               pinyinState={charData.pinyinState || 'neutral'}
               characterWidth={characterWidthClasses[fontSize]}
+              ref={el => { characterRefs.current[idx] = el; }} // Assign ref to character element
             />
           ) : (
             <CharacterDisplay
@@ -476,6 +531,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               index={idx}
               onClick={handleCharacterClick}
               showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+              ref={el => { characterRefs.current[idx] = el; }} // Assign ref to character element
             />
           );
 

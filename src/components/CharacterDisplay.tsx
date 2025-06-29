@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import TypingCursor from './TypingCursor';
 
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
@@ -12,14 +12,14 @@ interface CharacterDisplayProps {
   characterWidth?: string;
 }
 
-const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
+const CharacterDisplay = forwardRef<HTMLSpanElement, CharacterDisplayProps>(({
   char,
   state,
   index,
   onClick,
   showCursor,
   characterWidth = 'min-w-[0.5rem]'
-}) => {
+}, ref) => {
   // Apply consistent base styling to all characters to maintain uniform width
   let className = `relative inline-flex items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
   
@@ -47,6 +47,7 @@ const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
 
   return (
     <span
+      ref={ref}
       data-testid="practice-char"
       className={className}
       onClick={handleClick}
@@ -56,6 +57,8 @@ const CharacterDisplay: React.FC<CharacterDisplayProps> = ({
       {showCursor && <TypingCursor visible={true} />}
     </span>
   );
-};
+});
+
+CharacterDisplay.displayName = 'CharacterDisplay';
 
 export default CharacterDisplay;

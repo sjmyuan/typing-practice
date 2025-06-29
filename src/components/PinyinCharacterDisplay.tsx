@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import TypingCursor from './TypingCursor';
 import { getPinyinForChar, getPinyinWithoutTonesForChar, containsChinese, containsChinesePunctuation, getEnglishPunctuationForChinese } from '../utils/pinyinUtils';
 
@@ -17,7 +17,7 @@ interface PinyinCharacterDisplayProps {
   characterWidth?: string;
 }
 
-const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
+const PinyinCharacterDisplay = forwardRef<HTMLSpanElement, PinyinCharacterDisplayProps>(({
   char,
   state,
   index,
@@ -27,7 +27,7 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
   pinyinInput = '',
   pinyinState = 'neutral',
   characterWidth = 'min-w-[2rem]'
-}) => {
+}, ref) => {
   // Apply consistent base styling to all characters to maintain uniform width
   let className = `relative inline-flex flex-col items-center justify-center cursor-pointer px-0.5 rounded ${characterWidth}`;
   
@@ -109,6 +109,7 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
 
   return (
     <span
+      ref={ref}
       data-testid="pinyin-practice-char"
       className={className}
       onClick={handleClick}
@@ -131,6 +132,8 @@ const PinyinCharacterDisplay: React.FC<PinyinCharacterDisplayProps> = ({
       </span>
     </span>
   );
-};
+});
+
+PinyinCharacterDisplay.displayName = 'PinyinCharacterDisplay';
 
 export default PinyinCharacterDisplay;
