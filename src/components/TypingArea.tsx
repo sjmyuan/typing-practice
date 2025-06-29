@@ -4,7 +4,7 @@ import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
 import CharacterAlignmentControl, { type CharacterAlignment } from './CharacterAlignmentControl';
-import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese, isPinyinPracticeText } from '../utils/pinyinUtils';
+import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese, isPinyinPracticeText, containsChinesePunctuation } from '../utils/pinyinUtils';
 import { type PracticeMode } from './StartScreen';
 
 // Character state types
@@ -515,7 +515,149 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     localStorage.setItem('typingPracticeCharacterAlignment', alignment);
   };
 
-  // Character alignment classes
+  // Word grouping interface
+  interface WordGroup {
+    characters: CharacterData[];
+    startIndex: number;
+    endIndex: number;
+  }
+
+  // Helper function to check if a character is punctuation (English or Chinese)
+  const isPunctuation = (char: string): boolean => {
+    // Use existing utility for Chinese punctuation detection
+    if (containsChinesePunctuation(char)) {
+      return true; // It's Chinese punctuation
+    }
+    
+    // English punctuation
+    const englishPunctuation = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
+    return englishPunctuation.test(char);
+  };
+
+  // Group characters into words for better justify alignment
+  const groupCharactersIntoWords = (characters: CharacterData[]): WordGroup[] => {
+    const words: WordGroup[] = [];
+    let currentWord: CharacterData[] = [];
+    let wordStartIndex = 0;
+
+    characters.forEach((charData, index) => {
+      // Handle newlines as separate groups
+      if (charData.char === '\n') {
+        // End current word if it has characters
+        if (currentWord.length > 0) {
+          words.push({
+            characters: currentWord,
+            startIndex: wordStartIndex,
+            endIndex: index - 1
+          });
+          currentWord = [];
+        }
+        
+        // Add the newline as a separate "word"
+        words.push({
+          characters: [charData],
+          startIndex: index,
+          endIndex: index
+        });
+        
+        wordStartIndex = index + 1;
+      } else if (containsChinese(charData.char)) {
+        // For Chinese characters, start a new group but check if next character is Chinese punctuation
+        // End current word if it has characters
+        if (currentWord.length > 0) {
+          words.push({
+            characters: currentWord,
+            startIndex: wordStartIndex,
+            endIndex: index - 1
+          });
+          currentWord = [];
+        }
+        
+        // Start a new "word" with the Chinese character
+        currentWord = [charData];
+        wordStartIndex = index;
+        
+        // Check if the next character is Chinese punctuation - if so, include it in this group
+        const nextIndex = index + 1;
+        if (nextIndex < characters.length && isPunctuation(characters[nextIndex].char) && 
+            (isChineseCharacterOrPunctuation(characters[nextIndex].char) && !containsChinese(characters[nextIndex].char))) {
+          // Skip to next iteration to let the punctuation be handled in the next loop
+        } else {
+          // No Chinese punctuation follows, so complete this Chinese character as its own group
+          words.push({
+            characters: currentWord,
+            startIndex: wordStartIndex,
+            endIndex: index
+          });
+          currentWord = [];
+          wordStartIndex = index + 1;
+        }
+      } else if (isPunctuation(charData.char)) {
+        // Check if this is Chinese punctuation following a Chinese character
+        if (isChineseCharacterOrPunctuation(charData.char) && !containsChinese(charData.char) && currentWord.length > 0) {
+          // This is Chinese punctuation and we have a current word (likely Chinese character)
+          currentWord.push(charData);
+          // Complete the group with Chinese character + punctuation
+          words.push({
+            characters: currentWord,
+            startIndex: wordStartIndex,
+            endIndex: index
+          });
+          currentWord = [];
+          wordStartIndex = index + 1;
+        } else if (currentWord.length > 0) {
+          // English punctuation - add to current word
+          currentWord.push(charData);
+        } else {
+          // Standalone punctuation - treat as its own group
+          words.push({
+            characters: [charData],
+            startIndex: index,
+            endIndex: index
+          });
+          wordStartIndex = index + 1;
+        }
+      } else if (charData.char === ' ') {
+        // Handle spaces - end current word if it has characters
+        if (currentWord.length > 0) {
+          words.push({
+            characters: currentWord,
+            startIndex: wordStartIndex,
+            endIndex: index - 1
+          });
+          currentWord = [];
+        }
+        
+        // Add the space as a separate "word"
+        words.push({
+          characters: [charData],
+          startIndex: index,
+          endIndex: index
+        });
+        
+        wordStartIndex = index + 1;
+      } else {
+        // For non-Chinese characters (English letters, etc.)
+        if (currentWord.length === 0) {
+          wordStartIndex = index;
+        }
+        currentWord.push(charData);
+      }
+    });
+
+    // Add final word if it exists
+    if (currentWord.length > 0) {
+      words.push({
+        characters: currentWord,
+        startIndex: wordStartIndex,
+        endIndex: characters.length - 1
+      });
+    }
+
+    return words;
+  };
+
+  // Character alignment classes - updated for word-based alignment
   const characterAlignmentClasses = {
     left: 'flex flex-wrap justify-start',
     center: 'flex flex-wrap justify-center',
@@ -560,45 +702,86 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
         aria-label="practice prompt"
         role="presentation"
       >
-        {characters.reduce((acc, charData, idx) => {
-          // Determine whether to use pinyin display based on character type and practice mode
-          const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
+        {groupCharactersIntoWords(characters).map((wordGroup, wordIndex) => {
+          // Check if this word group is a newline
+          const isNewline = wordGroup.characters.length === 1 && wordGroup.characters[0].char === '\n';
           
-          const charElement = shouldUsePinyinDisplay ? (
-            <PinyinCharacterDisplay
-              key={idx}
-              char={charData.char}
-              state={charData.state}
-              index={idx}
-              onClick={handleCharacterClick}
-              showCursor={idx === cursorPosition && cursorPosition < prompt.length}
-              showPinyin={true}
-              pinyinInput={charData.pinyinInput || ''}
-              pinyinState={charData.pinyinState || 'neutral'}
-              characterWidth={characterWidthClasses[fontSize]}
-              ref={el => { characterRefs.current[idx] = el; }} // Assign ref to character element
-            />
-          ) : (
-            <CharacterDisplay
-              key={idx}
-              char={charData.char}
-              state={charData.state}
-              index={idx}
-              onClick={handleCharacterClick}
-              showCursor={idx === cursorPosition && cursorPosition < prompt.length}
-              ref={el => { characterRefs.current[idx] = el; }} // Assign ref to character element
-            />
-          );
-
-          acc.push(charElement);
-          
-          // Add line break after newline characters - force full width to break flex layout
-          if (charData.char === '\n') {
-            acc.push(<div key={`br-${idx}`} className="w-full" role="separator" aria-hidden="true" />);
+          if (isNewline) {
+            // Render newline as a full-width break
+            const charData = wordGroup.characters[0];
+            const idx = wordGroup.startIndex;
+            const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
+            
+            const charElement = shouldUsePinyinDisplay ? (
+              <PinyinCharacterDisplay
+                key={idx}
+                char={charData.char}
+                state={charData.state}
+                index={idx}
+                onClick={handleCharacterClick}
+                showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+                showPinyin={true}
+                pinyinInput={charData.pinyinInput || ''}
+                pinyinState={charData.pinyinState || 'neutral'}
+                characterWidth={characterWidthClasses[fontSize]}
+                ref={el => { characterRefs.current[idx] = el; }}
+              />
+            ) : (
+              <CharacterDisplay
+                key={idx}
+                char={charData.char}
+                state={charData.state}
+                index={idx}
+                onClick={handleCharacterClick}
+                showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+                ref={el => { characterRefs.current[idx] = el; }}
+              />
+            );
+            
+            return (
+              <React.Fragment key={`word-${wordIndex}`}>
+                {charElement}
+                <div className="w-full" role="separator" aria-hidden="true" />
+              </React.Fragment>
+            );
           }
           
-          return acc;
-        }, [] as React.ReactNode[])}
+          // Render word group as a unit
+          return (
+            <div key={`word-${wordIndex}`} className="inline-flex">
+              {wordGroup.characters.map((charData, charIndex) => {
+                const idx = wordGroup.startIndex + charIndex;
+                const shouldUsePinyinDisplay = detectedPracticeMode === 'pinyin' && isChineseCharacterOrPunctuation(charData.char);
+                
+                return shouldUsePinyinDisplay ? (
+                  <PinyinCharacterDisplay
+                    key={idx}
+                    char={charData.char}
+                    state={charData.state}
+                    index={idx}
+                    onClick={handleCharacterClick}
+                    showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+                    showPinyin={true}
+                    pinyinInput={charData.pinyinInput || ''}
+                    pinyinState={charData.pinyinState || 'neutral'}
+                    characterWidth={characterWidthClasses[fontSize]}
+                    ref={el => { characterRefs.current[idx] = el; }}
+                  />
+                ) : (
+                  <CharacterDisplay
+                    key={idx}
+                    char={charData.char}
+                    state={charData.state}
+                    index={idx}
+                    onClick={handleCharacterClick}
+                    showCursor={idx === cursorPosition && cursorPosition < prompt.length}
+                    ref={el => { characterRefs.current[idx] = el; }}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
       <ProgressDisplay
         typedCount={getTypedCharacters().length}

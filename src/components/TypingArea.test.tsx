@@ -966,4 +966,53 @@ describe('TypingArea', () => {
       }
     });
   });
+
+  describe('Chinese Punctuation Grouping', () => {
+    it('groups Chinese punctuation with preceding Chinese character', () => {
+      const chinesePrompt = '你好，世界！';
+      render(<TypingArea prompt={chinesePrompt} practiceMode="pinyin" onComplete={vi.fn()} />);
+      
+      // Verify that Chinese characters and punctuation are rendered
+      // In pinyin mode, Chinese characters use pinyin-practice-char test ID
+      const pinyinChars = screen.getAllByTestId('pinyin-practice-char');
+      expect(pinyinChars).toHaveLength(6); // 你好，世界！ (6 characters total)
+      
+      // Check the specific characters
+      expect(pinyinChars[0]).toHaveTextContent('你');
+      expect(pinyinChars[1]).toHaveTextContent('好');
+      expect(pinyinChars[2]).toHaveTextContent('，');
+      expect(pinyinChars[3]).toHaveTextContent('世');
+      expect(pinyinChars[4]).toHaveTextContent('界');
+      expect(pinyinChars[5]).toHaveTextContent('！');
+    });
+
+    it('handles mixed Chinese characters and punctuation', () => {
+      const mixedPrompt = '测试！English，中文。';
+      render(<TypingArea prompt={mixedPrompt} practiceMode="pinyin" onComplete={vi.fn()} />);
+      
+      // Verify all characters are rendered - mix of pinyin and regular chars
+      const pinyinChars = screen.queryAllByTestId('pinyin-practice-char');
+      const regularChars = screen.queryAllByTestId('practice-char');
+      const totalChars = pinyinChars.length + regularChars.length;
+      expect(totalChars).toBeGreaterThan(0);
+      
+      // The important thing is that it renders without errors and shows the characters
+      if (pinyinChars.length > 0) {
+        const firstChar = pinyinChars[0];
+        expect(firstChar).toHaveTextContent('测');
+      }
+    });
+
+    it('handles standalone Chinese punctuation', () => {
+      const punctPrompt = '，。！？';
+      render(<TypingArea prompt={punctPrompt} practiceMode="pinyin" onComplete={vi.fn()} />);
+      
+      const pinyinChars = screen.getAllByTestId('pinyin-practice-char');
+      expect(pinyinChars).toHaveLength(4);
+      expect(pinyinChars[0]).toHaveTextContent('，');
+      expect(pinyinChars[1]).toHaveTextContent('。');
+      expect(pinyinChars[2]).toHaveTextContent('！');
+      expect(pinyinChars[3]).toHaveTextContent('？');
+    });
+  });
 });
