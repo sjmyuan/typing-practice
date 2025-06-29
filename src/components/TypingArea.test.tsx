@@ -743,8 +743,8 @@ describe('TypingArea', () => {
       // The container should have the proper styling for displaying characters
       expect(container).toHaveClass('font-mono');
       
-      // Check that line breaks are present in the DOM
-      const lineBreaks = container.querySelectorAll('br');
+      // Check that line breaks are present in the DOM (now using div elements)
+      const lineBreaks = container.querySelectorAll('div[role="separator"]');
       expect(lineBreaks).toHaveLength(1); // Should have one line break for the newline character
     });
 

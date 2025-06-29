@@ -3,6 +3,7 @@ import CharacterDisplay from './CharacterDisplay';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
+import CharacterAlignmentControl, { type CharacterAlignment } from './CharacterAlignmentControl';
 import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese, isPinyinPracticeText } from '../utils/pinyinUtils';
 import { type PracticeMode } from './StartScreen';
 
@@ -53,6 +54,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       return saved as FontSize;
     }
     return 'medium';
+  });
+  const [characterAlignment, setCharacterAlignment] = useState<CharacterAlignment>(() => {
+    const saved = localStorage.getItem('typingPracticeCharacterAlignment');
+    if (saved && ['left', 'center', 'right', 'justify'].includes(saved)) {
+      return saved as CharacterAlignment;
+    }
+    return 'left';
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const characterRefs = useRef<(HTMLElement | null)[]>([]);
@@ -502,6 +510,19 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
   const canIncreaseFontSize = fontSizeOrder.indexOf(fontSize) < fontSizeOrder.length - 1;
   const canDecreaseFontSize = fontSizeOrder.indexOf(fontSize) > 0;
 
+  const handleCharacterAlignmentChange = (alignment: CharacterAlignment) => {
+    setCharacterAlignment(alignment);
+    localStorage.setItem('typingPracticeCharacterAlignment', alignment);
+  };
+
+  // Character alignment classes
+  const characterAlignmentClasses = {
+    left: 'flex flex-wrap justify-start',
+    center: 'flex flex-wrap justify-center',
+    right: 'flex flex-wrap justify-end',
+    justify: 'flex flex-wrap justify-between'
+  };
+
   return (
     <div
       ref={containerRef}
@@ -512,7 +533,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors"
       aria-label="practice area - click here and start typing"
     >
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end gap-4 mb-4">
+        <CharacterAlignmentControl 
+          currentAlignment={characterAlignment}
+          onAlignmentChange={handleCharacterAlignmentChange}
+        />
         <FontSizeControl 
           onIncrease={handleIncreaseFontSize} 
           onDecrease={handleDecreaseFontSize} 
@@ -531,7 +556,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       )}
       
       <div
-        className={`${fontSizeClasses[fontSize]} font-mono select-none leading-relaxed mb-8`}
+        className={`${fontSizeClasses[fontSize]} ${characterAlignmentClasses[characterAlignment]} font-mono select-none leading-relaxed mb-8`}
         aria-label="practice prompt"
         role="presentation"
       >
@@ -567,9 +592,9 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
 
           acc.push(charElement);
           
-          // Add line break after newline characters
+          // Add line break after newline characters - force full width to break flex layout
           if (charData.char === '\n') {
-            acc.push(<br key={`br-${idx}`} />);
+            acc.push(<div key={`br-${idx}`} className="w-full" role="separator" aria-hidden="true" />);
           }
           
           return acc;
