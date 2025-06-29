@@ -8,7 +8,8 @@ interface ContentPreviewProps {
 
 const ContentPreview: React.FC<ContentPreviewProps> = ({ poem, onStart, onBack }) => {
   const handleStart = () => {
-    onStart(poem.text);
+    const fullText = `${poem.title}\n${poem.author}\n${poem.text}`;
+    onStart(fullText);
   };
 
   // Split text by line breaks for proper display
