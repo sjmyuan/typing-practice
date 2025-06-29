@@ -522,16 +522,21 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     endIndex: number;
   }
 
-  // Helper function to check if a character is punctuation (English or Chinese)
+  // Helper functions for character classification
   const isPunctuation = (char: string): boolean => {
-    // Use existing utility for Chinese punctuation detection
     if (containsChinesePunctuation(char)) {
-      return true; // It's Chinese punctuation
+      return true;
     }
-    
-    // English punctuation
     const englishPunctuation = /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/;
     return englishPunctuation.test(char);
+  };
+
+  const isChinesePunctuation = (char: string): boolean => {
+    return isChineseCharacterOrPunctuation(char) && !containsChinese(char);
+  };
+
+  const isWordBreaker = (char: string): boolean => {
+    return char === ' ' || char === '\n';
   };
 
   // Group characters into words for better justify alignment
@@ -540,119 +545,89 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     let currentWord: CharacterData[] = [];
     let wordStartIndex = 0;
 
-    characters.forEach((charData, index) => {
-      // Handle newlines as separate groups
-      if (charData.char === '\n') {
-        // End current word if it has characters
-        if (currentWord.length > 0) {
-          words.push({
-            characters: currentWord,
-            startIndex: wordStartIndex,
-            endIndex: index - 1
-          });
-          currentWord = [];
-        }
-        
-        // Add the newline as a separate "word"
+    const finalizeCurrentWord = (endIndex: number) => {
+      if (currentWord.length > 0) {
         words.push({
-          characters: [charData],
-          startIndex: index,
-          endIndex: index
+          characters: [...currentWord],
+          startIndex: wordStartIndex,
+          endIndex
         });
-        
-        wordStartIndex = index + 1;
-      } else if (containsChinese(charData.char)) {
-        // For Chinese characters, start a new group but check if next character is Chinese punctuation
-        // End current word if it has characters
-        if (currentWord.length > 0) {
-          words.push({
-            characters: currentWord,
-            startIndex: wordStartIndex,
-            endIndex: index - 1
-          });
-          currentWord = [];
-        }
-        
-        // Start a new "word" with the Chinese character
-        currentWord = [charData];
-        wordStartIndex = index;
-        
-        // Check if the next character is Chinese punctuation - if so, include it in this group
+        currentWord = [];
+      }
+    };
+
+    const startNewWord = (startIndex: number) => {
+      wordStartIndex = startIndex;
+    };
+
+    const addSingleCharacterWord = (charData: CharacterData, index: number) => {
+      words.push({
+        characters: [charData],
+        startIndex: index,
+        endIndex: index
+      });
+    };
+
+    const addCharacterToCurrentWord = (charData: CharacterData, index: number) => {
+      if (currentWord.length === 0) {
+        startNewWord(index);
+      }
+      currentWord.push(charData);
+    };
+
+    characters.forEach((charData, index) => {
+      const char = charData.char;
+
+      // Handle newlines and spaces as separate word groups
+      if (isWordBreaker(char)) {
+        finalizeCurrentWord(index - 1);
+        addSingleCharacterWord(charData, index);
+        startNewWord(index + 1);
+        return;
+      }
+
+      // Handle Chinese characters - each forms its own group, potentially with following Chinese punctuation
+      if (containsChinese(char)) {
+        finalizeCurrentWord(index - 1);
+        addCharacterToCurrentWord(charData, index);
+
+        // Check if next character is Chinese punctuation that should be grouped with this character
         const nextIndex = index + 1;
-        if (nextIndex < characters.length && isPunctuation(characters[nextIndex].char) && 
-            (isChineseCharacterOrPunctuation(characters[nextIndex].char) && !containsChinese(characters[nextIndex].char))) {
-          // Skip to next iteration to let the punctuation be handled in the next loop
-        } else {
-          // No Chinese punctuation follows, so complete this Chinese character as its own group
-          words.push({
-            characters: currentWord,
-            startIndex: wordStartIndex,
-            endIndex: index
-          });
-          currentWord = [];
-          wordStartIndex = index + 1;
+        const nextChar = nextIndex < characters.length ? characters[nextIndex] : null;
+        
+        if (!nextChar || !isChinesePunctuation(nextChar.char)) {
+          // No Chinese punctuation follows, complete this Chinese character group
+          finalizeCurrentWord(index);
+          startNewWord(nextIndex);
         }
-      } else if (isPunctuation(charData.char)) {
-        // Check if this is Chinese punctuation following a Chinese character
-        if (isChineseCharacterOrPunctuation(charData.char) && !containsChinese(charData.char) && currentWord.length > 0) {
-          // This is Chinese punctuation and we have a current word (likely Chinese character)
-          currentWord.push(charData);
-          // Complete the group with Chinese character + punctuation
-          words.push({
-            characters: currentWord,
-            startIndex: wordStartIndex,
-            endIndex: index
-          });
-          currentWord = [];
-          wordStartIndex = index + 1;
+        // If Chinese punctuation follows, let it be handled in the next iteration
+        return;
+      }
+
+      // Handle punctuation
+      if (isPunctuation(char)) {
+        if (isChinesePunctuation(char) && currentWord.length > 0) {
+          // Chinese punctuation following a Chinese character - add to current word and finalize
+          addCharacterToCurrentWord(charData, index);
+          finalizeCurrentWord(index);
+          startNewWord(index + 1);
         } else if (currentWord.length > 0) {
-          // English punctuation - add to current word
-          currentWord.push(charData);
+          // English punctuation - add to current English word
+          addCharacterToCurrentWord(charData, index);
         } else {
           // Standalone punctuation - treat as its own group
-          words.push({
-            characters: [charData],
-            startIndex: index,
-            endIndex: index
-          });
-          wordStartIndex = index + 1;
+          addSingleCharacterWord(charData, index);
+          startNewWord(index + 1);
         }
-      } else if (charData.char === ' ') {
-        // Handle spaces - end current word if it has characters
-        if (currentWord.length > 0) {
-          words.push({
-            characters: currentWord,
-            startIndex: wordStartIndex,
-            endIndex: index - 1
-          });
-          currentWord = [];
-        }
-        
-        // Add the space as a separate "word"
-        words.push({
-          characters: [charData],
-          startIndex: index,
-          endIndex: index
-        });
-        
-        wordStartIndex = index + 1;
-      } else {
-        // For non-Chinese characters (English letters, etc.)
-        if (currentWord.length === 0) {
-          wordStartIndex = index;
-        }
-        currentWord.push(charData);
+        return;
       }
+
+      // Handle regular characters (English letters, digits, etc.)
+      addCharacterToCurrentWord(charData, index);
     });
 
-    // Add final word if it exists
-    if (currentWord.length > 0) {
-      words.push({
-        characters: currentWord,
-        startIndex: wordStartIndex,
-        endIndex: characters.length - 1
-      });
-    }
+    // Finalize any remaining word
+    finalizeCurrentWord(characters.length - 1);
 
     return words;
   };
