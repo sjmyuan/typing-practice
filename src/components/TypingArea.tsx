@@ -62,7 +62,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     characterRefs.current = new Array(prompt.length).fill(null);
   }, [prompt.length]);
 
-  // Check if current character needs scrolling (proactive visibility check)
+  // Check if current character needs scrolling (proactive visibility check - vertical only)
   const isCharacterNearViewportEdge = useCallback(() => {
     if (cursorPosition >= characterRefs.current.length || !containerRef.current) {
       return false;
@@ -76,17 +76,14 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     const containerRect = containerRef.current.getBoundingClientRect();
     const charRect = currentCharElement.getBoundingClientRect();
     
-    // Define buffer zones (20% of container height/width)
+    // Define buffer zone (20% of container height for vertical scrolling only)
     const verticalBuffer = containerRect.height * 0.2;
-    const horizontalBuffer = containerRect.width * 0.2;
     
-    // Check if character is approaching viewport edges
+    // Check if character is approaching vertical viewport edges only
     const isNearTopEdge = charRect.top < containerRect.top + verticalBuffer;
     const isNearBottomEdge = charRect.bottom > containerRect.bottom - verticalBuffer;
-    const isNearLeftEdge = charRect.left < containerRect.left + horizontalBuffer;
-    const isNearRightEdge = charRect.right > containerRect.right - horizontalBuffer;
     
-    return isNearTopEdge || isNearBottomEdge || isNearLeftEdge || isNearRightEdge;
+    return isNearTopEdge || isNearBottomEdge;
   }, [cursorPosition]);
 
   // Smart scroll function that only scrolls when necessary
@@ -100,12 +97,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       return;
     }
 
-    // Only scroll if character is near viewport edge
+    // Only scroll if character is near viewport edge (vertical only)
     if (isCharacterNearViewportEdge()) {
       currentCharElement.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
-        inline: 'nearest'
+        inline: 'start' // Use 'start' instead of 'nearest' for consistent horizontal positioning
       });
     }
   }, [cursorPosition, isCharacterNearViewportEdge]);
@@ -132,7 +129,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
           currentCharElement.scrollIntoView({
             behavior: 'smooth',
             block: 'center',
-            inline: 'nearest'
+            inline: 'start' // Use 'start' instead of 'nearest' for consistent horizontal positioning
           });
         }
       }
