@@ -62,53 +62,86 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     characterRefs.current = new Array(prompt.length).fill(null);
   }, [prompt.length]);
 
-  // Auto-scroll function to bring current character into view
-  const scrollToCurrentCharacter = useCallback(() => {
-    if (cursorPosition < characterRefs.current.length) {
-      const currentCharElement = characterRefs.current[cursorPosition];
-      if (currentCharElement && typeof currentCharElement.scrollIntoView === 'function') {
-        currentCharElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'nearest'
-        });
-      }
+  // Check if current character needs scrolling (proactive visibility check)
+  const isCharacterNearViewportEdge = useCallback(() => {
+    if (cursorPosition >= characterRefs.current.length || !containerRef.current) {
+      return false;
     }
+
+    const currentCharElement = characterRefs.current[cursorPosition];
+    if (!currentCharElement) {
+      return false;
+    }
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const charRect = currentCharElement.getBoundingClientRect();
+    
+    // Define buffer zones (20% of container height/width)
+    const verticalBuffer = containerRect.height * 0.2;
+    const horizontalBuffer = containerRect.width * 0.2;
+    
+    // Check if character is approaching viewport edges
+    const isNearTopEdge = charRect.top < containerRect.top + verticalBuffer;
+    const isNearBottomEdge = charRect.bottom > containerRect.bottom - verticalBuffer;
+    const isNearLeftEdge = charRect.left < containerRect.left + horizontalBuffer;
+    const isNearRightEdge = charRect.right > containerRect.right - horizontalBuffer;
+    
+    return isNearTopEdge || isNearBottomEdge || isNearLeftEdge || isNearRightEdge;
   }, [cursorPosition]);
+
+  // Smart scroll function that only scrolls when necessary
+  const scrollToCurrentCharacterIfNeeded = useCallback(() => {
+    if (cursorPosition >= characterRefs.current.length) {
+      return;
+    }
+
+    const currentCharElement = characterRefs.current[cursorPosition];
+    if (!currentCharElement || typeof currentCharElement.scrollIntoView !== 'function') {
+      return;
+    }
+
+    // Only scroll if character is near viewport edge
+    if (isCharacterNearViewportEdge()) {
+      currentCharElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    }
+  }, [cursorPosition, isCharacterNearViewportEdge]);
 
   // Scroll to current character when cursor position changes
   useEffect(() => {
-    // Use requestAnimationFrame to ensure DOM is updated, with timeout fallback
+    // Use requestAnimationFrame to ensure DOM is updated
     const animFrameId = requestAnimationFrame(() => {
-      scrollToCurrentCharacter();
+      scrollToCurrentCharacterIfNeeded();
     });
-    // Fallback for test environments where requestAnimationFrame might not work
-    const timeoutId = setTimeout(() => {
-      scrollToCurrentCharacter();
-    }, 0);
 
     return () => {
       cancelAnimationFrame(animFrameId);
-      clearTimeout(timeoutId);
     };
-  }, [cursorPosition, scrollToCurrentCharacter]);
+  }, [cursorPosition, scrollToCurrentCharacterIfNeeded]);
 
-  // Scroll to current character when font size changes
+  // Scroll to current character when font size changes (always scroll on font change)
   useEffect(() => {
     // Use requestAnimationFrame to ensure font size changes are rendered
     const animFrameId = requestAnimationFrame(() => {
-      scrollToCurrentCharacter();
+      if (cursorPosition < characterRefs.current.length) {
+        const currentCharElement = characterRefs.current[cursorPosition];
+        if (currentCharElement && typeof currentCharElement.scrollIntoView === 'function') {
+          currentCharElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+      }
     });
-    // Fallback for test environments
-    const timeoutId = setTimeout(() => {
-      scrollToCurrentCharacter();
-    }, 100);
 
     return () => {
       cancelAnimationFrame(animFrameId);
-      clearTimeout(timeoutId);
     };
-  }, [fontSize, scrollToCurrentCharacter]);
+  }, [fontSize, cursorPosition]);
 
   // Auto-focus the typing area on mount and add global click listener
   useEffect(() => {
