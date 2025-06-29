@@ -735,7 +735,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
                     showPinyin={true}
                     pinyinInput={charData.pinyinInput || ''}
                     pinyinState={charData.pinyinState || 'neutral'}
-                    characterWidth={characterWidthClasses[fontSize]}
+                    characterWidth={containsChinese(charData.char) && !containsChinesePunctuation(charData.char) ? characterWidthClasses[fontSize] : 'min-w-[0.5rem]'}
                     ref={el => { characterRefs.current[idx] = el; }}
                   />
                 ) : (
