@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import StartScreen from './StartScreen';
+import EnhancedStartScreen from './EnhancedStartScreen';
 import TypingArea from './TypingArea';
 import CompletionScreen from './CompletionScreen';
 
@@ -67,7 +67,7 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({
   return (
     <div className="w-full max-w-[2048px] mx-auto">
       {practiceState === 'ready' && (
-        <StartScreen onStart={startPractice} />
+        <EnhancedStartScreen onStart={startPractice} />
       )}
       
       {practiceState === 'active' && currentPrompt && (

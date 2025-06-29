@@ -11,6 +11,10 @@ describe('PracticeArea', () => {
   const startPracticeSessionWithPrompt = async (prompt: string = testPrompt) => {
     const user = userEvent.setup();
     
+    // First, click "Create Your Own Content" to enter custom input mode
+    const customTextButton = screen.getByRole('button', { name: /create your own content/i });
+    await user.click(customTextButton);
+    
     // Type prompt in textarea
     const textarea = screen.getByRole('textbox');
     await user.type(textarea, prompt);
@@ -26,9 +30,9 @@ describe('PracticeArea', () => {
   describe('Initial State', () => {
     it('renders start screen initially', () => {
       render(<PracticeArea />);
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /start practice/i })).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      // Should show mode selection buttons initially
+      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
     });
   });
 
@@ -141,9 +145,9 @@ describe('PracticeArea', () => {
       const initialPrompt = 'initial test';
       render(<PracticeArea initialPrompt={initialPrompt} />);
       
-      // Should still show start screen initially
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      // Should still show mode selection initially
+      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
     });
   });
 
@@ -196,8 +200,8 @@ describe('PracticeArea', () => {
       fireEvent.click(startNewButton);
       
       // Should be back to start screen
-      expect(screen.getByRole('textbox')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
       
       // Should not show practice characters
       expect(screen.queryAllByTestId('practice-char')).toHaveLength(0);
@@ -231,6 +235,10 @@ describe('PracticeArea', () => {
       
       // Should call with 'ready' initially
       expect(mockOnPracticeStateChange).toHaveBeenCalledWith('ready');
+      
+      // First, click "Create Your Own Content" to enter custom input mode
+      const customTextButton = screen.getByRole('button', { name: /create your own content/i });
+      await user.click(customTextButton);
       
       // Start practice session
       const textarea = screen.getByRole('textbox');
