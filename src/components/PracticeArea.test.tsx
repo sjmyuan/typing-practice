@@ -1,6 +1,7 @@
 import { render, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import PracticeArea from './PracticeArea';
 
 describe('PracticeArea', () => {
@@ -218,6 +219,35 @@ describe('PracticeArea', () => {
       expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Practice State Communication', () => {
+    it('should call onPracticeStateChange when practice state changes', async () => {
+      const mockOnPracticeStateChange = vi.fn();
+      const user = userEvent.setup();
+      
+      render(<PracticeArea onPracticeStateChange={mockOnPracticeStateChange} />);
+      
+      // Should call with 'ready' initially
+      expect(mockOnPracticeStateChange).toHaveBeenCalledWith('ready');
+      
+      // Start practice session
+      const textarea = screen.getByRole('textbox');
+      await user.type(textarea, testPrompt);
+      
+      const startButton = screen.getByRole('button', { name: /start practice/i });
+      await user.click(startButton);
+      
+      // Should call with 'active' when starting practice
+      expect(mockOnPracticeStateChange).toHaveBeenCalledWith('active');
+    });
+
+    it('should not call onPracticeStateChange if not provided', async () => {
+      // Should not throw error when onPracticeStateChange is not provided
+      expect(() => {
+        render(<PracticeArea />);
+      }).not.toThrow();
     });
   });
 });

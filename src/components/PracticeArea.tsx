@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StartScreen from './StartScreen';
 import TypingArea from './TypingArea';
 import CompletionScreen from './CompletionScreen';
 
 interface PracticeAreaProps {
   initialPrompt?: string;
+  onPracticeStateChange?: (state: PracticeState) => void;
 }
 
 // Practice state types
-type PracticeState = 'ready' | 'active' | 'completed';
+export type PracticeState = 'ready' | 'active' | 'completed';
 
 interface CompletionStats {
   accuracy: number;
@@ -17,10 +18,20 @@ interface CompletionStats {
   incorrectCharacters: number;
 }
 
-const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
+const PracticeArea: React.FC<PracticeAreaProps> = ({ 
+  initialPrompt = '', 
+  onPracticeStateChange 
+}) => {
   const [practiceState, setPracticeState] = useState<PracticeState>('ready');
   const [currentPrompt, setCurrentPrompt] = useState<string>(initialPrompt);
   const [completionStats, setCompletionStats] = useState<CompletionStats | null>(null);
+
+  // Notify parent component of practice state changes
+  useEffect(() => {
+    if (typeof onPracticeStateChange === 'function') {
+      onPracticeStateChange(practiceState);
+    }
+  }, [practiceState, onPracticeStateChange]);
 
   // State transition functions
   const startPractice = (prompt: string) => {
@@ -45,6 +56,13 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({ initialPrompt = '' }) => {
     setPracticeState('active');
     setCompletionStats(null);
   };
+
+  // Notify parent component about practice state changes
+  useEffect(() => {
+    if (typeof onPracticeStateChange === 'function') {
+      onPracticeStateChange(practiceState);
+    }
+  }, [practiceState, onPracticeStateChange]);
 
   return (
     <div className="w-full max-w-[2048px] mx-auto">
