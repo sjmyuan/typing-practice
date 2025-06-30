@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 30 160 80">
+  <defs>
+    <!-- Main keyboard gradient -->
+    <linearGradient id="keyBase" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6CC6F9"/>
+      <stop offset="100%" stop-color="#8A72F6"/>
+    </linearGradient>
+
+    <!-- Active key glow -->
+    <radialGradient id="keyGlow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#F9D655" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#AE47F5" stop-opacity="0.2"/>
+    </radialGradient>
+
+    <filter id="keyShadow">
+      <feDropShadow dx="1.5" dy="1.5" stdDeviation="1" flood-color="#8A72F6"/>
+    </filter>
+  </defs>
+
+  <!-- Keyboard base -->
+  <rect x="20" y="40" width="120" height="60" rx="6" fill="url(#keyBase)" filter="url(#keyShadow)"/>
+
+  <!-- Active keys with custom colors -->
+  <g>
+    <rect x="50" y="50" width="16" height="12" rx="2" fill="#F9D655"/>
+    <rect x="76" y="62" width="16" height="12" rx="2" fill="#AE47F5"/>
+    <rect x="102" y="74" width="16" height="12" rx="2" fill="#6CC6F9"/>
+  </g>
+
+  <!-- Standard keys -->
+  <g fill="#8A72F6">
+    <rect x="30" y="50" width="16" height="12" rx="2"/>
+    <rect x="66" y="50" width="16" height="12" rx="2"/>
+    <rect x="40" y="62" width="16" height="12" rx="2"/>
+    <rect x="56" y="62" width="16" height="12" rx="2"/>
+    <rect x="92" y="62" width="16" height="12" rx="2"/>
+    <rect x="50" y="74" width="16" height="12" rx="2"/>
+    <rect x="76" y="74" width="16" height="12" rx="2"/>
+    <rect x="82" y="74" width="16" height="12" rx="2"/>
+  </g>
+
+  <!-- Hands with updated colors -->
+  <g stroke="#F9D655" stroke-width="3" stroke-linecap="round" fill="none">
+    <!-- Left hand -->
+    <path d="M10 60 Q30 45 45 55"/>
+    <path d="M15 70 Q35 60 50 65"/>
+
+    <!-- Right hand -->
+    <path d="M150 75 Q130 65 115 70"/>
+    <path d="M145 85 Q125 80 110 85"/>
+  </g>
+
+  <!-- Key glows -->
+  <g opacity="0.7">
+    <ellipse cx="60" cy="56" rx="12" ry="6" fill="url(#keyGlow)"/>
+    <ellipse cx="86" cy="68" rx="12" ry="6" fill="url(#keyGlow)"/>
+    <ellipse cx="112" cy="80" rx="12" ry="6" fill="url(#keyGlow)"/>
+  </g>
+</svg>
