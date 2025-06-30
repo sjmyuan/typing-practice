@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import TypingCursor from './TypingCursor';
 import { getPinyinForChar, getPinyinWithoutTonesForChar, containsChinese, containsChinesePunctuation, getEnglishPunctuationForChinese } from '../utils/pinyinUtils';
 

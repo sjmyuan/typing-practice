@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import TypingCursor from './TypingCursor';
 
 type CharacterState = 'untyped' | 'correct' | 'incorrect' | 'skipped';
