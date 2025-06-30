@@ -74,7 +74,9 @@ describe('ContentPreview', () => {
     
     fireEvent.click(screen.getByText('Start Practice'));
     
-    expect(mockOnStart).toHaveBeenCalledWith(mockPoem.text);
+    expect(mockOnStart).toHaveBeenCalledWith(
+      `${mockPoem.title}\n${mockPoem.author}\n${mockPoem.text}`
+    );
   });
 
   it('should render back button', () => {

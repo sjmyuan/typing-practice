@@ -172,7 +172,7 @@ describe('PoemBrowser', () => {
     
     fireEvent.click(screen.getByText('Start Practice'));
     
-    expect(mockOnStart).toHaveBeenCalledWith("孤鸿海上来，池潢不敢顾。\n侧见双翠鸟，巢在三珠树。");
+    expect(mockOnStart).toHaveBeenCalledWith("感遇四首之一\n张九龄\n孤鸿海上来，池潢不敢顾。\n侧见双翠鸟，巢在三珠树。");
   });
 
   it('should call onBack when back to options is clicked from author selection', async () => {
