@@ -1,29 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Define the gradient -->
+  <defs>
+    <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#7E22CE"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background with gradient -->
+  <rect width="800" height="600" fill="url(#gradientBg)"/>
+
   <!-- Base keyboard structure -->
-  <rect x="100" y="200" width="600" height="200" fill="#8A72F6" stroke="#000"/>
+  <rect x="50" y="100" width="700" height="400" rx="25" ry="25" fill="#B2F2BB" stroke="#000000" stroke-width="6"/>
 
   <!-- Standard keys -->
-  <polygon points="120,220 180,220 180,280 120,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="200,220 260,220 260,280 200,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="280,220 340,220 340,280 280,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="360,220 420,220 420,280 360,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="440,220 500,220 500,280 440,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="520,220 580,220 580,280 520,280" fill="#8A72F6" stroke="#000"/>
-  <polygon points="600,220 660,220 660,280 600,280" fill="#8A72F6" stroke="#000"/>
+  <g fill="#FFFFFF" stroke="#000000" stroke-width="5">
+    <rect x="70" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="160" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="250" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="340" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="430" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="520" y="120" width="80" height="80" rx="7" ry="7"/>
+    <rect x="610" y="120" width="80" height="80" rx="7" ry="7"/>
+  </g>
 
   <!-- Active function keys -->
-  <polygon points="140,300 220,300 220,360 140,360" fill="#AE47F5" stroke="#000"/>
-  <polygon points="240,300 320,300 320,360 240,360" fill="#AE47F5" stroke="#000"/>
-  <polygon points="340,300 420,300 420,360 340,360" fill="#AE47F5" stroke="#000"/>
+  <g fill="#F97316" stroke="#000000" stroke-width="5">
+    <rect x="70" y="220" width="170" height="100" rx="12" ry="12"/>
+    <rect x="260" y="220" width="170" height="100" rx="12" ry="12"/>
+    <rect x="450" y="220" width="170" height="100" rx="12" ry="12"/>
+  </g>
 
   <!-- Primary action key -->
-  <polygon points="440,300 520,300 520,360 440,360" fill="#6CC6F9" stroke="#000"/>
+  <rect x="260" y="340" width="260" height="140" rx="20" ry="20" fill="#10B981" stroke="#000000" stroke-width="6"/>
 
-  <!-- Highlighted hand strokes and primary key accents -->
-  <polygon points="160,380 200,380 200,420 160,420" fill="#F9D655" stroke="#000"/>
-  <polygon points="220,380 280,380 280,420 220,420" fill="#F9D655" stroke="#000"/>
-  <polygon points="300,380 360,380 360,420 300,420" fill="#F9D655" stroke="#000"/>
-  <polygon points="380,380 440,380 440,420 380,420" fill="#F9D655" stroke="#000"/>
-  <polygon points="460,380 520,380 520,420 460,420" fill="#F9D655" stroke="#000"/>
-  <polygon points="540,380 600,380 600,420 540,420" fill="#F9D655" stroke="#000"/>
+  <!-- Highlighted hand strokes -->
+  <g fill="#FCD34D" stroke="#000000" stroke-width="5">
+    <rect x="80" y="380" width="70" height="70" rx="7" ry="7"/>
+    <rect x="170" y="380" width="70" height="70" rx="7" ry="7"/>
+    <rect x="260" y="380" width="70" height="70" rx="7" ry="7"/>
+    <rect x="350" y="380" width="70" height="70" rx="7" ry="7"/>
+    <rect x="440" y="380" width="70" height="70" rx="7" ry="7"/>
+    <rect x="530" y="380" width="70" height="70" rx="7" ry="7"/>
+  </g>
 </svg>
