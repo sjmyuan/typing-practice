@@ -11,6 +11,8 @@ Typing Practice is a typing practice program designed for younger elementary sch
 - TypeScript
 - Tailwind CSS V4 and Tailwind Vite Plugin
 - Vitest
+- Lucide Icons
+- Storybook
 </tech-stack>
 <architecture>
 </architecture>
@@ -61,4 +63,5 @@ The rules section outlines decision criteria that determine which skills to appl
 <rule> When run a command in terminal, redirect stdout and stderr to the file output.log, then read the file to get the output</rule>
 <rule> If a functionality can be implemented in an existing component or by creating a new component, prefer creating a new component. </rule>
 <rule> After create a new component, add it to storybook. </rule>
+<rule> After implementing a requirement, do not do manual test. </rule>
 </rules>

@@ -4,6 +4,7 @@ import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
 import FontSizeControl from './FontSizeControl';
 import CharacterAlignmentControl, { type CharacterAlignment } from './CharacterAlignmentControl';
+import FullscreenControl from './FullscreenControl';
 import { getPinyinWithoutTonesForChar, normalizePinyinInput, containsChinese, isChineseCharacterOrPunctuation, getEnglishPunctuationForChinese, isPinyinPracticeText, containsChinesePunctuation } from '../utils/pinyinUtils';
 import { type PracticeMode } from './StartScreen';
 
@@ -63,6 +64,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     }
     return 'left';
   });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const characterRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -173,6 +175,12 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
   // Handle keyboard input
   const handleKeyDown = (e: React.KeyboardEvent) => {
     e.preventDefault(); // Prevent default browser behavior
+    
+    if (e.key === 'Escape' && isFullscreen) {
+      // Exit fullscreen mode when Escape is pressed
+      setIsFullscreen(false);
+      return;
+    }
     
     if (e.key === 'Backspace') {
       handleBackspace();
@@ -523,6 +531,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     localStorage.setItem('typingPracticeCharacterAlignment', alignment);
   };
 
+  const handleFullscreenToggle = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   // Word grouping interface
   interface WordGroup {
     characters: CharacterData[];
@@ -670,7 +682,11 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
-      className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors"
+      className={`outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors ${
+        isFullscreen 
+          ? 'fixed inset-0 z-50 bg-white overflow-auto' 
+          : ''
+      }`}
       aria-label="practice area - click here and start typing"
     >
       <div className="flex justify-between items-center gap-4 mb-4">
@@ -695,6 +711,10 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
             onDecrease={handleDecreaseFontSize} 
             canIncrease={canIncreaseFontSize} 
             canDecrease={canDecreaseFontSize}
+          />
+          <FullscreenControl 
+            isFullscreen={isFullscreen}
+            onToggle={handleFullscreenToggle}
           />
         </div>
       </div>
