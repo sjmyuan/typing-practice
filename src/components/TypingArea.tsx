@@ -31,9 +31,10 @@ interface TypingAreaProps {
     correctCharacters: number;
     incorrectCharacters: number;
   }) => void;
+  onBack?: () => void;
 }
 
-const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplete }) => {
+const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplete, onBack }) => {
   // Auto-detect practice mode based on prompt content
   const detectedPracticeMode: PracticeMode = practiceMode || (isPinyinPracticeText(prompt) ? 'pinyin' : 'english');
   
@@ -454,6 +455,13 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
     setCurrentPinyinInput('');
   };
 
+  // Handle back button click
+  const handleBackClick = () => {
+    if (typeof onBack === 'function') {
+      onBack();
+    }
+  };
+
   // Calculate statistics for display
   const getTypedCharacters = () => {
     return characters.filter(char => char.state === 'correct' || char.state === 'incorrect');
@@ -665,17 +673,30 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       className="outline-none rounded-lg p-8 cursor-text bg-gray-50 transition-colors"
       aria-label="practice area - click here and start typing"
     >
-      <div className="flex justify-end gap-4 mb-4">
-        <CharacterAlignmentControl 
-          currentAlignment={characterAlignment}
-          onAlignmentChange={handleCharacterAlignmentChange}
-        />
-        <FontSizeControl 
-          onIncrease={handleIncreaseFontSize} 
-          onDecrease={handleDecreaseFontSize} 
-          canIncrease={canIncreaseFontSize} 
-          canDecrease={canDecreaseFontSize}
-        />
+      <div className="flex justify-between items-center gap-4 mb-4">
+        <div className="flex">
+          {onBack && (
+            <button
+              type="button"
+              onClick={handleBackClick}
+              className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
+            >
+              ← Back to Options
+            </button>
+          )}
+        </div>
+        <div className="flex gap-4">
+          <CharacterAlignmentControl 
+            currentAlignment={characterAlignment}
+            onAlignmentChange={handleCharacterAlignmentChange}
+          />
+          <FontSizeControl 
+            onIncrease={handleIncreaseFontSize} 
+            onDecrease={handleDecreaseFontSize} 
+            canIncrease={canIncreaseFontSize} 
+            canDecrease={canDecreaseFontSize}
+          />
+        </div>
       </div>
       
       <div

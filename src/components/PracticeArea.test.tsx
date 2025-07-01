@@ -226,6 +226,26 @@ describe('PracticeArea', () => {
     });
   });
 
+  describe('Back to Options', () => {
+    it('shows back button during active practice', async () => {
+      render(<PracticeArea />);
+      await startPracticeSessionWithPrompt();
+      
+      expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+    });
+
+    it('returns to start screen when back button is clicked', async () => {
+      render(<PracticeArea />);
+      await startPracticeSessionWithPrompt();
+      
+      fireEvent.click(screen.getByText('← Back to Options'));
+      
+      // Should return to start screen
+      expect(screen.getByText('Choose Practice Mode')).toBeInTheDocument();
+      expect(screen.queryAllByTestId('practice-char')).toHaveLength(0);
+    });
+  });
+
   describe('Practice State Communication', () => {
     it('should call onPracticeStateChange when practice state changes', async () => {
       const mockOnPracticeStateChange = vi.fn();

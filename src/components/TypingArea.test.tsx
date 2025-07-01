@@ -327,6 +327,44 @@ describe('TypingArea', () => {
     });
   });
 
+  describe('Back Button', () => {
+    it('renders back button when onBack prop is provided', () => {
+      const mockOnBack = vi.fn();
+      render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
+      
+      expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+    });
+
+    it('does not render back button when onBack prop is not provided', () => {
+      render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} />);
+      
+      expect(screen.queryByText('← Back to Options')).not.toBeInTheDocument();
+    });
+
+    it('calls onBack when back button is clicked', () => {
+      const mockOnBack = vi.fn();
+      render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
+      
+      fireEvent.click(screen.getByText('← Back to Options'));
+      
+      expect(mockOnBack).toHaveBeenCalledTimes(1);
+    });
+
+    it('back button has proper accessibility attributes', () => {
+      const mockOnBack = vi.fn();
+      render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
+      
+      const backButton = screen.getByText('← Back to Options');
+      expect(backButton).toHaveAttribute('type', 'button');
+    });
+
+    it('handles null onBack gracefully', () => {
+      expect(() => {
+        render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={() => {}} />);
+      }).not.toThrow();
+    });
+  });
+
   describe('Edge Cases', () => {
     it('handles empty prompt gracefully', () => {
       render(<TypingArea prompt="" onComplete={mockProps.onComplete} />);

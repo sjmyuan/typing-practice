@@ -57,6 +57,13 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({
     setCompletionStats(null);
   };
 
+  // Handle back to options
+  const handleBackToOptions = () => {
+    setPracticeState('ready');
+    setCompletionStats(null);
+    setCurrentPrompt(initialPrompt);
+  };
+
   // Notify parent component about practice state changes
   useEffect(() => {
     if (typeof onPracticeStateChange === 'function') {
@@ -74,6 +81,7 @@ const PracticeArea: React.FC<PracticeAreaProps> = ({
         <TypingArea 
           prompt={currentPrompt}
           onComplete={completePractice}
+          onBack={handleBackToOptions}
         />
       )}
       

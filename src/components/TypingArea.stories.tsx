@@ -17,6 +17,10 @@ const meta: Meta<typeof TypingArea> = {
       action: 'completed',
       description: 'Function called when typing is completed',
     },
+    onBack: {
+      action: 'back-clicked',
+      description: 'Function called when back button is clicked',
+    },
   },
 };
 
@@ -96,4 +100,22 @@ export const ChineseWithPunctuation: Story = {
     practiceMode: 'pinyin',
     onComplete: (stats) => console.log('Completed with stats:', stats),
   },
+};
+
+export const WithBackButton: Story = {
+  args: {
+    prompt: 'This story shows the back button functionality',
+    onComplete: (stats) => console.log('Completed with stats:', stats),
+    onBack: () => alert('Back to options clicked!'),
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-full max-w-4xl">
+        <div className="mb-4 text-sm text-gray-600">
+          Notice the "← Back to Options" button in the top-left corner
+        </div>
+        <Story />
+      </div>
+    ),
+  ],
 };
