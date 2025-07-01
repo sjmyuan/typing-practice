@@ -15,12 +15,6 @@ describe('TypingArea Pinyin Mode', () => {
   });
 
   describe('Pinyin Practice Mode', () => {
-    it('renders pinyin instructions for pinyin mode', () => {
-      render(<TypingArea {...mockProps} />);
-      
-      expect(screen.getByText(/Pinyin Practice Mode/)).toBeInTheDocument();
-      expect(screen.getByText(/Type the pinyin for each Chinese character/)).toBeInTheDocument();
-    });
 
     it('uses PinyinCharacterDisplay for Chinese characters', () => {
       render(<TypingArea {...mockProps} />);

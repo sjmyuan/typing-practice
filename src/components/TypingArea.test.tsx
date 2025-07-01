@@ -594,9 +594,6 @@ describe('TypingArea', () => {
       
       render(<TypingArea {...englishProps} />);
       
-      // Should not show pinyin instructions for English text
-      expect(screen.queryByText(/Pinyin Practice Mode/)).not.toBeInTheDocument();
-      
       // Should use regular character display, not pinyin display
       const chars = screen.getAllByTestId('practice-char');
       expect(chars).toHaveLength(11);
@@ -613,9 +610,6 @@ describe('TypingArea', () => {
       
       render(<TypingArea {...chineseProps} />);
       
-      // Should show pinyin instructions for Chinese text
-      expect(screen.getByText(/Pinyin Practice Mode/)).toBeInTheDocument();
-      
       // Should use pinyin displays for Chinese characters
       const pinyinDisplays = screen.getAllByTestId('pinyin-display');
       expect(pinyinDisplays).toHaveLength(2);
@@ -628,9 +622,6 @@ describe('TypingArea', () => {
       };
       
       render(<TypingArea {...mixedProps} />);
-      
-      // Should show pinyin instructions for mixed text containing Chinese
-      expect(screen.getByText(/Pinyin Practice Mode/)).toBeInTheDocument();
       
       // Should have both regular and pinyin displays
       const regularChars = screen.getAllByTestId('practice-char');
@@ -649,8 +640,6 @@ describe('TypingArea', () => {
       
       render(<TypingArea {...propsWithoutMode} />);
       
-      // Should render without errors and default to English mode
-      expect(screen.queryByText(/Pinyin Practice Mode/)).not.toBeInTheDocument();
       const chars = screen.getAllByTestId('practice-char');
       expect(chars).toHaveLength(4);
     });

@@ -678,15 +678,6 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
         />
       </div>
       
-      {/* Instructions for pinyin mode */}
-      {detectedPracticeMode === 'pinyin' && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Pinyin Practice Mode:</strong> Type the pinyin for each Chinese character. The cursor will automatically move to the next character when you've typed the correct number of characters. Tones are not required.
-          </p>
-        </div>
-      )}
-      
       <div
         className={`${fontSizeClasses[fontSize]} ${characterAlignmentClasses[characterAlignment]} font-mono select-none leading-relaxed mb-8`}
         aria-label="practice prompt"
