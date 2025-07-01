@@ -360,15 +360,13 @@ describe('TypingArea Pinyin Mode', () => {
       // Type English exclamation for Chinese exclamation
       fireEvent.keyDown(container, { key: '!', code: 'Exclamation' });
       
-      // Wait a short time for completion to be called
-      setTimeout(() => {
-        expect(onComplete).toHaveBeenCalledWith({
-          accuracy: 100,
-          totalCharacters: 2,
-          correctCharacters: 2,
-          incorrectCharacters: 0
-        });
-      }, 10);
+      // Verify completion is called synchronously
+      expect(onComplete).toHaveBeenCalledWith({
+        accuracy: 100,
+        totalCharacters: 2,
+        correctCharacters: 2,
+        incorrectCharacters: 0
+      });
     });
   });
 });

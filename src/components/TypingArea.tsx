@@ -294,7 +294,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
 
         // Call onComplete synchronously
         if (typeof onComplete === 'function') {
-          setTimeout(() => onComplete(stats), 0);
+          onComplete(stats);
         }
       }
       
