@@ -368,6 +368,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
 
   // Handle backspace
   const handleBackspace = () => {
+    // First check if we're in pinyin mode and currently typing pinyin for the current character
     if (detectedPracticeMode === 'pinyin' && cursorPosition < prompt.length) {
       const currentChar = prompt[cursorPosition];
       // Only handle pinyin input backspace for Chinese characters (not Chinese punctuation)
@@ -406,10 +407,65 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       }
     }
     
-    // Regular backspace logic for moving cursor back
+    // If we reach here, we're not currently editing pinyin for the current character
+    // Check if we can move back
     if (cursorPosition > 0) {
-      // Move cursor back and reset characters
       const newPosition = cursorPosition - 1;
+      const previousChar = prompt[newPosition];
+      
+      // Special handling for pinyin mode with Chinese characters - immediately edit previous pinyin
+      if (detectedPracticeMode === 'pinyin' && containsChinese(previousChar)) {
+        const previousCharData = characters[newPosition];
+        
+        // If the previous character was completed, restore its pinyin and immediately remove last character
+        if (previousCharData.state !== 'untyped' && previousCharData.pinyinInput) {
+          // Remove last character from the previous pinyin input
+          const newPinyinInput = previousCharData.pinyinInput.slice(0, -1);
+          
+          // Update all states in a single batch
+          setCursorPosition(newPosition);
+          setCurrentPinyinInput(newPinyinInput);
+          
+          // Determine real-time pinyin state for the edited pinyin
+          const expectedPinyin = previousCharData.expectedPinyin || '';
+          let pinyinState: 'neutral' | 'correct' | 'incorrect' = 'neutral';
+          
+          if (newPinyinInput.length > 0 && expectedPinyin.length > 0) {
+            const normalizedInput = normalizePinyinInput(newPinyinInput);
+            const normalizedExpected = expectedPinyin;
+            
+            if (normalizedExpected.startsWith(normalizedInput)) {
+              pinyinState = 'correct';
+            } else {
+              pinyinState = 'incorrect';
+            }
+          }
+          
+          setCharacters(prev => {
+            const newCharacters = [...prev];
+            // Reset the previous character to allow re-editing with updated pinyin
+            newCharacters[newPosition] = {
+              ...newCharacters[newPosition],
+              state: 'untyped',
+              pinyinInput: newPinyinInput,
+              pinyinState: pinyinState
+            };
+            // Reset all characters after the new cursor position
+            for (let i = newPosition + 1; i < newCharacters.length; i++) {
+              newCharacters[i] = {
+                ...newCharacters[i],
+                state: 'untyped',
+                pinyinInput: '',
+                pinyinState: 'neutral'
+              };
+            }
+            return newCharacters;
+          });
+          return; // Exit early after handling pinyin restoration and editing
+        }
+      }
+      
+      // Default backspace behavior for all other cases
       setCursorPosition(newPosition);
       setCurrentPinyinInput('');
       
