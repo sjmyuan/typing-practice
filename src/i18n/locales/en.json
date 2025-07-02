@@ -1,0 +1,108 @@
+{
+  "common": {
+    "back": "Back",
+    "start": "Start",
+    "practice": "Practice",
+    "again": "Again",
+    "options": "Options",
+    "titles": "Titles",
+    "authors": "Authors",
+    "content": "Content",
+    "mode": "Mode",
+    "text": "Text",
+    "your": "Your",
+    "own": "Own",
+    "create": "Create",
+    "choose": "Choose",
+    "browse": "Browse",
+    "existing": "Existing",
+    "poems": "Poems",
+    "enter": "Enter",
+    "type": "Type",
+    "paste": "Paste",
+    "want": "Want",
+    "typing": "Typing",
+    "final": "Final",
+    "accuracy": "Accuracy",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "font": "Font",
+    "size": "Size",
+    "characters": "Characters",
+    "align": "Align",
+    "left": "Left",
+    "center": "Center", 
+    "right": "Right",
+    "justify": "Justify",
+    "language": "Language"
+  },
+  "buttons": {
+    "backToOptions": "← Back to Options",
+    "backToTitles": "← Back to Titles", 
+    "backToAuthors": "← Back to Authors",
+    "startPractice": "Start Practice",
+    "practiceAgain": "Practice Again",
+    "startNewPractice": "Start New Practice",
+    "createYourOwnContent": "Create Your Own Content",
+    "browseExistingPoems": "Browse Existing Poems"
+  },
+  "labels": {
+    "practiceArea": "practice area - click here and start typing",
+    "practicePrompt": "practice prompt",
+    "increaseFontSize": "Increase font size",
+    "decreaseFontSize": "Decrease font size",
+    "leftAlignCharacters": "Left align characters",
+    "centerCharacters": "Center characters", 
+    "rightAlignCharacters": "Right align characters",
+    "justifyCharacters": "Justify characters",
+    "characterAlignmentOptions": "Character alignment options",
+    "toggleFullscreen": "Toggle fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "enterFullscreen": "Enter fullscreen"
+  },
+  "headings": {
+    "choosePracticeMode": "Choose Practice Mode",
+    "enterYourPracticeText": "Enter Your Practice Text",
+    "finalAccuracy": "Final Accuracy: {{accuracy}}%",
+    "typingPractice": "Typing Practice",
+    "practiceComplete": "Practice Complete!"
+  },
+  "placeholders": {
+    "enterTextToPractice": "Enter the text you want to practice typing..."
+  },
+  "descriptions": {
+    "createYourOwnContent": "Type or paste your own text to practice with",
+    "browseExistingPoems": "Choose from a collection of Tang poetry",
+    "clickHereToStartTyping": "Click in the area below and start typing to test the component",
+    "backButtonFunctionality": "Notice the \"← Back to Options\" button in the top-left corner",
+    "letsLearnTogether": "Let's learn to type together!",
+    "practiceLearnFun": "Practice • Learn • Have Fun!"
+  },
+  "errors": {
+    "pleaseEnterSomeText": "Please enter some text to practice.",
+    "pleaseEnterAtLeast3Characters": "Please enter at least 3 characters."
+  },
+  "progress": {
+    "progressLabel": "Progress",
+    "charactersTyped": "{{typedCount}}/{{totalCount}} characters",
+    "accuracy": "Accuracy: {{percentage}}%"
+  },
+  "poemBrowser": {
+    "selectAuthor": "Select Author",
+    "selectTitleBy": "Select Title by {{author}}",
+    "loadingAuthors": "Loading authors...",
+    "loadingTitles": "Loading titles...",
+    "loadingPoems": "Loading poems...",
+    "failedToLoadPoems": "Failed to load poems. Please try again.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "by": "by",
+    "error": {
+      "loadingPoems": "Error loading poems",
+      "noTitlesFound": "No titles found for this author"
+    }
+  },
+  "fullscreen": {
+    "enterFullscreen": "Enter fullscreen mode",
+    "exitFullscreen": "Exit fullscreen mode"
+  }
+}

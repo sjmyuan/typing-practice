@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './App.css'
 import PracticeArea, { type PracticeState } from './components/PracticeArea'
+import LanguageSwitcher from './components/LanguageSwitcher'
 
 function App() {
   const [practiceState, setPracticeState] = useState<PracticeState>('ready');
+  const { t } = useTranslation();
 
   const handlePracticeStateChange = (state: PracticeState) => {
     setPracticeState(state);
@@ -25,6 +28,14 @@ function App() {
           <div className={`bg-white rounded-3xl shadow-lg mx-auto max-w-2xl border-4 border-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300 ${
             isMinimized ? 'p-3 mb-2' : 'p-6 mb-6'
           }`}>
+            {/* Language Switcher - hide when typing */}
+            {!isMinimized && (
+              <div className="flex justify-end mb-3">
+                <LanguageSwitcher />
+              </div>
+            )}
+            
+            {/* Title section - now perfectly centered */}
             <div className="flex items-center justify-center mb-4">
               <img 
                 src="/typing-practice.svg" 
@@ -36,7 +47,7 @@ function App() {
               <h1 className={`font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent transition-all duration-300 ${
                 isMinimized ? 'text-2xl' : 'text-4xl'
               }`}>
-                Typing Adventure
+                {t('headings.typingPractice', 'Typing Practice')}
               </h1>
               <div className={`ml-3 transition-all duration-300 ${
                 isMinimized ? 'text-2xl' : 'text-4xl'
@@ -45,10 +56,10 @@ function App() {
             {!isMinimized && (
               <>
                 <p className="text-lg text-gray-700 font-medium mb-2">
-                  Let's learn to type together! 
+                  {t('descriptions.letsLearnTogether', "Let's learn to type together!")}
                 </p>
                 <p className="text-base text-blue-600 font-semibold">
-                  🌟 Practice • Learn • Have Fun! 🌟
+                  🌟 {t('descriptions.practiceLearnFun', 'Practice • Learn • Have Fun!')} 🌟
                 </p>
               </>
             )}

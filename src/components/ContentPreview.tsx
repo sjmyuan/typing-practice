@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { TangPoem } from '../utils/tangPoemsUtils';
 
 interface ContentPreviewProps {
@@ -7,6 +8,8 @@ interface ContentPreviewProps {
 }
 
 const ContentPreview: React.FC<ContentPreviewProps> = ({ poem, onStart, onBack }) => {
+  const { t } = useTranslation();
+  
   const handleStart = () => {
     const fullText = `${poem.title}\n${poem.author}\n${poem.text}`;
     onStart(fullText);
@@ -19,7 +22,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ poem, onStart, onBack }
     <div className="text-center space-y-6 max-w-2xl mx-auto">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-gray-800">{poem.title}</h2>
-        <p className="text-lg text-gray-600">by {poem.author}</p>
+        <p className="text-lg text-gray-600">{t('poemBrowser.by')} {poem.author}</p>
       </div>
       
       <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-200">
@@ -38,7 +41,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ poem, onStart, onBack }
           onClick={handleStart}
           className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200"
         >
-          Start Practice
+          {t('buttons.startPractice')}
         </button>
         
         <button
@@ -46,7 +49,7 @@ const ContentPreview: React.FC<ContentPreviewProps> = ({ poem, onStart, onBack }
           onClick={onBack}
           className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
         >
-          ← Back to Titles
+          {t('buttons.backToTitles')}
         </button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import AuthorSelection from './AuthorSelection';
 import TitleSelection from './TitleSelection';
 import ContentPreview from './ContentPreview';
@@ -20,6 +21,7 @@ interface PoemBrowserProps {
 type BrowserState = 'loading' | 'error' | 'authors' | 'titles' | 'preview';
 
 const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
+  const { t } = useTranslation();
   const [state, setState] = useState<BrowserState>('loading');
   const [data, setData] = useState<TangPoemsData | null>(null);
   const [selectedAuthor, setSelectedAuthor] = useState<string>('');
@@ -39,10 +41,9 @@ const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
         }
         
         setData(poemsData);
-        setState('authors');
-      } catch {
-        setError('Failed to load poems. Please try again.');
-        setState('error');
+        setState('authors');        } catch {
+          setError(t('poemBrowser.failedToLoadPoems'));
+          setState('error');
       }
     };
 
@@ -81,7 +82,7 @@ const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
   if (state === 'loading') {
     return (
       <div className="text-center space-y-4">
-        <p className="text-lg text-gray-600">Loading poems...</p>
+        <p className="text-lg text-gray-600">{t('poemBrowser.loadingPoems')}</p>
       </div>
     );
   }
@@ -95,7 +96,7 @@ const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
           onClick={onBack}
           className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
         >
-          ← Back to Options
+          {t('buttons.backToOptions')}
         </button>
       </div>
     );
@@ -136,13 +137,13 @@ const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
 
   return (
     <div className="text-center space-y-4">
-      <p className="text-gray-600">Something went wrong. Please try again.</p>
+      <p className="text-gray-600">{t('poemBrowser.somethingWentWrong')}</p>
       <button
         type="button"
         onClick={onBack}
         className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
       >
-        ← Back to Options
+        {t('buttons.backToOptions')}
       </button>
     </div>
   );

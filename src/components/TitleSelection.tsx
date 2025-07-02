@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface TitleSelectionProps {
   author: string;
   titles: string[];
@@ -6,17 +8,19 @@ interface TitleSelectionProps {
 }
 
 const TitleSelection: React.FC<TitleSelectionProps> = ({ author, titles, onSelect, onBack }) => {
+  const { t } = useTranslation();
+  
   if (titles.length === 0) {
     return (
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800">Select Title by {author}</h2>
-        <p className="text-gray-600">Loading titles...</p>
+        <h2 className="text-2xl font-bold text-gray-800">{t('poemBrowser.selectTitleBy', { author })}</h2>
+        <p className="text-gray-600">{t('poemBrowser.loadingTitles')}</p>
         <button
           type="button"
           onClick={onBack}
           className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
         >
-          ← Back to Authors
+          {t('buttons.backToAuthors')}
         </button>
       </div>
     );
@@ -24,7 +28,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({ author, titles, onSelec
 
   return (
     <div className="text-center space-y-4">
-      <h2 className="text-2xl font-bold text-gray-800">Select Title by {author}</h2>
+      <h2 className="text-2xl font-bold text-gray-800">{t('poemBrowser.selectTitleBy', { author })}</h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
         {titles.map((title) => (
@@ -44,7 +48,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({ author, titles, onSelec
         onClick={onBack}
         className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
       >
-        ← Back to Authors
+        {t('buttons.backToAuthors')}
       </button>
     </div>
   );

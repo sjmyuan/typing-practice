@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FontSizeControl from './FontSizeControl';
 
 describe('FontSizeControl', () => {
@@ -20,8 +20,8 @@ describe('FontSizeControl', () => {
       />
     );
 
-    expect(screen.getByLabelText('Increase font size')).toBeInTheDocument();
-    expect(screen.getByLabelText('Decrease font size')).toBeInTheDocument();
+    expect(screen.getByLabelText('labels.increaseFontSize')).toBeInTheDocument();
+    expect(screen.getByLabelText('labels.decreaseFontSize')).toBeInTheDocument();
   });
 
   it('calls onIncrease when increase button is clicked', () => {
@@ -34,7 +34,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText('Increase font size'));
+    fireEvent.click(screen.getByLabelText('labels.increaseFontSize'));
     expect(mockOnIncrease).toHaveBeenCalledTimes(1);
   });
 
@@ -48,7 +48,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText('Decrease font size'));
+    fireEvent.click(screen.getByLabelText('labels.decreaseFontSize'));
     expect(mockOnDecrease).toHaveBeenCalledTimes(1);
   });
 
@@ -62,7 +62,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    const increaseButton = screen.getByLabelText('Increase font size');
+    const increaseButton = screen.getByLabelText('labels.increaseFontSize');
     expect(increaseButton).toBeDisabled();
   });
 
@@ -76,7 +76,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    const decreaseButton = screen.getByLabelText('Decrease font size');
+    const decreaseButton = screen.getByLabelText('labels.decreaseFontSize');
     expect(decreaseButton).toBeDisabled();
   });
 
@@ -90,7 +90,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText('Increase font size'));
+    fireEvent.click(screen.getByLabelText('labels.increaseFontSize'));
     expect(mockOnIncrease).not.toHaveBeenCalled();
   });
 
@@ -104,7 +104,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    fireEvent.click(screen.getByLabelText('Decrease font size'));
+    fireEvent.click(screen.getByLabelText('labels.decreaseFontSize'));
     expect(mockOnDecrease).not.toHaveBeenCalled();
   });
 
@@ -118,7 +118,7 @@ describe('FontSizeControl', () => {
       />
     );
 
-    expect(screen.getByLabelText('Increase font size')).toBeInTheDocument();
-    expect(screen.getByLabelText('Decrease font size')).toBeInTheDocument();
+    expect(screen.getByLabelText('labels.increaseFontSize')).toBeInTheDocument();
+    expect(screen.getByLabelText('labels.decreaseFontSize')).toBeInTheDocument();
   });
 });

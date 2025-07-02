@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PoemBrowser from './PoemBrowser';
 
 interface EnhancedStartScreenProps {
@@ -8,6 +9,7 @@ interface EnhancedStartScreenProps {
 type ScreenMode = 'selection' | 'custom' | 'browse';
 
 const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) => {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<ScreenMode>('selection');
   const [prompt, setPrompt] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -18,12 +20,12 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
     // Validation
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
-      setError('Please enter some text to practice with.');
+      setError(t('errors.pleaseEnterSomeText', 'Please enter some text to practice.'));
       return;
     }
     
     if (trimmedPrompt.length < 3) {
-      setError('Please enter at least 3 characters.');
+      setError(t('errors.pleaseEnterAtLeast3Characters', 'Please enter at least 3 characters.'));
       return;
     }
 
@@ -57,7 +59,7 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
   if (mode === 'selection') {
     return (
       <div className="text-center space-y-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Choose Practice Mode</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">{t('headings.choosePracticeMode', 'Choose Practice Mode')}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           <button
@@ -68,10 +70,10 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
             <div className="text-center space-y-4">
               <div className="text-4xl mb-4">✏️</div>
               <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600">
-                Create Your Own Content
+                {t('buttons.createYourOwnContent', 'Create Your Own Content')}
               </h2>
               <p className="text-gray-600">
-                Type or paste your own text to practice with
+                {t('descriptions.createYourOwnContent', 'Type or paste your own text to practice with')}
               </p>
             </div>
           </button>
@@ -84,10 +86,10 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
             <div className="text-center space-y-4">
               <div className="text-4xl mb-4">📚</div>
               <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600">
-                Browse Existing Poems
+                {t('buttons.browseExistingPoems', 'Browse Existing Poems')}
               </h2>
               <p className="text-gray-600">
-                Choose from a collection of Tang poetry
+                {t('descriptions.browseExistingPoems', 'Choose from a collection of Tang poetry')}
               </p>
             </div>
           </button>
@@ -99,14 +101,14 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
   if (mode === 'custom') {
     return (
       <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Enter Your Practice Text</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('headings.enterYourPracticeText', 'Enter Your Practice Text')}</h2>
         
         <form onSubmit={handleCustomSubmit} className="space-y-4">
           <div>
             <textarea
               value={prompt}
               onChange={handleInputChange}
-              placeholder="Enter the text you want to practice typing..."
+              placeholder={t('placeholders.enterTextToPractice', 'Enter the text you want to practice typing...')}
               className="w-full p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none text-lg"
               rows={4}
               maxLength={500}
@@ -122,7 +124,7 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
               className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
               disabled={isButtonDisabled}
             >
-              Start Practice
+              {t('buttons.startPractice', 'Start Practice')}
             </button>
             
             <button
@@ -130,7 +132,7 @@ const EnhancedStartScreen: React.FC<EnhancedStartScreenProps> = ({ onStart }) =>
               onClick={handleBackToSelection}
               className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
             >
-              ← Back to Options
+              {t('buttons.backToOptions', '← Back to Options')}
             </button>
           </div>
         </form>

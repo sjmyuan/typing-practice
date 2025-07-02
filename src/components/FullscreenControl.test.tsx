@@ -7,7 +7,7 @@ describe('FullscreenControl', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={false} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /enter fullscreen/i });
+    const button = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     expect(button).toBeInTheDocument();
   });
 
@@ -15,7 +15,7 @@ describe('FullscreenControl', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={true} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /exit fullscreen/i });
+    const button = screen.getByRole('button', { name: /fullscreen.exitFullscreen/i });
     expect(button).toBeInTheDocument();
   });
 
@@ -23,7 +23,7 @@ describe('FullscreenControl', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={false} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /enter fullscreen/i });
+    const button = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     fireEvent.click(button);
     
     expect(onToggle).toHaveBeenCalledTimes(1);
@@ -33,24 +33,24 @@ describe('FullscreenControl', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={false} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /enter fullscreen/i });
+    const button = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveAttribute('aria-label', 'Enter fullscreen mode');
+    expect(button).toHaveAttribute('aria-label', 'fullscreen.enterFullscreen');
   });
 
   it('shows correct accessibility label for exit fullscreen', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={true} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /exit fullscreen/i });
-    expect(button).toHaveAttribute('aria-label', 'Exit fullscreen mode');
+    const button = screen.getByRole('button', { name: /fullscreen.exitFullscreen/i });
+    expect(button).toHaveAttribute('aria-label', 'fullscreen.exitFullscreen');
   });
 
   it('has proper focus styling', () => {
     const onToggle = vi.fn();
     render(<FullscreenControl isFullscreen={false} onToggle={onToggle} />);
     
-    const button = screen.getByRole('button', { name: /enter fullscreen/i });
+    const button = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     expect(button).toHaveClass('focus:outline-none', 'focus:ring-2');
   });
 });

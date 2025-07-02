@@ -71,7 +71,7 @@ describe('TitleSelection', () => {
       />
     );
     
-    expect(screen.getByText('← Back to Authors')).toBeInTheDocument();
+    expect(screen.getByText('buttons.backToAuthors')).toBeInTheDocument();
   });
 
   it('should call onBack when back button is clicked', () => {
@@ -87,7 +87,7 @@ describe('TitleSelection', () => {
       />
     );
     
-    fireEvent.click(screen.getByText('← Back to Authors'));
+    fireEvent.click(screen.getByText('buttons.backToAuthors'));
     
     expect(mockOnBack).toHaveBeenCalled();
   });
@@ -105,7 +105,7 @@ describe('TitleSelection', () => {
       />
     );
     
-    expect(screen.getByText('Loading titles...')).toBeInTheDocument();
+    expect(screen.getByText('poemBrowser.loadingTitles')).toBeInTheDocument();
   });
 
   it('should have proper accessibility attributes', () => {

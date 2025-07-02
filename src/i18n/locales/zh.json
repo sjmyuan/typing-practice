@@ -1,0 +1,108 @@
+{
+  "common": {
+    "back": "返回",
+    "start": "开始",
+    "practice": "练习",
+    "again": "重新",
+    "options": "选项",
+    "titles": "标题",
+    "authors": "作者",
+    "content": "内容",
+    "mode": "模式",
+    "text": "文本",
+    "your": "您的",
+    "own": "自己的",
+    "create": "创建",
+    "choose": "选择",
+    "browse": "浏览",
+    "existing": "现有的",
+    "poems": "诗歌",
+    "enter": "输入",
+    "type": "打字",
+    "paste": "粘贴",
+    "want": "想要",
+    "typing": "打字",
+    "final": "最终",
+    "accuracy": "准确率",
+    "increase": "增大",
+    "decrease": "减小",
+    "font": "字体",
+    "size": "大小",
+    "characters": "字符",
+    "align": "对齐",
+    "left": "左对齐",
+    "center": "居中",
+    "right": "右对齐", 
+    "justify": "两端对齐",
+    "language": "语言"
+  },
+  "buttons": {
+    "backToOptions": "← 返回选项",
+    "backToTitles": "← 返回标题",
+    "backToAuthors": "← 返回作者",
+    "startPractice": "开始练习",
+    "practiceAgain": "重新练习",
+    "startNewPractice": "开始新练习",
+    "createYourOwnContent": "创建您自己的内容",
+    "browseExistingPoems": "浏览现有诗歌"
+  },
+  "labels": {
+    "practiceArea": "练习区域 - 点击这里开始打字",
+    "practicePrompt": "练习提示",
+    "increaseFontSize": "增大字体",
+    "decreaseFontSize": "减小字体",
+    "leftAlignCharacters": "左对齐字符",
+    "centerCharacters": "居中字符",
+    "rightAlignCharacters": "右对齐字符",
+    "justifyCharacters": "两端对齐字符",
+    "characterAlignmentOptions": "字符对齐选项",
+    "toggleFullscreen": "切换全屏",
+    "exitFullscreen": "退出全屏",
+    "enterFullscreen": "进入全屏"
+  },
+  "headings": {
+    "choosePracticeMode": "选择练习模式",
+    "enterYourPracticeText": "输入您的练习文本",
+    "finalAccuracy": "最终准确率：{{accuracy}}%",
+    "typingPractice": "打字练习",
+    "practiceComplete": "练习完成！"
+  },
+  "placeholders": {
+    "enterTextToPractice": "输入您想要练习打字的文本..."
+  },
+  "descriptions": {
+    "createYourOwnContent": "输入或粘贴您自己的文本进行练习",
+    "browseExistingPoems": "从唐诗集合中选择",
+    "clickHereToStartTyping": "点击下面的区域并开始打字来测试组件",
+    "backButtonFunctionality": "注意左上角的\"← 返回选项\"按钮",
+    "letsLearnTogether": "让我们一起学习打字吧！",
+    "practiceLearnFun": "练习 • 学习 • 快乐成长！"
+  },
+  "errors": {
+    "pleaseEnterSomeText": "请输入一些文本进行练习。",
+    "pleaseEnterAtLeast3Characters": "请输入至少3个字符。"
+  },
+  "progress": {
+    "progressLabel": "进度",
+    "charactersTyped": "{{typedCount}}/{{totalCount}} 个字符",
+    "accuracy": "准确率：{{percentage}}%"
+  },
+  "poemBrowser": {
+    "selectAuthor": "选择作者",
+    "selectTitleBy": "选择{{author}}的作品",
+    "loadingAuthors": "正在加载作者...",
+    "loadingTitles": "正在加载标题...",
+    "loadingPoems": "正在加载诗歌...",
+    "failedToLoadPoems": "加载诗歌失败，请重试。",
+    "somethingWentWrong": "出了点问题，请重试。",
+    "by": "作者：",
+    "error": {
+      "loadingPoems": "加载诗歌时出错", 
+      "noTitlesFound": "未找到此作者的作品"
+    }
+  },
+  "fullscreen": {
+    "enterFullscreen": "进入全屏模式",
+    "exitFullscreen": "退出全屏模式"
+  }
+}

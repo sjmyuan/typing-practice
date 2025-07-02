@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export type PracticeMode = 'auto' | 'english' | 'pinyin';
 
@@ -7,6 +8,7 @@ interface StartScreenProps {
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -16,12 +18,12 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
     // Validation
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
-      setError('Please enter some text to practice with.');
+      setError(t('errors.pleaseEnterSomeText', 'Please enter some text to practice.'));
       return;
     }
     
     if (trimmedPrompt.length < 3) {
-      setError('Please enter at least 3 characters.');
+      setError(t('errors.pleaseEnterAtLeast3Characters', 'Please enter at least 3 characters.'));
       return;
     }
 
@@ -49,7 +51,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
           <textarea
             value={prompt}
             onChange={handleInputChange}
-            placeholder="Enter the text you want to practice typing..."
+            placeholder={t('placeholders.enterTextToPractice')}
             className="w-full p-4 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none text-lg"
             rows={4}
             maxLength={500}
@@ -64,7 +66,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart }) => {
           className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 text-lg font-semibold shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           disabled={isButtonDisabled}
         >
-          Start Practice
+          {t('buttons.startPractice')}
         </button>
       </form>
     </div>

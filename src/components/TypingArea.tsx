@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import CharacterDisplay from './CharacterDisplay';
 import PinyinCharacterDisplay from './PinyinCharacterDisplay';
 import ProgressDisplay from './ProgressDisplay';
@@ -36,6 +37,8 @@ interface TypingAreaProps {
 }
 
 const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplete, onBack }) => {
+  const { t } = useTranslation();
+  
   // Auto-detect practice mode based on prompt content
   const detectedPracticeMode: PracticeMode = practiceMode || (isPinyinPracticeText(prompt) ? 'pinyin' : 'english');
   
@@ -743,7 +746,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
           ? 'fixed inset-0 z-50 bg-white overflow-auto' 
           : ''
       }`}
-      aria-label="practice area - click here and start typing"
+      aria-label={t('labels.practiceArea')}
     >
       <div className="flex justify-between items-center gap-4 mb-4">
         <div className="flex">
@@ -753,7 +756,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
               onClick={handleBackClick}
               className="px-4 py-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded"
             >
-              ← Back to Options
+              {t('buttons.backToOptions')}
             </button>
           )}
         </div>
@@ -777,7 +780,7 @@ const TypingArea: React.FC<TypingAreaProps> = ({ prompt, practiceMode, onComplet
       
       <div
         className={`${fontSizeClasses[fontSize]} ${characterAlignmentClasses[characterAlignment]} font-mono select-none leading-relaxed mb-8`}
-        aria-label="practice prompt"
+        aria-label={t('labels.practicePrompt')}
         role="presentation"
       >
         {groupCharactersIntoWords(characters).map((wordGroup, wordIndex) => {

@@ -17,7 +17,7 @@ describe('AuthorSelection', () => {
       />
     );
     
-    expect(screen.getByText('Select Author')).toBeInTheDocument();
+    expect(screen.getByText('poemBrowser.selectAuthor')).toBeInTheDocument();
   });
 
   it('should render all authors as buttons', () => {
@@ -66,7 +66,7 @@ describe('AuthorSelection', () => {
       />
     );
     
-    expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+    expect(screen.getByText('buttons.backToOptions')).toBeInTheDocument();
   });
 
   it('should call onBack when back button is clicked', () => {
@@ -81,7 +81,7 @@ describe('AuthorSelection', () => {
       />
     );
     
-    fireEvent.click(screen.getByText('← Back to Options'));
+    fireEvent.click(screen.getByText('buttons.backToOptions'));
     
     expect(mockOnBack).toHaveBeenCalled();
   });
@@ -98,7 +98,7 @@ describe('AuthorSelection', () => {
       />
     );
     
-    expect(screen.getByText('Loading authors...')).toBeInTheDocument();
+    expect(screen.getByText('poemBrowser.loadingAuthors')).toBeInTheDocument();
   });
 
   it('should have proper accessibility attributes', () => {
