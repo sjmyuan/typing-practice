@@ -12,7 +12,7 @@ const mockUseTranslation = vi.mocked(useTranslation);
 
 describe('LanguageSwitcher', () => {
   const mockChangeLanguage = vi.fn();
-  const mockT = vi.fn((key: string) => key) as any;
+  const mockT = vi.fn((key: string) => key);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,10 +21,10 @@ describe('LanguageSwitcher', () => {
       i18n: {
         language: 'en',
         changeLanguage: mockChangeLanguage
-      } as any,
-      t: mockT,
+      } as unknown as ReturnType<typeof useTranslation>['i18n'],
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
       ready: true
-    } as any);
+    } as ReturnType<typeof useTranslation>);
   });
 
   it('renders language selector with correct options', () => {
@@ -47,10 +47,10 @@ describe('LanguageSwitcher', () => {
       i18n: {
         language: 'zh',
         changeLanguage: mockChangeLanguage
-      } as any,
-      t: mockT,
+      } as unknown as ReturnType<typeof useTranslation>['i18n'],
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
       ready: true
-    } as any);
+    } as ReturnType<typeof useTranslation>);
 
     render(<LanguageSwitcher />);
     

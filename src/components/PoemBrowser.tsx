@@ -48,6 +48,7 @@ const PoemBrowser: React.FC<PoemBrowserProps> = ({ onStart, onBack }) => {
     };
 
     initializeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAuthorSelect = (author: string) => {

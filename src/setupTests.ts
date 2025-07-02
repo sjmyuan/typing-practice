@@ -1,10 +1,19 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Define interface for interpolation options
+interface InterpolationOptions {
+  accuracy?: number;
+  author?: string;
+  typedCount?: number;
+  totalCount?: number;
+  percentage?: number;
+}
+
 // Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, defaultValue?: string, options?: any) => {
+    t: (key: string, defaultValue?: string, options?: InterpolationOptions) => {
       // Handle interpolation for testing
       // If options is provided as third parameter
       if (typeof options === 'object' && options !== null) {
@@ -23,17 +32,18 @@ vi.mock('react-i18next', () => ({
       }
       // If defaultValue is provided and is an object (old format compatibility)
       if (typeof defaultValue === 'object' && defaultValue !== null) {
-        if ((defaultValue as any).accuracy !== undefined) {
-          return `Final Accuracy: ${(defaultValue as any).accuracy}%`;
+        const objValue = defaultValue as InterpolationOptions;
+        if (objValue.accuracy !== undefined) {
+          return `Final Accuracy: ${objValue.accuracy}%`;
         }
-        if ((defaultValue as any).author !== undefined) {
-          return `Select Title by ${(defaultValue as any).author}`;
+        if (objValue.author !== undefined) {
+          return `Select Title by ${objValue.author}`;
         }
-        if ((defaultValue as any).typedCount !== undefined && (defaultValue as any).totalCount !== undefined) {
-          return `${(defaultValue as any).typedCount}/${(defaultValue as any).totalCount} characters`;
+        if (objValue.typedCount !== undefined && objValue.totalCount !== undefined) {
+          return `${objValue.typedCount}/${objValue.totalCount} characters`;
         }
-        if ((defaultValue as any).percentage !== undefined) {
-          return `Accuracy: ${(defaultValue as any).percentage}%`;
+        if (objValue.percentage !== undefined) {
+          return `Accuracy: ${objValue.percentage}%`;
         }
       }
       // If no options or fallback needed, return the key
