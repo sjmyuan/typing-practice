@@ -549,4 +549,141 @@ describe('PinyinCharacterDisplay', () => {
       expect(mainCharacter.className).not.toMatch(/text-\[0\.75em\]/);
     });
   });
+
+  describe('Chinese Punctuation Color Behavior', () => {
+    it('shows gray English punctuation for untyped Chinese punctuation', () => {
+      render(
+        <PinyinCharacterDisplay 
+          char="，" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={false}
+          showPinyin={true}
+          pinyinInput=""
+          pinyinState="neutral"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent(',');
+      // Check the individual punctuation character, not the container
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-gray-400'); // Individual chars should use gray when untyped
+    });
+
+    it('shows green English punctuation for correctly completed Chinese punctuation', () => {
+      // When Chinese punctuation is completed and correct, the English equivalent should be green
+      render(
+        <PinyinCharacterDisplay 
+          char="，" 
+          state="correct" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={false}
+          showPinyin={true}
+          pinyinInput="" // No active input, character is completed
+          pinyinState="neutral"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent(',');
+      // The punctuation character should reflect the completed state
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-green-600');
+      expect(punctChar).toHaveClass('font-bold');
+    });
+
+    it('shows red English punctuation for incorrectly completed Chinese punctuation', () => {
+      // When Chinese punctuation is completed but incorrect, the English equivalent should be red
+      render(
+        <PinyinCharacterDisplay 
+          char="，" 
+          state="incorrect" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={false}
+          showPinyin={true}
+          pinyinInput="" // No active input, character is completed
+          pinyinState="neutral"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent(',');
+      // The punctuation character should reflect the completed state
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-red-600');
+      expect(punctChar).toHaveClass('font-bold');
+    });
+
+    it('shows correct color during active typing', () => {
+      // During typing, individual character comparison should work
+      render(
+        <PinyinCharacterDisplay 
+          char="，" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="," // Currently typing the correct punctuation
+          pinyinState="correct"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent(',');
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-green-600');
+      expect(punctChar).toHaveClass('font-bold');
+    });
+
+    it('shows incorrect color during active typing with wrong input', () => {
+      // During typing with wrong input, should show red
+      render(
+        <PinyinCharacterDisplay 
+          char="，" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput="." // Typing wrong punctuation
+          pinyinState="incorrect"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent(',');
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-red-600');
+      expect(punctChar).toHaveClass('font-bold');
+    });
+
+    it('maintains individual character coloring during typing for multi-character punctuation', () => {
+      // For testing with a complex punctuation that might have multiple English equivalents
+      render(
+        <PinyinCharacterDisplay 
+          char="「" 
+          state="untyped" 
+          index={0} 
+          onClick={() => {}}
+          showCursor={true}
+          showPinyin={true}
+          pinyinInput=""
+          pinyinState="neutral"
+        />
+      );
+      
+      const pinyinDisplay = screen.getByTestId('pinyin-display');
+      expect(pinyinDisplay).toHaveTextContent('"');
+      const punctChar = pinyinDisplay.querySelector('span');
+      expect(punctChar).toHaveClass('text-gray-400');
+      
+      // Should show cursor at the start
+      expect(pinyinDisplay.querySelector('[data-testid="cursor"]')).toBeInTheDocument();
+    });
+  });
 });

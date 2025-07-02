@@ -101,16 +101,31 @@ const PinyinCharacterDisplay = forwardRef<HTMLSpanElement, PinyinCharacterDispla
 
     const inputLength = pinyinInput.length;
     
-    return englishPunctuation.split('').map((punctChar, charIndex) => {
-      let charStyle = '';
-      
+    // Helper function to determine character style based on typing state
+    const getCharacterStyle = (charIndex: number, punctChar: string) => {
       if (charIndex < inputLength) {
-        // Character already typed
+        // Character already typed - compare during active typing
         const typedChar = pinyinInput[charIndex];
-        charStyle = typedChar === punctChar ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+        return typedChar === punctChar ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+      } else if (inputLength === 0 && state !== 'untyped') {
+        // No active input but character is completed - use overall character state
+        switch (state) {
+          case 'correct':
+            return 'text-green-600 font-bold';
+          case 'incorrect':
+            return 'text-red-600 font-bold';
+          case 'skipped':
+            return 'text-yellow-700 font-bold';
+          default:
+            return 'text-gray-400';
+        }
       } else {
-        charStyle = 'text-gray-400';
+        return 'text-gray-400';
       }
+    };
+    
+    return englishPunctuation.split('').map((punctChar, charIndex) => {
+      const charStyle = getCharacterStyle(charIndex, punctChar);
       
       // Show cursor at current typing position
       const showCharCursor = showCursor && charIndex === inputLength;
