@@ -19,7 +19,7 @@ describe('TypingArea - Fullscreen', () => {
       />
     );
     
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     expect(fullscreenButton).toBeInTheDocument();
   });
 
@@ -32,10 +32,10 @@ describe('TypingArea - Fullscreen', () => {
       />
     );
     
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     fireEvent.click(fullscreenButton);
     
-    const exitFullscreenButton = screen.getByRole('button', { name: /exit fullscreen/i });
+    const exitFullscreenButton = screen.getByRole('button', { name: /fullscreen.exitFullscreen/i });
     expect(exitFullscreenButton).toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe('TypingArea - Fullscreen', () => {
     );
     
     const container = screen.getByRole('textbox');
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     
     // Should not have fullscreen styles initially
     expect(container).not.toHaveClass('fixed', 'inset-0', 'z-50');
@@ -70,17 +70,17 @@ describe('TypingArea - Fullscreen', () => {
     );
     
     const container = screen.getByRole('textbox');
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     
     // Enter fullscreen mode
     fireEvent.click(fullscreenButton);
-    expect(screen.getByRole('button', { name: /exit fullscreen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /fullscreen.exitFullscreen/i })).toBeInTheDocument();
     
     // Press escape key
     fireEvent.keyDown(container, { key: 'Escape' });
     
     // Should exit fullscreen mode
-    expect(screen.getByRole('button', { name: /enter fullscreen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /fullscreen.enterFullscreen/i })).toBeInTheDocument();
     expect(container).not.toHaveClass('fixed', 'inset-0', 'z-50');
   });
 
@@ -94,7 +94,7 @@ describe('TypingArea - Fullscreen', () => {
     );
     
     const container = screen.getByRole('textbox');
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     
     // Enter fullscreen mode
     fireEvent.click(fullscreenButton);
@@ -103,7 +103,7 @@ describe('TypingArea - Fullscreen', () => {
     fireEvent.keyDown(container, { key: 'H' });
     
     // Check that progress display shows typed characters
-    const progressText = screen.getByText(/progress:/i);
+    const progressText = screen.getByText(/progress\.progressLabel/i);
     expect(progressText).toBeInTheDocument();
   });
 
@@ -116,10 +116,10 @@ describe('TypingArea - Fullscreen', () => {
       />
     );
     
-    const fullscreenButton = screen.getByRole('button', { name: /enter fullscreen/i });
+    const fullscreenButton = screen.getByRole('button', { name: /fullscreen.enterFullscreen/i });
     fireEvent.click(fullscreenButton);
     
-    const backButton = screen.getByRole('button', { name: /back to options/i });
+    const backButton = screen.getByRole('button', { name: /buttons.backToOptions/i });
     expect(backButton).toBeInTheDocument();
     
     fireEvent.click(backButton);

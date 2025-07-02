@@ -56,7 +56,7 @@ describe('PoemBrowser', () => {
     render(<PoemBrowser onStart={mockOnStart} onBack={mockOnBack} />);
     
     await waitFor(() => {
-      expect(screen.getByText('Select Author')).toBeInTheDocument();
+      expect(screen.getByText('poemBrowser.selectAuthor')).toBeInTheDocument();
       expect(screen.getByText('张九龄')).toBeInTheDocument();
       expect(screen.getByText('李白')).toBeInTheDocument();
     });
@@ -79,7 +79,7 @@ describe('PoemBrowser', () => {
     
     render(<PoemBrowser onStart={mockOnStart} onBack={mockOnBack} />);
     
-    expect(screen.getByText('Loading poems...')).toBeInTheDocument();
+    expect(screen.getByText('poemBrowser.loadingPoems')).toBeInTheDocument();
   });
 
   it('should show error state when loading fails', async () => {
@@ -89,7 +89,7 @@ describe('PoemBrowser', () => {
     render(<PoemBrowser onStart={mockOnStart} onBack={mockOnBack} />);
     
     await waitFor(() => {
-      expect(screen.getByText('Failed to load poems. Please try again.')).toBeInTheDocument();
+      expect(screen.getByText('poemBrowser.failedToLoadPoems')).toBeInTheDocument();
     });
   });
 
@@ -119,13 +119,13 @@ describe('PoemBrowser', () => {
     fireEvent.click(screen.getByText('张九龄'));
     
     await waitFor(() => {
-      expect(screen.getByText('← Back to Authors')).toBeInTheDocument();
+      expect(screen.getByText('buttons.backToAuthors')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByText('← Back to Authors'));
+    fireEvent.click(screen.getByText('buttons.backToAuthors'));
     
     await waitFor(() => {
-      expect(screen.getByText('Select Author')).toBeInTheDocument();
+      expect(screen.getByText('poemBrowser.selectAuthor')).toBeInTheDocument();
     });
   });
 
@@ -146,8 +146,8 @@ describe('PoemBrowser', () => {
     
     await waitFor(() => {
       expect(screen.getByText('感遇四首之一')).toBeInTheDocument();
-      expect(screen.getByText('by 张九龄')).toBeInTheDocument();
-      expect(screen.getByText('Start Practice')).toBeInTheDocument();
+      expect(screen.getByText('poemBrowser.by 张九龄')).toBeInTheDocument();
+      expect(screen.getByText('buttons.startPractice')).toBeInTheDocument();
     });
   });
 
@@ -167,10 +167,10 @@ describe('PoemBrowser', () => {
     fireEvent.click(screen.getByText('感遇四首之一'));
     
     await waitFor(() => {
-      expect(screen.getByText('Start Practice')).toBeInTheDocument();
+      expect(screen.getByText('buttons.startPractice')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByText('Start Practice'));
+    fireEvent.click(screen.getByText('buttons.startPractice'));
     
     expect(mockOnStart).toHaveBeenCalledWith("感遇四首之一\n张九龄\n孤鸿海上来，池潢不敢顾。\n侧见双翠鸟，巢在三珠树。");
   });
@@ -179,10 +179,10 @@ describe('PoemBrowser', () => {
     render(<PoemBrowser onStart={mockOnStart} onBack={mockOnBack} />);
     
     await waitFor(() => {
-      expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+      expect(screen.getByText('buttons.backToOptions')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByText('← Back to Options'));
+    fireEvent.click(screen.getByText('buttons.backToOptions'));
     
     expect(mockOnBack).toHaveBeenCalled();
   });

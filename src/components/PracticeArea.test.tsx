@@ -12,7 +12,7 @@ describe('PracticeArea', () => {
     const user = userEvent.setup();
     
     // First, click "Create Your Own Content" to enter custom input mode
-    const customTextButton = screen.getByRole('button', { name: /create your own content/i });
+    const customTextButton = screen.getByRole('button', { name: /buttons.createYourOwnContent/i });
     await user.click(customTextButton);
     
     // Type prompt in textarea
@@ -20,7 +20,7 @@ describe('PracticeArea', () => {
     await user.type(textarea, prompt);
     
     // Click start button
-    const startButton = screen.getByRole('button', { name: /start practice/i });
+    const startButton = screen.getByRole('button', { name: /buttons.startPractice/i });
     await user.click(startButton);
     
     // Return the practice textbox
@@ -31,8 +31,8 @@ describe('PracticeArea', () => {
     it('renders start screen initially', () => {
       render(<PracticeArea />);
       // Should show mode selection buttons initially
-      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.createYourOwnContent/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.browseExistingPoems/i })).toBeInTheDocument();
     });
   });
 
@@ -85,7 +85,7 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'l', code: 'KeyL' });
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       // Check completion message appears
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
     });
 
     it('shows progress and accuracy information', async () => {
@@ -93,7 +93,7 @@ describe('PracticeArea', () => {
       const practiceArea = await startPracticeSessionWithPrompt();
       practiceArea.focus();
       fireEvent.keyDown(practiceArea, { key: 'h', code: 'KeyH' });
-      expect(screen.getByText(/Progress: 1\/5/)).toBeInTheDocument();
+      expect(screen.getByText(/1\/5 characters/)).toBeInTheDocument();
       expect(screen.getByText(/Accuracy: 100%/)).toBeInTheDocument();
     });
   });
@@ -112,9 +112,9 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       
       // Verify completion screen with both buttons
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.practiceAgain/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.startNewPractice/i })).toBeInTheDocument();
     });
   });
 
@@ -146,8 +146,8 @@ describe('PracticeArea', () => {
       render(<PracticeArea initialPrompt={initialPrompt} />);
       
       // Should still show mode selection initially
-      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.createYourOwnContent/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.browseExistingPoems/i })).toBeInTheDocument();
     });
   });
 
@@ -165,10 +165,10 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       
       // Verify completion screen
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
       
       // Click Practice Again button
-      const practiceAgainButton = screen.getByRole('button', { name: /practice again/i });
+      const practiceAgainButton = screen.getByRole('button', { name: /buttons.practiceAgain/i });
       fireEvent.click(practiceAgainButton);
       
       // Should go directly to practice area with same prompt
@@ -193,15 +193,15 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       
       // Verify completion screen
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
       
       // Click Start New Practice button
-      const startNewButton = screen.getByRole('button', { name: /start new practice/i });
+      const startNewButton = screen.getByRole('button', { name: /buttons.startNewPractice/i });
       fireEvent.click(startNewButton);
       
       // Should be back to start screen
-      expect(screen.getByRole('button', { name: /create your own content/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /browse existing poems/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.createYourOwnContent/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.browseExistingPoems/i })).toBeInTheDocument();
       
       // Should not show practice characters
       expect(screen.queryAllByTestId('practice-char')).toHaveLength(0);
@@ -220,9 +220,9 @@ describe('PracticeArea', () => {
       fireEvent.keyDown(practiceArea, { key: 'o', code: 'KeyO' });
       
       // Verify completion screen has both buttons
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.practiceAgain/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.startNewPractice/i })).toBeInTheDocument();
     });
   });
 
@@ -231,17 +231,17 @@ describe('PracticeArea', () => {
       render(<PracticeArea />);
       await startPracticeSessionWithPrompt();
       
-      expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+      expect(screen.getByText('buttons.backToOptions')).toBeInTheDocument();
     });
 
     it('returns to start screen when back button is clicked', async () => {
       render(<PracticeArea />);
       await startPracticeSessionWithPrompt();
       
-      fireEvent.click(screen.getByText('← Back to Options'));
+      fireEvent.click(screen.getByText('buttons.backToOptions'));
       
       // Should return to start screen
-      expect(screen.getByText('Choose Practice Mode')).toBeInTheDocument();
+      expect(screen.getByText('headings.choosePracticeMode')).toBeInTheDocument();
       expect(screen.queryAllByTestId('practice-char')).toHaveLength(0);
     });
   });
@@ -257,14 +257,14 @@ describe('PracticeArea', () => {
       expect(mockOnPracticeStateChange).toHaveBeenCalledWith('ready');
       
       // First, click "Create Your Own Content" to enter custom input mode
-      const customTextButton = screen.getByRole('button', { name: /create your own content/i });
+      const customTextButton = screen.getByRole('button', { name: /buttons.createYourOwnContent/i });
       await user.click(customTextButton);
       
       // Start practice session
       const textarea = screen.getByRole('textbox');
       await user.type(textarea, testPrompt);
       
-      const startButton = screen.getByRole('button', { name: /start practice/i });
+      const startButton = screen.getByRole('button', { name: /buttons.startPractice/i });
       await user.click(startButton);
       
       // Should call with 'active' when starting practice

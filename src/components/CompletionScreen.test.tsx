@@ -15,7 +15,7 @@ describe('CompletionScreen', () => {
   describe('Rendering', () => {
     it('renders completion title', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      expect(screen.getByText('Practice Complete!')).toBeInTheDocument();
+      expect(screen.getByText('headings.practiceComplete')).toBeInTheDocument();
     });
 
     it('renders accuracy percentage', () => {
@@ -25,17 +25,17 @@ describe('CompletionScreen', () => {
 
     it('renders practice again button', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      expect(screen.getByRole('button', { name: /practice again/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.practiceAgain/i })).toBeInTheDocument();
     });
 
     it('renders start new practice button', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      expect(screen.getByRole('button', { name: /start new practice/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.startNewPractice/i })).toBeInTheDocument();
     });
 
     it('centers the content', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const title = screen.getByText('Practice Complete!');
+      const title = screen.getByText('headings.practiceComplete');
       const innerDiv = title.closest('div'); // This is the mb-6 div
       const outerDiv = innerDiv?.parentElement; // This is the text-center div
       expect(outerDiv).toHaveClass('text-center');
@@ -45,7 +45,7 @@ describe('CompletionScreen', () => {
   describe('Title Styling', () => {
     it('applies correct CSS classes to title', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const title = screen.getByText('Practice Complete!');
+      const title = screen.getByText('headings.practiceComplete');
       expect(title).toHaveClass('text-2xl');
       expect(title).toHaveClass('font-bold');
       expect(title).toHaveClass('text-green-600');
@@ -55,7 +55,7 @@ describe('CompletionScreen', () => {
     it('title is an h3 element', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
       const title = screen.getByRole('heading', { level: 3 });
-      expect(title).toHaveTextContent('Practice Complete!');
+      expect(title).toHaveTextContent('headings.practiceComplete');
     });
   });
 
@@ -87,7 +87,7 @@ describe('CompletionScreen', () => {
   describe('Button Styling', () => {
     it('applies correct CSS classes to Practice Again button', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const button = screen.getByRole('button', { name: /practice again/i });
+      const button = screen.getByRole('button', { name: /buttons.practiceAgain/i });
       expect(button).toHaveClass('px-8');
       expect(button).toHaveClass('py-4');
       expect(button).toHaveClass('bg-blue-600');
@@ -106,21 +106,21 @@ describe('CompletionScreen', () => {
 
     it('has correct button text', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      expect(screen.getByRole('button', { name: /practice again/i })).toHaveTextContent('Practice Again');
-      expect(screen.getByRole('button', { name: /start new practice/i })).toHaveTextContent('Start New Practice');
+      expect(screen.getByRole('button', { name: /buttons.practiceAgain/i })).toHaveTextContent('buttons.practiceAgain');
+      expect(screen.getByRole('button', { name: /buttons.startNewPractice/i })).toHaveTextContent('buttons.startNewPractice');
     });
   });
 
   describe('Layout Structure', () => {
     it('has correct margin between title/accuracy section and button', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const titleSection = screen.getByText('Practice Complete!').closest('div');
+      const titleSection = screen.getByText('headings.practiceComplete').closest('div');
       expect(titleSection).toHaveClass('mb-6');
     });
 
     it('maintains proper component structure', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const titleElement = screen.getByText('Practice Complete!');
+      const titleElement = screen.getByText('headings.practiceComplete');
       const titleDiv = titleElement.closest('div');
       const container = titleDiv?.parentElement;
       expect(container).toHaveClass('text-center');
@@ -130,7 +130,7 @@ describe('CompletionScreen', () => {
   describe('Click Handling', () => {
     it('calls onRestart when Practice Again button is clicked', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const practiceAgainButton = screen.getByRole('button', { name: /practice again/i });
+      const practiceAgainButton = screen.getByRole('button', { name: /buttons.practiceAgain/i });
       fireEvent.click(practiceAgainButton);
       expect(mockOnRestart).toHaveBeenCalledTimes(1);
       expect(mockOnStartNew).not.toHaveBeenCalled();
@@ -138,7 +138,7 @@ describe('CompletionScreen', () => {
 
     it('calls onStartNew when Start New Practice button is clicked', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const startNewButton = screen.getByRole('button', { name: /start new practice/i });
+      const startNewButton = screen.getByRole('button', { name: /buttons.startNewPractice/i });
       fireEvent.click(startNewButton);
       expect(mockOnStartNew).toHaveBeenCalledTimes(1);
       expect(mockOnRestart).not.toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe('CompletionScreen', () => {
 
     it('handles multiple clicks on Practice Again correctly', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const practiceAgainButton = screen.getByRole('button', { name: /practice again/i });
+      const practiceAgainButton = screen.getByRole('button', { name: /buttons.practiceAgain/i });
       fireEvent.click(practiceAgainButton);
       fireEvent.click(practiceAgainButton);
       expect(mockOnRestart).toHaveBeenCalledTimes(2);
@@ -154,7 +154,7 @@ describe('CompletionScreen', () => {
 
     it('handles multiple clicks on Start New Practice correctly', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const startNewButton = screen.getByRole('button', { name: /start new practice/i });
+      const startNewButton = screen.getByRole('button', { name: /buttons.startNewPractice/i });
       fireEvent.click(startNewButton);
       fireEvent.click(startNewButton);
       expect(mockOnStartNew).toHaveBeenCalledTimes(2);
@@ -162,8 +162,8 @@ describe('CompletionScreen', () => {
 
     it('calls callbacks without parameters', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      fireEvent.click(screen.getByRole('button', { name: /practice again/i }));
-      fireEvent.click(screen.getByRole('button', { name: /start new practice/i }));
+      fireEvent.click(screen.getByRole('button', { name: /buttons.practiceAgain/i }));
+      fireEvent.click(screen.getByRole('button', { name: /buttons.startNewPractice/i }));
       expect(mockOnRestart).toHaveBeenCalledWith();
       expect(mockOnStartNew).toHaveBeenCalledWith();
     });
@@ -172,14 +172,14 @@ describe('CompletionScreen', () => {
   describe('Accessibility', () => {
     it('Practice Again button is focusable', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const button = screen.getByRole('button', { name: /practice again/i });
+      const button = screen.getByRole('button', { name: /buttons.practiceAgain/i });
       button.focus();
       expect(button).toHaveFocus();
     });
 
     it('Start New Practice button is focusable', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={mockOnStartNew} />);
-      const button = screen.getByRole('button', { name: /start new practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startNewPractice/i });
       button.focus();
       expect(button).toHaveFocus();
     });
@@ -243,28 +243,28 @@ describe('CompletionScreen', () => {
     it('does not crash when clicking Practice Again with null onRestart', () => {
       render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       expect(() => {
-        fireEvent.click(screen.getByRole('button', { name: /practice again/i }));
+        fireEvent.click(screen.getByRole('button', { name: /buttons.practiceAgain/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Practice Again with undefined onRestart', () => {
       render(<CompletionScreen accuracy={85} onRestart={() => {}} onStartNew={mockOnStartNew} />);
       expect(() => {
-        fireEvent.click(screen.getByRole('button', { name: /practice again/i }));
+        fireEvent.click(screen.getByRole('button', { name: /buttons.practiceAgain/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Start New Practice with null onStartNew', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       expect(() => {
-        fireEvent.click(screen.getByRole('button', { name: /start new practice/i }));
+        fireEvent.click(screen.getByRole('button', { name: /buttons.startNewPractice/i }));
       }).not.toThrow();
     });
 
     it('does not crash when clicking Start New Practice with undefined onStartNew', () => {
       render(<CompletionScreen accuracy={85} onRestart={mockOnRestart} onStartNew={() => {}} />);
       expect(() => {
-        fireEvent.click(screen.getByRole('button', { name: /start new practice/i }));
+        fireEvent.click(screen.getByRole('button', { name: /buttons.startNewPractice/i }));
       }).not.toThrow();
     });
   });

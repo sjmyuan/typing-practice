@@ -27,14 +27,14 @@ describe('TypingArea Character Alignment Integration', () => {
   it('renders character alignment control', () => {
     render(<TypingArea prompt="hello" onComplete={mockOnComplete} />);
     
-    expect(screen.getByRole('radiogroup', { name: /character alignment options/i })).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: /labels.characterAlignmentOptions/i })).toBeInTheDocument();
   });
 
   it('applies left alignment by default', () => {
     mockLocalStorage.getItem.mockReturnValue(null);
     render(<TypingArea prompt="hello world" onComplete={mockOnComplete} />);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-start');
   });
 
@@ -44,10 +44,10 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello world" onComplete={mockOnComplete} />);
     
-    const centerButton = screen.getByRole('radio', { name: /center characters/i });
+    const centerButton = screen.getByRole('radio', { name: /labels.centerCharacters/i });
     await user.click(centerButton);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-center');
   });
 
@@ -57,10 +57,10 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello world" onComplete={mockOnComplete} />);
     
-    const rightButton = screen.getByRole('radio', { name: /right align characters/i });
+    const rightButton = screen.getByRole('radio', { name: /labels.rightAlignCharacters/i });
     await user.click(rightButton);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-end');
   });
 
@@ -70,10 +70,10 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello world" onComplete={mockOnComplete} />);
     
-    const justifyButton = screen.getByRole('radio', { name: /justify characters/i });
+    const justifyButton = screen.getByRole('radio', { name: /labels.justifyCharacters/i });
     await user.click(justifyButton);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-between');
   });
 
@@ -83,7 +83,7 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello" onComplete={mockOnComplete} />);
     
-    const centerButton = screen.getByRole('radio', { name: /center characters/i });
+    const centerButton = screen.getByRole('radio', { name: /labels.centerCharacters/i });
     await user.click(centerButton);
     
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('typingPracticeCharacterAlignment', 'center');
@@ -98,10 +98,10 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello" onComplete={mockOnComplete} />);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-end');
     
-    const rightButton = screen.getByRole('radio', { name: /right align characters/i });
+    const rightButton = screen.getByRole('radio', { name: /labels.rightAlignCharacters/i });
     expect(rightButton).toHaveAttribute('aria-checked', 'true');
   });
 
@@ -114,7 +114,7 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello" onComplete={mockOnComplete} />);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-start'); // Should default to left
   });
 
@@ -123,12 +123,12 @@ describe('TypingArea Character Alignment Integration', () => {
     
     // Test English mode
     const { rerender } = render(<TypingArea prompt="hello" practiceMode="english" onComplete={mockOnComplete} />);
-    let practiceContainer = screen.getByLabelText('practice prompt');
+    let practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-center');
     
     // Test Pinyin mode
     rerender(<TypingArea prompt="你好" practiceMode="pinyin" onComplete={mockOnComplete} />);
-    practiceContainer = screen.getByLabelText('practice prompt');
+    practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-center');
   });
 
@@ -137,7 +137,7 @@ describe('TypingArea Character Alignment Integration', () => {
     
     render(<TypingArea prompt="hello\nworld" onComplete={mockOnComplete} />);
     
-    const practiceContainer = screen.getByLabelText('practice prompt');
+    const practiceContainer = screen.getByLabelText('labels.practicePrompt');
     expect(practiceContainer).toHaveClass('flex', 'flex-wrap', 'justify-center');
     
     // The container should support line breaks via flex-wrap

@@ -23,7 +23,7 @@ describe('App Layout', () => {
     render(<App />);
     
     // Header should be present
-    expect(screen.getByText('Typing Adventure')).toBeInTheDocument();
+    expect(screen.getByText('headings.typingPractice')).toBeInTheDocument();
     
     // Main content area should be present
     expect(screen.getByRole('main')).toBeInTheDocument();
@@ -34,9 +34,9 @@ describe('App Layout', () => {
       render(<App />);
       
       // Full header elements should be visible
-      expect(screen.getByText('Typing Adventure')).toBeInTheDocument();
-      expect(screen.getByText("Let's learn to type together!")).toBeInTheDocument();
-      expect(screen.getByText('🌟 Practice • Learn • Have Fun! 🌟')).toBeInTheDocument();
+      expect(screen.getByText('headings.typingPractice')).toBeInTheDocument();
+      expect(screen.getByText('descriptions.letsLearnTogether')).toBeInTheDocument();
+      expect(screen.getByText('🌟 descriptions.practiceLearnFun 🌟')).toBeInTheDocument();
       
       // Header should have full size classes
       const header = screen.getByRole('banner');
@@ -65,8 +65,8 @@ describe('App Layout', () => {
       expect(header).toHaveAttribute('data-practice-state', 'ready');
       
       // Description elements should be visible in ready state
-      expect(screen.getByText("Let's learn to type together!")).toBeInTheDocument();
-      expect(screen.getByText('🌟 Practice • Learn • Have Fun! 🌟')).toBeInTheDocument();
+      expect(screen.getByText('descriptions.letsLearnTogether')).toBeInTheDocument();
+      expect(screen.getByText('🌟 descriptions.practiceLearnFun 🌟')).toBeInTheDocument();
     });
   });
 });

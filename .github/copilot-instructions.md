@@ -49,6 +49,15 @@ Step 6: **Validate Refactoring**, Run the tests again after refactoring to ensur
 Step 7: **Validate Linting**, Run the linter to confirm that the code complies with the project's coding standards and guidelines.
 </custom-tdd>
 
+<debugging>
+- Reproduce the issue by creating a minimal, isolated test case.
+- Analyze the test case to identify the root cause of the problem.
+- Insert debugging statements to gather additional information as needed.
+- Use the collected information to fix the underlying issue in the code.
+- Re-run the tests to verify that the issue is resolved.
+- If the problem persists, repeat the debugging process until it is fully resolved.
+</debugging>
+
 <skills>
 
 <rules>

@@ -18,11 +18,11 @@ describe('CharacterAlignmentControl', () => {
       />
     );
 
-    expect(screen.getByRole('radiogroup', { name: /character alignment options/i })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /left align characters/i })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /center characters/i })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /right align characters/i })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /justify characters/i })).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: /labels.characterAlignmentOptions/i })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /labels.leftAlignCharacters/i })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /labels.centerCharacters/i })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /labels.rightAlignCharacters/i })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: /labels.justifyCharacters/i })).toBeInTheDocument();
   });
 
   it('shows the current alignment as selected', () => {
@@ -33,7 +33,7 @@ describe('CharacterAlignmentControl', () => {
       />
     );
 
-    const centerButton = screen.getByRole('radio', { name: /center characters/i });
+    const centerButton = screen.getByRole('radio', { name: /labels.centerCharacters/i });
     expect(centerButton).toHaveAttribute('aria-checked', 'true');
     expect(centerButton).toHaveAttribute('aria-pressed', 'true');
     expect(centerButton).toHaveClass('bg-blue-100', 'text-blue-800');
@@ -48,7 +48,7 @@ describe('CharacterAlignmentControl', () => {
       />
     );
 
-    const rightButton = screen.getByRole('radio', { name: /right align characters/i });
+    const rightButton = screen.getByRole('radio', { name: /labels.rightAlignCharacters/i });
     await user.click(rightButton);
 
     expect(mockOnAlignmentChange).toHaveBeenCalledWith('right');
@@ -57,10 +57,10 @@ describe('CharacterAlignmentControl', () => {
   it('handles all alignment options correctly', async () => {
     const user = userEvent.setup();
     const alignmentOptions: { alignment: CharacterAlignment; pattern: RegExp }[] = [
-      { alignment: 'left', pattern: /left align characters/i },
-      { alignment: 'center', pattern: /center characters/i },
-      { alignment: 'right', pattern: /right align characters/i },
-      { alignment: 'justify', pattern: /justify characters/i }
+      { alignment: 'left', pattern: /labels.leftAlignCharacters/i },
+      { alignment: 'center', pattern: /labels.centerCharacters/i },
+      { alignment: 'right', pattern: /labels.rightAlignCharacters/i },
+      { alignment: 'justify', pattern: /labels.justifyCharacters/i }
     ];
 
     for (const { alignment, pattern } of alignmentOptions) {
@@ -91,7 +91,7 @@ describe('CharacterAlignmentControl', () => {
       />
     );
 
-    const centerButton = screen.getByRole('radio', { name: /center characters/i });
+    const centerButton = screen.getByRole('radio', { name: /labels.centerCharacters/i });
     
     // Focus the button directly
     centerButton.focus();
@@ -111,9 +111,9 @@ describe('CharacterAlignmentControl', () => {
     );
 
     const radioGroup = screen.getByRole('radiogroup');
-    expect(radioGroup).toHaveAttribute('aria-label', 'Character alignment options');
+    expect(radioGroup).toHaveAttribute('aria-label', 'labels.characterAlignmentOptions');
 
-    const justifyButton = screen.getByRole('radio', { name: /justify characters/i });
+    const justifyButton = screen.getByRole('radio', { name: /labels.justifyCharacters/i });
     expect(justifyButton).toHaveAttribute('aria-checked', 'true');
     expect(justifyButton).toHaveAttribute('aria-pressed', 'true');
     expect(justifyButton).toHaveAttribute('role', 'radio');

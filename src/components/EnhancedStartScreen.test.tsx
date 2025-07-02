@@ -12,49 +12,49 @@ describe('EnhancedStartScreen', () => {
   it('should render mode selection options by default', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    expect(screen.getByText('Choose Practice Mode')).toBeInTheDocument();
-    expect(screen.getByText('Create Your Own Content')).toBeInTheDocument();
-    expect(screen.getByText('Browse Existing Poems')).toBeInTheDocument();
+    expect(screen.getByText(/headings.choosePracticeMode/i)).toBeInTheDocument();
+    expect(screen.getByText(/buttons.createYourOwnContent/i)).toBeInTheDocument();
+    expect(screen.getByText(/buttons.browseExistingPoems/i)).toBeInTheDocument();
   });
 
   it('should show custom input form when Create Your Own Content is clicked', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    fireEvent.click(screen.getByText('Create Your Own Content'));
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
     
-    expect(screen.getByPlaceholderText('Enter the text you want to practice typing...')).toBeInTheDocument();
-    expect(screen.getByText('Start Practice')).toBeInTheDocument();
-    expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/placeholders.enterTextToPractice/i)).toBeInTheDocument();
+    expect(screen.getByText(/buttons.startPractice/i)).toBeInTheDocument();
+    expect(screen.getByText(/buttons.backToOptions/i)).toBeInTheDocument();
   });
 
   it('should show poem browser when Browse Existing Poems is clicked', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    fireEvent.click(screen.getByText('Browse Existing Poems'));
+    fireEvent.click(screen.getByText(/buttons.browseExistingPoems/i));
     
     // The PoemBrowser will show loading initially
-    expect(screen.getByText('Loading poems...')).toBeInTheDocument();
+    expect(screen.getByText(/poemBrowser.loadingPoems/i)).toBeInTheDocument();
   });
 
   it('should navigate back to mode selection from custom input', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    fireEvent.click(screen.getByText('Create Your Own Content'));
-    expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
+    expect(screen.getByText(/buttons.backToOptions/i)).toBeInTheDocument();
     
-    fireEvent.click(screen.getByText('← Back to Options'));
-    expect(screen.getByText('Choose Practice Mode')).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/buttons.backToOptions/i));
+    expect(screen.getByText(/headings.choosePracticeMode/i)).toBeInTheDocument();
   });
 
   it('should call onStart when custom input is submitted', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    fireEvent.click(screen.getByText('Create Your Own Content'));
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
     
-    const textarea = screen.getByPlaceholderText('Enter the text you want to practice typing...');
+    const textarea = screen.getByPlaceholderText(/placeholders.enterTextToPractice/i);
     fireEvent.change(textarea, { target: { value: 'Test content for typing practice' } });
     
-    fireEvent.click(screen.getByText('Start Practice'));
+    fireEvent.click(screen.getByText(/buttons.startPractice/i));
     
     expect(mockOnStart).toHaveBeenCalledWith('Test content for typing practice');
   });
@@ -62,14 +62,14 @@ describe('EnhancedStartScreen', () => {
   it('should validate custom input', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
-    fireEvent.click(screen.getByText('Create Your Own Content'));
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
     
-    const textarea = screen.getByPlaceholderText('Enter the text you want to practice typing...');
+    const textarea = screen.getByPlaceholderText(/placeholders.enterTextToPractice/i);
     fireEvent.change(textarea, { target: { value: 'ab' } }); // Too short
     
-    fireEvent.click(screen.getByText('Start Practice'));
+    fireEvent.click(screen.getByText(/buttons.startPractice/i));
     
-    expect(screen.getByText('Please enter at least 3 characters.')).toBeInTheDocument();
+    expect(screen.getByText(/errors.pleaseEnterAtLeast3Characters/i)).toBeInTheDocument();
     expect(mockOnStart).not.toHaveBeenCalled();
   });
 
@@ -86,16 +86,16 @@ describe('EnhancedStartScreen', () => {
     render(<EnhancedStartScreen onStart={mockOnStart} />);
     
     // Go to custom input and enter text
-    fireEvent.click(screen.getByText('Create Your Own Content'));
-    const textarea = screen.getByPlaceholderText('Enter the text you want to practice typing...');
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
+    const textarea = screen.getByPlaceholderText(/placeholders.enterTextToPractice/i);
     fireEvent.change(textarea, { target: { value: 'Some text content' } });
     
     // Go back to mode selection
-    fireEvent.click(screen.getByText('← Back to Options'));
-    expect(screen.getByText('Choose Practice Mode')).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/buttons.backToOptions/i));
+    expect(screen.getByText(/headings.choosePracticeMode/i)).toBeInTheDocument();
     
     // Go back to custom input - text should be preserved
-    fireEvent.click(screen.getByText('Create Your Own Content'));
+    fireEvent.click(screen.getByText(/buttons.createYourOwnContent/i));
     expect(textarea).toHaveValue('Some text content');
   });
 });

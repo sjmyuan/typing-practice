@@ -24,7 +24,7 @@ describe('ContentPreview', () => {
     );
     
     expect(screen.getByText(mockPoem.title)).toBeInTheDocument();
-    expect(screen.getByText(`by ${mockPoem.author}`)).toBeInTheDocument();
+    expect(screen.getByText(`poemBrowser.by ${mockPoem.author}`)).toBeInTheDocument();
   });
 
   it('should render poem content with line breaks', () => {
@@ -57,7 +57,7 @@ describe('ContentPreview', () => {
       />
     );
     
-    expect(screen.getByText('Start Practice')).toBeInTheDocument();
+    expect(screen.getByText('buttons.startPractice')).toBeInTheDocument();
   });
 
   it('should call onStart with poem text when start button is clicked', () => {
@@ -72,7 +72,7 @@ describe('ContentPreview', () => {
       />
     );
     
-    fireEvent.click(screen.getByText('Start Practice'));
+    fireEvent.click(screen.getByText('buttons.startPractice'));
     
     expect(mockOnStart).toHaveBeenCalledWith(
       `${mockPoem.title}\n${mockPoem.author}\n${mockPoem.text}`
@@ -91,7 +91,7 @@ describe('ContentPreview', () => {
       />
     );
     
-    expect(screen.getByText('← Back to Titles')).toBeInTheDocument();
+    expect(screen.getByText('buttons.backToTitles')).toBeInTheDocument();
   });
 
   it('should call onBack when back button is clicked', () => {
@@ -106,7 +106,7 @@ describe('ContentPreview', () => {
       />
     );
     
-    fireEvent.click(screen.getByText('← Back to Titles'));
+    fireEvent.click(screen.getByText('buttons.backToTitles'));
     
     expect(mockOnBack).toHaveBeenCalled();
   });
@@ -143,6 +143,6 @@ describe('ContentPreview', () => {
     );
     
     expect(screen.getByText(emptyPoem.title)).toBeInTheDocument();
-    expect(screen.getByText('Start Practice')).toBeInTheDocument();
+    expect(screen.getByText('buttons.startPractice')).toBeInTheDocument();
   });
 });

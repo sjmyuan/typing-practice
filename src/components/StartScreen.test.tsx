@@ -19,19 +19,19 @@ describe('StartScreen', () => {
 
     it('renders start practice button', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      expect(screen.getByRole('button', { name: /start practice/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /buttons.startPractice/i })).toBeInTheDocument();
     });
 
     it('has placeholder text in textarea', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      expect(screen.getByPlaceholderText(/enter the text you want to practice typing/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/placeholders.enterTextToPractice/i)).toBeInTheDocument();
     });
   });
 
   describe('Form Validation', () => {
     it('button is disabled when textarea is empty', () => {
       render(<StartScreen onStart={mockOnStart} />);
-      const button = screen.getByRole('button', { name: /start practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startPractice/i });
       expect(button).toBeDisabled();
     });
 
@@ -40,7 +40,7 @@ describe('StartScreen', () => {
       render(<StartScreen onStart={mockOnStart} />);
       
       const textarea = screen.getByRole('textbox');
-      const button = screen.getByRole('button', { name: /start practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startPractice/i });
       
       await user.type(textarea, 'Hello world');
       expect(button).toBeEnabled();
@@ -50,7 +50,7 @@ describe('StartScreen', () => {
       const user = userEvent.setup();
       render(<StartScreen onStart={mockOnStart} />);
       
-      const button = screen.getByRole('button', { name: /start practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startPractice/i });
       expect(button).toBeDisabled();
       
       // Try to click disabled button - should not trigger onStart
@@ -64,9 +64,9 @@ describe('StartScreen', () => {
       
       const textarea = screen.getByRole('textbox');
       await user.type(textarea, 'Hi');
-      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      await user.click(screen.getByRole('button', { name: /buttons.startPractice/i }));
       
-      expect(screen.getByText(/please enter at least 3 characters/i)).toBeInTheDocument();
+      expect(screen.getByText(/errors.pleaseEnterAtLeast3Characters/i)).toBeInTheDocument();
       expect(mockOnStart).not.toHaveBeenCalled();
     });
 
@@ -78,12 +78,12 @@ describe('StartScreen', () => {
       
       // First trigger an error by submitting short text
       await user.type(textarea, 'Hi');
-      await user.click(screen.getByRole('button', { name: /start practice/i }));
-      expect(screen.getByText(/please enter at least 3 characters/i)).toBeInTheDocument();
+      await user.click(screen.getByRole('button', { name: /buttons.startPractice/i }));
+      expect(screen.getByText(/errors.pleaseEnterAtLeast3Characters/i)).toBeInTheDocument();
       
       // Then type more to clear the error
       await user.type(textarea, ' there');
-      expect(screen.queryByText(/please enter at least 3 characters/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/errors.pleaseEnterAtLeast3Characters/i)).not.toBeInTheDocument();
     });
   });
 
@@ -94,7 +94,7 @@ describe('StartScreen', () => {
       
       const textarea = screen.getByRole('textbox');
       await user.type(textarea, '  Hello world  ');
-      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      await user.click(screen.getByRole('button', { name: /buttons.startPractice/i }));
       
       expect(mockOnStart).toHaveBeenCalledWith('Hello world');
     });
@@ -104,7 +104,7 @@ describe('StartScreen', () => {
       render(<StartScreen onStart={mockOnStart} />);
       
       const textarea = screen.getByRole('textbox');
-      const button = screen.getByRole('button', { name: /start practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startPractice/i });
       
       await user.type(textarea, '   ');
       expect(button).toBeDisabled();
@@ -121,7 +121,7 @@ describe('StartScreen', () => {
       const textarea = screen.getByRole('textbox');
       await user.type(textarea, 'Hello world');
       
-      const button = screen.getByRole('button', { name: /start practice/i });
+      const button = screen.getByRole('button', { name: /buttons.startPractice/i });
       await user.click(button);
       
       expect(mockOnStart).toHaveBeenCalledWith('Hello world');
@@ -174,9 +174,9 @@ describe('StartScreen', () => {
       
       const textarea = screen.getByRole('textbox');
       await user.type(textarea, 'Hi');
-      await user.click(screen.getByRole('button', { name: /start practice/i }));
+      await user.click(screen.getByRole('button', { name: /buttons.startPractice/i }));
       
-      const errorMessage = screen.getByText(/please enter at least 3 characters/i);
+      const errorMessage = screen.getByText(/errors.pleaseEnterAtLeast3Characters/i);
       expect(errorMessage).toBeInTheDocument();
     });
 
@@ -184,7 +184,7 @@ describe('StartScreen', () => {
       render(<StartScreen onStart={mockOnStart} />);
       
       // Should not show any error messages initially
-      expect(screen.queryByText(/please enter/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/errors.pleaseEnter/i)).not.toBeInTheDocument();
     });
   });
 

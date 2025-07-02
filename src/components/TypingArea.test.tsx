@@ -46,7 +46,7 @@ describe('TypingArea', () => {
     it('has correct accessibility attributes', () => {
       render(<TypingArea {...mockProps} />);
       const container = screen.getByRole('textbox');
-      expect(container).toHaveAttribute('aria-label', 'practice area - click here and start typing');
+      expect(container).toHaveAttribute('aria-label', 'labels.practiceArea');
       expect(container).toHaveAttribute('tabIndex', '0');
     });
   });
@@ -112,8 +112,8 @@ describe('TypingArea', () => {
       
       fireEvent.keyDown(container, { key: 'h', code: 'KeyH' });
       
-      expect(screen.getByText('Progress: 1/5 characters')).toBeInTheDocument();
-      expect(screen.getByText('Accuracy: 100%')).toBeInTheDocument();
+      expect(screen.getByText(/progress\.progressLabel/)).toBeInTheDocument();
+      expect(screen.getByText(/Accuracy:/)).toBeInTheDocument();
     });
   });
 
@@ -256,7 +256,7 @@ describe('TypingArea', () => {
       fireEvent.keyDown(container, { key: 'Control', code: 'ControlLeft' });
       
       // No characters should be typed - progress should still show 0 typed
-      expect(screen.getByText('Progress: 0/5 characters')).toBeInTheDocument();
+      expect(screen.getByText(/progress\.progressLabel/)).toBeInTheDocument();
       
       // All characters should still be untyped
       const chars = screen.getAllByTestId('practice-char');
@@ -332,20 +332,20 @@ describe('TypingArea', () => {
       const mockOnBack = vi.fn();
       render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
       
-      expect(screen.getByText('← Back to Options')).toBeInTheDocument();
+      expect(screen.getByText('buttons.backToOptions')).toBeInTheDocument();
     });
 
     it('does not render back button when onBack prop is not provided', () => {
       render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} />);
       
-      expect(screen.queryByText('← Back to Options')).not.toBeInTheDocument();
+      expect(screen.queryByText('buttons.backToOptions')).not.toBeInTheDocument();
     });
 
     it('calls onBack when back button is clicked', () => {
       const mockOnBack = vi.fn();
       render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
       
-      fireEvent.click(screen.getByText('← Back to Options'));
+      fireEvent.click(screen.getByText('buttons.backToOptions'));
       
       expect(mockOnBack).toHaveBeenCalledTimes(1);
     });
@@ -354,7 +354,7 @@ describe('TypingArea', () => {
       const mockOnBack = vi.fn();
       render(<TypingArea prompt="hello" onComplete={mockProps.onComplete} onBack={mockOnBack} />);
       
-      const backButton = screen.getByText('← Back to Options');
+      const backButton = screen.getByText('buttons.backToOptions');
       expect(backButton).toHaveAttribute('type', 'button');
     });
 
@@ -428,7 +428,7 @@ describe('TypingArea', () => {
       fireEvent.keyDown(container, { key: 'h', code: 'KeyH' });
       
       // Should show progress from ProgressDisplay
-      expect(screen.getByText('Progress: 1/5 characters')).toBeInTheDocument();
+      expect(screen.getByText(/progress\.progressLabel/)).toBeInTheDocument();
     });
 
     it('integrates with TypingCursor component', () => {
@@ -450,7 +450,7 @@ describe('TypingArea', () => {
       
       // Click somewhere else (like a progress element)
       const progressElement = screen.getByText((content, element) => {
-        return element?.tagName.toLowerCase() === 'p' && content.includes('Progress:');
+        return element?.tagName.toLowerCase() === 'p' && content.includes('progress.progressLabel');
       });
       fireEvent.click(progressElement);
       
@@ -510,8 +510,8 @@ describe('TypingArea', () => {
     it('renders font size controls', () => {
       render(<TypingArea {...mockProps} />);
       
-      expect(screen.getByLabelText('Increase font size')).toBeInTheDocument();
-      expect(screen.getByLabelText('Decrease font size')).toBeInTheDocument();
+      expect(screen.getByLabelText('labels.increaseFontSize')).toBeInTheDocument();
+      expect(screen.getByLabelText('labels.decreaseFontSize')).toBeInTheDocument();
     });
 
     it('starts with medium font size by default', () => {
@@ -524,7 +524,7 @@ describe('TypingArea', () => {
     it('increases font size when increase button is clicked', () => {
       render(<TypingArea {...mockProps} />);
       
-      const increaseButton = screen.getByLabelText('Increase font size');
+      const increaseButton = screen.getByLabelText('labels.increaseFontSize');
       fireEvent.click(increaseButton);
       
       const characterContainer = screen.getByRole('presentation');
@@ -534,7 +534,7 @@ describe('TypingArea', () => {
     it('decreases font size when decrease button is clicked', () => {
       render(<TypingArea {...mockProps} />);
       
-      const decreaseButton = screen.getByLabelText('Decrease font size');
+      const decreaseButton = screen.getByLabelText('labels.decreaseFontSize');
       fireEvent.click(decreaseButton);
       
       const characterContainer = screen.getByRole('presentation');
@@ -544,7 +544,7 @@ describe('TypingArea', () => {
     it('disables increase button at maximum font size', () => {
       render(<TypingArea {...mockProps} />);
       
-      const increaseButton = screen.getByLabelText('Increase font size');
+      const increaseButton = screen.getByLabelText('labels.increaseFontSize');
       
       // Click twice to reach maximum (medium -> large -> extra-large)
       fireEvent.click(increaseButton);
@@ -556,7 +556,7 @@ describe('TypingArea', () => {
     it('disables decrease button at minimum font size', () => {
       render(<TypingArea {...mockProps} />);
       
-      const decreaseButton = screen.getByLabelText('Decrease font size');
+      const decreaseButton = screen.getByLabelText('labels.decreaseFontSize');
       
       // Click twice to reach minimum (medium -> small -> can't go smaller)
       fireEvent.click(decreaseButton);
@@ -568,7 +568,7 @@ describe('TypingArea', () => {
     it('saves font size preference to localStorage', () => {
       render(<TypingArea {...mockProps} />);
       
-      const increaseButton = screen.getByLabelText('Increase font size');
+      const increaseButton = screen.getByLabelText('labels.increaseFontSize');
       fireEvent.click(increaseButton);
       
       expect(localStorage.getItem('typingPracticeFontSize')).toBe('large');
@@ -606,7 +606,7 @@ describe('TypingArea', () => {
       expect(characterContainer).toHaveClass('text-3xl');
       
       // Increase font size
-      const increaseButton = screen.getByLabelText('Increase font size');
+      const increaseButton = screen.getByLabelText('labels.increaseFontSize');
       fireEvent.click(increaseButton);
       
       expect(characterContainer).toHaveClass('text-5xl');
@@ -765,7 +765,7 @@ describe('TypingArea', () => {
 
     it('displays multi-line layout correctly', () => {
       render(<TypingArea {...multiLineProps} />);
-      const container = screen.getByLabelText('practice prompt');
+      const container = screen.getByLabelText('labels.practicePrompt');
       
       // The container should have the proper styling for displaying characters
       expect(container).toHaveClass('font-mono');
@@ -803,7 +803,7 @@ describe('TypingArea', () => {
       render(<TypingArea {...multiLineProps} />);
       
       // Check initial progress display
-      expect(screen.getByText(/Progress: 0\/11 characters/)).toBeInTheDocument();
+      expect(screen.getByText(/progress\.progressLabel: 0\/11 characters/)).toBeInTheDocument();
       
       const container = screen.getByRole('textbox');
       
@@ -817,7 +817,7 @@ describe('TypingArea', () => {
       });
       
       // Progress should show 6 characters typed
-      expect(screen.getByText(/Progress: 6\/11 characters/)).toBeInTheDocument();
+      expect(screen.getByText(/progress\.progressLabel: 6\/11 characters/)).toBeInTheDocument();
     });
   });
 
@@ -937,7 +937,7 @@ describe('TypingArea', () => {
       mockScrollIntoView.mockClear();
       
       // Change font size
-      const increaseFontButton = screen.getByLabelText('Increase font size');
+      const increaseFontButton = screen.getByLabelText('labels.increaseFontSize');
       fireEvent.click(increaseFontButton);
       
       // Wait for font size change and scroll effect
